@@ -5,7 +5,7 @@ A modern, visually stunning implementation of the ancient Roman game **Rota**, b
 ## Features
 
 - **Glassmorphism UI:** sleek, translucent design with neon accents.
-- **Smart AI:** Play against a Minimax-powered CPU opponent.
+- **Game Modes:** Play against a smart AI (Minimax-powered) or challenge a friend in local multiplayer (Human vs Human).
 - **Fluid Animations:** Smooth transitions for piece placement and movement.
 - **Responsive:** Works beautifully on desktop and mobile.
 
@@ -30,6 +30,11 @@ A modern, visually stunning implementation of the ancient Roman game **Rota**, b
     ```
 
 3.  Open [http://localhost:3000](http://localhost:3000) with your browser.
+
+4.  Run tests:
+    ```bash
+    npm test
+    ```
 
 ## How to Play
 
