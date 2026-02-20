@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Marcellus, Lora } from "next/font/google";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
 const marcellus = Marcellus({
@@ -29,6 +30,7 @@ export default function RootLayout({
       <body
         className={`${marcellus.variable} ${lora.variable} antialiased bg-[var(--background)] text-[var(--foreground)] font-[family-name:var(--font-lora)]`}
       >
+        <ServiceWorkerRegister />
         {children}
       </body>
     </html>
