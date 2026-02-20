@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Piece } from './Piece';
 import { Player } from '@/lib/game-logic';
+import { cn } from '@/lib/utils';
 
 interface CellProps {
   index: number;
@@ -17,14 +18,15 @@ export function Cell({ index, player, isValidMove, isSource, onClick, position }
   return (
     <motion.div
       data-testid={`cell-${index}`}
-      className="absolute flex items-center justify-center cursor-pointer touch-manipulation"
+      className={cn(
+        "absolute flex items-center justify-center cursor-pointer touch-manipulation",
+        "-translate-x-1/2 -translate-y-1/2",
+        "w-[60px] h-[60px]",
+        isSource ? "z-20" : "z-10"
+      )}
       style={{
         left: `${position.x}%`,
         top: `${position.y}%`,
-        width: '60px',
-        height: '60px',
-        transform: 'translate(-50%, -50%)',
-        zIndex: isSource ? 20 : 10
       }}
       onClick={onClick}
       whileHover={{ scale: 1.1 }}
