@@ -4,28 +4,36 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-bright: var(--primary-bright); /* Added this */
   --color-secondary: var(--secondary);
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-marcellus: var(--font-marcellus);
+  --font-lora: var(--font-lora);
 }
 
 :root {
-  --background: #050510;
-  --foreground: #ffffff;
-  --primary: #00f0ff;
-  --secondary: #ff00ff;
+  --background: #1A1A2E; /* Deep Marble / Slate */
+  --foreground: #E0E0E0; /* Marble White */
+
+  --primary: #66023C; /* Tyrian Purple - Good for pieces */
+  --primary-bright: #D02090; /* Violet Red - Good for text highlights */
+  --secondary: #D4AF37; /* Imperial Gold */
+
   --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --font-geist-sans: "Geist", sans-serif;
-  --font-geist-mono: "Geist Mono", monospace;
+  --glass-border: rgba(212, 175, 55, 0.2);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-lora);
   overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-marcellus);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }

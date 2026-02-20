@@ -36,13 +36,16 @@ export function Board({ gameState, onCellClick }: BoardProps) {
       }
   }
 
+  // Imperial Gold for board lines
+  const lineColor = "rgba(212, 175, 55, 0.3)";
+
   return (
     <div className="relative w-full max-w-[500px] aspect-square mx-auto my-8">
       {/* SVG Board Lines */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="35" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
+        <circle cx="50" cy="50" r="35" fill="none" stroke={lineColor} strokeWidth="0.5" />
         {positions.slice(0, 8).map((pos, i) => (
-           <line key={i} x1="50" y1="50" x2={pos.x} y2={pos.y} stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
+           <line key={i} x1="50" y1="50" x2={pos.x} y2={pos.y} stroke={lineColor} strokeWidth="0.5" />
         ))}
       </svg>
 

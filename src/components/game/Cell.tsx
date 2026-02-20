@@ -5,12 +5,12 @@ import { Piece } from './Piece';
 import { Player } from '@/lib/game-logic';
 
 interface CellProps {
-  index: number; // Re-add index for testid
+  index: number;
   player: Player | null;
-  isValidMove: boolean; // Is it a valid destination?
-  isSource: boolean; // Is it the selected piece?
+  isValidMove: boolean;
+  isSource: boolean;
   onClick: () => void;
-  position: { x: number, y: number }; // Relative position for layout in percent
+  position: { x: number, y: number };
 }
 
 export function Cell({ index, player, isValidMove, isSource, onClick, position }: CellProps) {
@@ -23,24 +23,24 @@ export function Cell({ index, player, isValidMove, isSource, onClick, position }
         top: `${position.y}%`,
         width: '60px',
         height: '60px',
-        transform: 'translate(-50%, -50%)', // Center the cell on the point
+        transform: 'translate(-50%, -50%)',
         zIndex: isSource ? 20 : 10
       }}
       onClick={onClick}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
-      {/* Hitbox/Background for the cell point */}
+      {/* Hitbox/Background for the cell point - using Imperial Gold for highlights */}
       <div className={`w-4 h-4 rounded-full transition-all duration-300 ${
         isValidMove
-          ? 'bg-white/50 shadow-[0_0_15px_white] scale-150'
+          ? 'bg-secondary/50 shadow-[0_0_15px_rgba(212,175,55,0.8)] scale-150'
           : 'bg-white/10 hover:bg-white/20'
       }`} />
 
-      {/* Hint for valid move destination (pulsing ring) */}
+      {/* Hint for valid move destination (pulsing ring) - Gold color */}
       {isValidMove && !player && (
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-dashed border-white/30"
+          className="absolute inset-0 rounded-full border-2 border-dashed border-secondary/30"
           animate={{ rotate: 360, scale: [1, 1.1, 1] }}
           transition={{
             rotate: { duration: 8, ease: "linear", repeat: Infinity },
