@@ -19,3 +19,4 @@ Expected style "zIndex: 10px" to be unitless
  GET /pwa-icon 200 in 467ms
 ✓ Compiled in 454ms
 ✓ Compiled in 62ms
+✓ Compiled in 1426ms
