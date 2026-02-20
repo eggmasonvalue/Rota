@@ -7,6 +7,7 @@ import { Board } from '@/components/game/Board';
 import { Button } from '@/components/ui/Button';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 import { Modal } from '@/components/ui/Modal';
+import { HowToPlay } from '@/components/game/HowToPlay';
 
 type Action =
   | { type: 'PLACE_PIECE'; index: number }
@@ -166,7 +167,7 @@ export default function Home() {
   const isPlayer2Turn = state.currentPlayer === 'PLAYER2';
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden overflow-y-auto font-body">
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden font-body">
 
       {/* Background Ambience */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(102,2,60,0.15)_0%,rgba(26,26,46,0)_70%)] pointer-events-none" />
@@ -246,6 +247,9 @@ export default function Home() {
               {state.phase === 'MOVEMENT' && "Move a piece to an adjacent empty spot"}
             </p>
         </div>
+
+        {/* How to Play Section */}
+        <HowToPlay />
       </div>
 
       {/* Game Over Modal */}

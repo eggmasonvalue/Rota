@@ -1,0 +1,19 @@
+
+> rota-web-app@0.1.0 dev
+> next dev
+
+⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.0.2:3001
+
+✓ Starting...
+✓ Ready in 1310ms
+○ Compiling / ...
+ GET / 200 in 4.9s (compile: 4.6s, render: 392ms)
+Expected style "zIndex: 10px" to be unitless
+ GET /icon 200 in 3.3s
+Expected style "zIndex: 10px" to be unitless
+ GET /apple-icon 200 in 560ms
+Expected style "zIndex: 10px" to be unitless
+ GET /pwa-icon 200 in 467ms
