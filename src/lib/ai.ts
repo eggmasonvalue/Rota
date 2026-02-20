@@ -15,7 +15,7 @@ function applyMove(state: GameState, move: { from: number | null, to: number }):
 
     // Check if placement phase ends
     // If both players have placed 3 pieces, switch to MOVEMENT
-    if (newPiecesCount.PLAYER === 3 && newPiecesCount.CPU === 3) {
+    if (newPiecesCount.PLAYER1 === 3 && newPiecesCount.PLAYER2 === 3) {
       newPhase = 'MOVEMENT';
     }
   } else {
