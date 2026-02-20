@@ -5,15 +5,15 @@
     - [x] Board representation (Array/Graph)
     - [x] Move validation (Placement & Movement phases)
     - [x] Win condition detection (3-in-a-row)
-    - [x] Turn management
+    - [x] Draw detection (3-fold repetition)
+    - [x] Blocked move detection (win/loss)
 - [x] **AI Opponent**
-    - [x] Random Move (Easy) - *Integrated as base logic*
-    - [x] Minimax Depth 3 (Medium/Hard) - *Implemented with Alpha-Beta Pruning*
+    - [x] Minimax with Alpha-Beta Pruning (Web Worker)
+    - [x] Difficulty Levels: Novice (Easy), Legionary (Medium), Senator (Hard)
 - [x] **User Interface**
-    - [x] Glassmorphism Board Design
-    - [x] Glowing Pieces (Neon/Cyberpunk aesthetic)
-    - [x] Animated Transitions (Placement, Movement, Win)
-    - [x] Difficulty Selector - *Easy, Medium, Hard*
+    - [x] "Imperial Senate" Theme (Glassmorphism + Roman Aesthetics)
+    - [x] Game Modes: Human vs Human (HvH) & Human vs CPU (HvC)
+    - [x] Animated Transitions (Placement, Movement, Win) using Framer Motion
     - [x] Game Over Modal with "Play Again"
 - [x] **Responsiveness**
     - [x] Mobile-first layout
@@ -22,6 +22,11 @@
     - [ ] Subtle SFX for placement/movement (Deferred)
 
 ## Design System
-- **Theme:** Dark Mode default. Deep void background.
-- **Material:** "Glass" - High blur, low opacity white/blue backgrounds with thin borders.
-- **Accent:** Neon Cyan (Player), Neon Magenta (CPU).
+- **Theme:** "Imperial Senate" - A blend of classical Roman aesthetics and modern glassmorphism.
+- **Colors:**
+    - **Primary:** Tyrian Purple (#66023C) - Represents Player 1 / Royalty.
+    - **Secondary:** Imperial Gold (#D4AF37) - Represents Player 2 / CPU / Wealth.
+    - **Background:** Deep Marble (#1A1A2E) - Represents the Senate floor / Night.
+- **Typography:**
+    - **Headings:** Marcellus (Classical Roman serif).
+    - **Body:** Lora (Elegant serif for readability).
