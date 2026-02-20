@@ -1,6 +1,7 @@
-export type Player = 'PLAYER' | 'CPU';
+export type Player = 'PLAYER1' | 'PLAYER2';
 export type Phase = 'PLACEMENT' | 'MOVEMENT' | 'GAME_OVER';
 export type Winner = Player | 'DRAW' | null;
+export type GameMode = 'HvH' | 'HvC';
 
 export interface GameState {
   board: (Player | null)[];
@@ -9,7 +10,8 @@ export interface GameState {
   winner: Winner;
   piecesCount: { [key in Player]: number };
   selectedCell: number | null; // For UI selection
-  history: string[]; // For detecting repetitive loops (optional but good to have)
+  history: string[]; // For detecting repetitive loops
+  gameMode: GameMode;
 }
 
 // 0-7 are outer circle, 8 is center
@@ -28,12 +30,13 @@ export const ADJACENCY: { [key: number]: number[] } = {
 
 export const INITIAL_STATE: GameState = {
   board: Array(9).fill(null),
-  currentPlayer: 'PLAYER',
+  currentPlayer: 'PLAYER1',
   phase: 'PLACEMENT',
   winner: null,
-  piecesCount: { PLAYER: 0, CPU: 0 },
+  piecesCount: { PLAYER1: 0, PLAYER2: 0 },
   selectedCell: null,
   history: [],
+  gameMode: 'HvC',
 };
 
 export function isValidPlacement(board: (Player | null)[], index: number): boolean {
@@ -72,7 +75,7 @@ export function getPossibleMoves(state: GameState): { from: number | null, to: n
 }
 
 export function getNextPlayer(current: Player): Player {
-  return current === 'PLAYER' ? 'CPU' : 'PLAYER';
+  return current === 'PLAYER1' ? 'PLAYER2' : 'PLAYER1';
 }
 
 export const WINNING_LINES: number[][] = [

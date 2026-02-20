@@ -10,11 +10,11 @@ interface PieceProps {
 
 export function Piece({ player, isSelected }: PieceProps) {
   // Use CSS variables for colors
-  const bgColor = player === 'PLAYER' ? 'bg-primary' : 'bg-secondary';
+  const bgColor = player === 'PLAYER1' ? 'bg-primary' : 'bg-secondary';
 
   // Dynamic shadow values based on theme variables (using CSS vars in style or Tailwind classes)
-  // PLAYER = Tyrian Purple, CPU = Imperial Gold
-  const shadowColor = player === 'PLAYER'
+  // PLAYER1 = Tyrian Purple, PLAYER2 = Imperial Gold
+  const shadowColor = player === 'PLAYER1'
     ? 'rgba(102, 2, 60, 0.6)'
     : 'rgba(212, 175, 55, 0.6)';
 
