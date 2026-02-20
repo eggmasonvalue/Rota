@@ -11,6 +11,14 @@ export const size = {
 export const contentType = 'image/png'
 
 export default async function Image() {
+  const marcellusFont = await fetch(
+    new URL('https://fonts.gstatic.com/s/marcellus/v13/1yOsO9M30K3R8m0KExeu.ttf', import.meta.url)
+  ).then((res) => res.arrayBuffer())
+
+  const loraFont = await fetch(
+    new URL('https://fonts.gstatic.com/s/lora/v35/0QIvMX1D_JOuMwr7.ttf', import.meta.url)
+  ).then((res) => res.arrayBuffer())
+
   const iconSize = 400; // Smaller than height to fit
   const strokeWidth = iconSize * 0.02;
   const hubSize = iconSize * 0.22;
@@ -101,9 +109,8 @@ export default async function Image() {
           <div
             style={{
               fontSize: 120,
-              fontFamily: 'serif',
+              fontFamily: 'Marcellus',
               color: '#D4AF37',
-              fontWeight: 700,
               lineHeight: 1,
             }}
           >
@@ -112,7 +119,7 @@ export default async function Image() {
           <div
             style={{
               fontSize: 48,
-              fontFamily: 'serif',
+              fontFamily: 'Lora',
               color: '#D4AF37',
               marginTop: 10,
               opacity: 0.9,
@@ -125,6 +132,20 @@ export default async function Image() {
     ),
     {
       ...size,
+      fonts: [
+        {
+          name: 'Marcellus',
+          data: marcellusFont,
+          style: 'normal',
+          weight: 400,
+        },
+        {
+          name: 'Lora',
+          data: loraFont,
+          style: 'normal',
+          weight: 400,
+        },
+      ],
     }
   )
 }
