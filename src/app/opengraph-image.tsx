@@ -12,11 +12,11 @@ export const contentType = 'image/png'
 
 export default async function Image() {
   const marcellusFont = await fetch(
-    new URL('https://fonts.gstatic.com/s/marcellus/v13/1yOsO9M30K3R8m0KExeu.ttf', import.meta.url)
+    new URL('https://fonts.gstatic.com/s/marcellus/v14/wEO_EBrOk8hQLDvIAF8FUQ.ttf', import.meta.url)
   ).then((res) => res.arrayBuffer())
 
   const loraFont = await fetch(
-    new URL('https://fonts.gstatic.com/s/lora/v35/0QIvMX1D_JOuMwr7.ttf', import.meta.url)
+    new URL('https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787weuyJG.ttf', import.meta.url)
   ).then((res) => res.arrayBuffer())
 
   const iconSize = 400; // Smaller than height to fit
