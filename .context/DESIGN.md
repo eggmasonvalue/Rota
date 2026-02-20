@@ -1,28 +1,27 @@
 # Design Status
 
 ## Features (V1)
-- [ ] **Game Engine**
-    - [ ] Board representation (Array/Graph)
-    - [ ] Move validation (Placement & Movement phases)
-    - [ ] Win condition detection (3-in-a-row)
-    - [ ] Turn management
-- [ ] **AI Opponent**
-    - [ ] Random Move (Easy)
-    - [ ] Minimax Depth 2 (Medium)
-    - [ ] Minimax Depth 4+ (Hard)
-- [ ] **User Interface**
-    - [ ] Glassmorphism Board Design
-    - [ ] Glowing Pieces (Neon/Cyberpunk aesthetic)
-    - [ ] Animated Transitions (Placement, Movement, Win)
-    - [ ] Difficulty Selector
-    - [ ] Game Over Modal with "Play Again"
-- [ ] **Responsiveness**
-    - [ ] Mobile-first layout
-    - [ ] Touch targets optimization
+- [x] **Game Engine**
+    - [x] Board representation (Array/Graph)
+    - [x] Move validation (Placement & Movement phases)
+    - [x] Win condition detection (3-in-a-row)
+    - [x] Turn management
+- [x] **AI Opponent**
+    - [x] Random Move (Easy) - *Integrated as base logic*
+    - [x] Minimax Depth 3 (Medium/Hard) - *Implemented with Alpha-Beta Pruning*
+- [x] **User Interface**
+    - [x] Glassmorphism Board Design
+    - [x] Glowing Pieces (Neon/Cyberpunk aesthetic)
+    - [x] Animated Transitions (Placement, Movement, Win)
+    - [ ] Difficulty Selector - *Fixed at Depth 3 for V1*
+    - [x] Game Over Modal with "Play Again"
+- [x] **Responsiveness**
+    - [x] Mobile-first layout
+    - [x] Touch targets optimization
 - [ ] **Sound**
-    - [ ] Subtle SFX for placement/movement (Optional for V1, but planned)
+    - [ ] Subtle SFX for placement/movement (Deferred)
 
 ## Design System
-- **Theme:** Dark Mode default. Deep blues/purples background.
+- **Theme:** Dark Mode default. Deep void background.
 - **Material:** "Glass" - High blur, low opacity white/blue backgrounds with thin borders.
-- **Accent:** Neon Cyan (Player), Neon Magenta (CPU), Gold (Win/Highlight).
+- **Accent:** Neon Cyan (Player), Neon Magenta (CPU).
