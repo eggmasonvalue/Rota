@@ -101,3 +101,9 @@ export function checkWin(board: (Player | null)[]): Winner {
   }
   return null;
 }
+
+export function isBlocked(state: GameState): boolean {
+  if (state.phase !== 'MOVEMENT') return false;
+  const moves = getPossibleMoves(state);
+  return moves.length === 0;
+}

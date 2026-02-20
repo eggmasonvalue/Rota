@@ -13,7 +13,7 @@
     - [x] Glassmorphism Board Design
     - [x] Glowing Pieces (Neon/Cyberpunk aesthetic)
     - [x] Animated Transitions (Placement, Movement, Win)
-    - [ ] Difficulty Selector - *Fixed at Depth 3 for V1*
+    - [x] Difficulty Selector - *Easy, Medium, Hard*
     - [x] Game Over Modal with "Play Again"
 - [x] **Responsiveness**
     - [x] Mobile-first layout

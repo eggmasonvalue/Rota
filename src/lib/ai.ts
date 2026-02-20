@@ -1,4 +1,6 @@
-import { GameState, Player, getPossibleMoves, checkWin, getNextPlayer } from './game-logic';
+import { GameState, Player, getPossibleMoves, checkWin, getNextPlayer, WINNING_LINES } from './game-logic';
+
+export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
 
 // Helper to simulate a move without mutating the original state
 function applyMove(state: GameState, move: { from: number | null, to: number }): GameState {
@@ -40,22 +42,35 @@ function evaluate(state: GameState, player: Player): number {
   if (state.winner && state.winner !== 'DRAW') return -10000;
   if (state.winner === 'DRAW') return 0;
 
-  // Simple heuristic:
-  // +10 for center (index 8)
-
   let score = 0;
-  if (state.board[8] === player) score += 10;
-  else if (state.board[8] && state.board[8] !== player) score -= 10;
+  // Center Control
+  if (state.board[8] === player) score += 20;
+  else if (state.board[8] && state.board[8] !== player) score -= 20;
 
-  // Add heuristic for blocking winning lines?
-  // Maybe too expensive for simple V1.
+  // 2-in-a-row threats
+  for (const line of WINNING_LINES) {
+    const pieces = line.map(i => state.board[i]);
+    const playerCount = pieces.filter(p => p === player).length;
+    const opponentCount = pieces.filter(p => p && p !== player).length;
+    const emptyCount = pieces.filter(p => p === null).length;
+
+    if (playerCount === 2 && emptyCount === 1) score += 50; // Winning opportunity
+    if (opponentCount === 2 && emptyCount === 1) score -= 60; // Defensive priority
+  }
 
   return score;
 }
 
-export function getBestMove(state: GameState, depth: number): { from: number | null, to: number } | null {
+export function getBestMove(state: GameState, difficulty: Difficulty): { from: number | null, to: number } | null {
   const possibleMoves = getPossibleMoves(state);
   if (possibleMoves.length === 0) return null;
+
+  // Easy: 40% chance of random move
+  if (difficulty === 'EASY' && Math.random() < 0.4) {
+    return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+  }
+
+  const depth = difficulty === 'EASY' ? 1 : difficulty === 'MEDIUM' ? 2 : 4;
 
   let bestMove = possibleMoves[0];
   let maxEval = -Infinity;
