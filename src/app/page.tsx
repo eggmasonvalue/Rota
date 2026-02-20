@@ -44,7 +44,16 @@ function gameReducer(state: GameState, action: Action): GameState {
      }
 
      if (nextPhase === 'MOVEMENT') {
-        const nextStateCheck = { ...newState, board: newBoard, currentPlayer: nextPlayer, phase: 'MOVEMENT' as Phase, piecesCount: newPiecesCount, winner: null, selectedCell: null, history: newHistory };
+        const nextStateCheck: GameState = {
+           ...newState,
+           board: newBoard,
+           currentPlayer: nextPlayer as Player,
+           phase: 'MOVEMENT' as Phase,
+           piecesCount: newPiecesCount,
+           winner: null,
+           selectedCell: null,
+           history: newHistory
+        };
         if (isBlocked(nextStateCheck)) {
            return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: 'GAME_OVER', winner: newState.currentPlayer, currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
         }
