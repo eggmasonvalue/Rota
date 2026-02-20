@@ -40,9 +40,9 @@ export function Board({ gameState, onCellClick }: BoardProps) {
   const lineColor = "rgba(212, 175, 55, 0.3)";
 
   return (
-    <div className="relative w-full max-w-[500px] aspect-square mx-auto my-8">
-      {/* SVG Board Lines */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100">
+    <div className="relative w-full max-w-[500px] aspect-square mx-auto my-8 flex-shrink-0">
+      {/* SVG Board Lines - preserveAspectRatio="none" ensures lines align with absolute positioned cells even if container is not perfectly square */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
         <circle cx="50" cy="50" r="35" fill="none" stroke={lineColor} strokeWidth="0.5" />
         {positions.slice(0, 8).map((pos, i) => (
            <line key={i} x1="50" y1="50" x2={pos.x} y2={pos.y} stroke={lineColor} strokeWidth="0.5" />
