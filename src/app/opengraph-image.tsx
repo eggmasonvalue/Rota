@@ -11,13 +11,41 @@ export const size = {
 export const contentType = 'image/png'
 
 export default async function Image() {
-  const marcellusFont = await fetch(
-    new URL('https://fonts.gstatic.com/s/marcellus/v14/wEO_EBrOk8hQLDvIAF8FUQ.ttf', import.meta.url)
-  ).then((res) => res.arrayBuffer())
+  let fonts: { name: string; data: ArrayBuffer; style: 'normal' | 'italic'; weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 }[] = [];
 
-  const loraFont = await fetch(
-    new URL('https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787weuyJG.ttf', import.meta.url)
-  ).then((res) => res.arrayBuffer())
+  try {
+    const marcellusFont = await fetch(
+      new URL('https://fonts.gstatic.com/s/marcellus/v14/wEO_EBrOk8hQLDvIAF8FUQ.ttf', import.meta.url)
+    ).then((res) => {
+        if (!res.ok) throw new Error(`Failed to fetch Marcellus: ${res.statusText}`);
+        return res.arrayBuffer();
+    });
+
+    const loraFont = await fetch(
+      new URL('https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787weuyJG.ttf', import.meta.url)
+    ).then((res) => {
+        if (!res.ok) throw new Error(`Failed to fetch Lora: ${res.statusText}`);
+        return res.arrayBuffer();
+    });
+
+    fonts = [
+      {
+        name: 'Marcellus',
+        data: marcellusFont,
+        style: 'normal',
+        weight: 400,
+      },
+      {
+        name: 'Lora',
+        data: loraFont,
+        style: 'normal',
+        weight: 400,
+      },
+    ];
+  } catch (e) {
+    console.error('Font loading failed:', e);
+    // Fallback fonts will be used if this array remains empty or partial
+  }
 
   const iconSize = 400; // Smaller than height to fit
   const strokeWidth = iconSize * 0.02;
@@ -109,7 +137,7 @@ export default async function Image() {
           <div
             style={{
               fontSize: 120,
-              fontFamily: 'Marcellus',
+              fontFamily: fonts.length > 0 ? 'Marcellus' : 'serif',
               color: '#D4AF37',
               lineHeight: 1,
             }}
@@ -119,7 +147,7 @@ export default async function Image() {
           <div
             style={{
               fontSize: 48,
-              fontFamily: 'Lora',
+              fontFamily: fonts.length > 0 ? 'Lora' : 'serif',
               color: '#D4AF37',
               marginTop: 10,
               opacity: 0.9,
@@ -132,20 +160,7 @@ export default async function Image() {
     ),
     {
       ...size,
-      fonts: [
-        {
-          name: 'Marcellus',
-          data: marcellusFont,
-          style: 'normal',
-          weight: 400,
-        },
-        {
-          name: 'Lora',
-          data: loraFont,
-          style: 'normal',
-          weight: 400,
-        },
-      ],
+      fonts: fonts.length > 0 ? fonts : undefined,
     }
   )
 }
