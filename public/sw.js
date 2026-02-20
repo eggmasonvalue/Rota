@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rota-pwa-v1';
+const CACHE_NAME = 'rota-pwa-v2';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
