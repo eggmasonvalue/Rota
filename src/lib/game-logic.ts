@@ -107,3 +107,10 @@ export function isBlocked(state: GameState): boolean {
   const moves = getPossibleMoves(state);
   return moves.length === 0;
 }
+
+export function checkRepetition(history: string[], currentBoard: (Player | null)[], currentPlayer: Player): boolean {
+  const currentStateString = JSON.stringify({ board: currentBoard, player: currentPlayer });
+  const count = history.filter(s => s === currentStateString).length;
+  // If the current state has occurred 2 times before (total 3), it's a draw
+  return count >= 2;
+}

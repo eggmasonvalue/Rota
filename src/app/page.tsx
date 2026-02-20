@@ -1,8 +1,8 @@
 'use client';
 
-import { useReducer, useEffect, useCallback, useState } from 'react';
-import { GameState, Phase, INITIAL_STATE, getNextPlayer, checkWin, isValidPlacement, isValidMovement, isBlocked, Player } from '@/lib/game-logic';
-import { getBestMove, Difficulty } from '@/lib/ai';
+import { useReducer, useEffect, useCallback, useState, useRef } from 'react';
+import { GameState, Phase, INITIAL_STATE, getNextPlayer, checkWin, isValidPlacement, isValidMovement, isBlocked, checkRepetition, Player } from '@/lib/game-logic';
+import { Difficulty } from '@/lib/ai';
 import { Board } from '@/components/game/Board';
 import { Button } from '@/components/ui/Button';
 import { GlassPanel } from '@/components/ui/GlassPanel';
@@ -15,10 +15,12 @@ type Action =
   | { type: 'CPU_MOVE'; from: number | null; to: number }
   | { type: 'RESET_GAME' };
 
-// Helper to handle turn switching and win/loss/block detection
+// Helper to handle turn switching and win/loss/block/draw detection
 function endTurn(state: GameState, newBoard: (Player | null)[], newPiecesCount: { [key in Player]: number }, nextPhase: Phase): GameState {
   const winner = checkWin(newBoard);
   const nextPlayer = getNextPlayer(state.currentPlayer);
+
+  const newHistory = [...state.history, JSON.stringify({ board: newBoard, player: state.currentPlayer })];
 
   if (winner) {
     return {
@@ -29,7 +31,22 @@ function endTurn(state: GameState, newBoard: (Player | null)[], newPiecesCount: 
       winner,
       currentPlayer: nextPlayer,
       selectedCell: null,
+      history: newHistory
     };
+  }
+
+  // Check for 3-fold repetition (DRAW)
+  if (nextPhase === 'MOVEMENT' && checkRepetition(state.history, newBoard, state.currentPlayer)) {
+      return {
+        ...state,
+        board: newBoard,
+        piecesCount: newPiecesCount,
+        phase: 'GAME_OVER',
+        winner: 'DRAW',
+        currentPlayer: nextPlayer,
+        selectedCell: null,
+        history: newHistory
+      };
   }
 
   // Check if next player is blocked (only in MOVEMENT phase)
@@ -42,7 +59,7 @@ function endTurn(state: GameState, newBoard: (Player | null)[], newPiecesCount: 
       piecesCount: newPiecesCount,
       winner: null,
       selectedCell: null,
-      history: []
+      history: newHistory
     };
 
     if (isBlocked(nextStateCheck)) {
@@ -54,6 +71,7 @@ function endTurn(state: GameState, newBoard: (Player | null)[], newPiecesCount: 
         winner: state.currentPlayer, // The player who just moved wins by blocking
         currentPlayer: nextPlayer,
         selectedCell: null,
+        history: newHistory
       };
     }
   }
@@ -66,6 +84,7 @@ function endTurn(state: GameState, newBoard: (Player | null)[], newPiecesCount: 
     winner: null,
     currentPlayer: nextPlayer,
     selectedCell: null,
+    history: newHistory
   };
 }
 
@@ -140,19 +159,34 @@ function gameReducer(state: GameState, action: Action): GameState {
 export default function Home() {
   const [state, dispatch] = useReducer(gameReducer, INITIAL_STATE);
   const [difficulty, setDifficulty] = useState<Difficulty>('MEDIUM');
+  const workerRef = useRef<Worker | null>(null);
+
+  useEffect(() => {
+    // Initialize Worker
+    workerRef.current = new Worker(new URL('../worker/ai.worker.ts', import.meta.url));
+
+    workerRef.current.onmessage = (event) => {
+      const { move } = event.data;
+      if (move) {
+         dispatch({ type: 'CPU_MOVE', from: move.from, to: move.to });
+      }
+    };
+
+    return () => {
+      workerRef.current?.terminate();
+    };
+  }, []);
 
   // AI Turn
   useEffect(() => {
     if (state.currentPlayer === 'CPU' && state.phase !== 'GAME_OVER') {
-      const timer = setTimeout(() => {
-        const move = getBestMove(state, difficulty);
-        if (move) {
-          dispatch({ type: 'CPU_MOVE', from: move.from, to: move.to });
-        } else {
-            // Should be handled by blocked check, but just in case
-        }
-      }, 500);
-      return () => clearTimeout(timer);
+       // Send state to worker
+       if (workerRef.current) {
+          // Small delay for UX so it doesn't feel instant
+          setTimeout(() => {
+             workerRef.current?.postMessage({ state, difficulty });
+          }, 500);
+       }
     }
   }, [state, difficulty]);
 
@@ -192,7 +226,7 @@ export default function Home() {
                     value={difficulty}
                     onChange={(e) => setDifficulty(e.target.value as Difficulty)}
                     className="bg-white/5 border border-white/10 rounded px-2 py-1 text-sm text-gray-200 outline-none focus:border-primary/50"
-                    disabled={state.phase !== 'PLACEMENT' || state.piecesCount.PLAYER > 0} // Only changeable at start? Or allow anytime? Allowing anytime is fine but maybe weird mid-calculation.
+                    disabled={state.phase !== 'PLACEMENT' || state.piecesCount.PLAYER > 0}
                 >
                     <option value="EASY" className="bg-black text-gray-200">EASY</option>
                     <option value="MEDIUM" className="bg-black text-gray-200">MEDIUM</option>
@@ -221,6 +255,7 @@ export default function Home() {
             </h2>
             <p className="text-gray-300">
                 {state.winner === 'PLAYER' ? "You outsmarted the machine!" : "Better luck next time."}
+                {state.winner === 'DRAW' && "It seems we are evenly matched."}
             </p>
             <Button onClick={() => dispatch({ type: 'RESET_GAME' })} variant="primary">Play Again</Button>
         </div>
