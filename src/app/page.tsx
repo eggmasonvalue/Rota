@@ -197,7 +197,7 @@ export default function Home() {
                 <select
                     value={difficulty}
                     onChange={(e) => setDifficulty(e.target.value as Difficulty)}
-                    className="bg-black/40 border border-secondary/30 rounded px-3 py-1 text-sm text-secondary font-body outline-none focus:border-secondary hover:bg-black/60 transition-colors cursor-pointer"
+                    className="bg-black/40 border border-secondary/30 rounded-xl px-3 py-1 text-sm text-secondary font-body outline-none focus:border-secondary hover:bg-black/60 transition-colors cursor-pointer"
                     disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER > 0)}
                 >
                     <option value="EASY" className="bg-background text-foreground">Novice</option>
