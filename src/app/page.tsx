@@ -190,7 +190,7 @@ export default function Home() {
             </div>
 
             {/* Controls */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-end justify-center sm:justify-end gap-3 w-full sm:w-auto">
                  {/* Game Mode Selector */}
                  <div className="flex flex-col gap-1">
                    <label className="text-xs text-secondary/70 font-heading uppercase tracking-widest">Mode</label>
