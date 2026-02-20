@@ -17,25 +17,50 @@ export default function Icon() {
       // ImageResponse JSX element
       <div
         style={{
-          fontSize: 24,
-          background: '#66023C',
+          background: '#1A1A2E',
           width: '100%',
           height: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#D4AF37',
           borderRadius: '50%',
           border: '2px solid #D4AF37',
+          position: 'relative',
         }}
       >
-        R
+        <div
+          style={{
+            position: 'absolute',
+            width: '2px',
+            height: '100%',
+            background: '#D4AF37',
+            transform: 'rotate(45deg)',
+          }}
+        />
+         <div
+          style={{
+            position: 'absolute',
+            width: '2px',
+            height: '100%',
+            background: '#D4AF37',
+            transform: 'rotate(-45deg)',
+          }}
+        />
+        <div
+            style={{
+                width: '12px',
+                height: '12px',
+                background: '#66023C',
+                borderRadius: '50%',
+                border: '1.5px solid #D4AF37',
+                zIndex: 10,
+                position: 'absolute', // Center it explicitly
+            }}
+        />
       </div>
     ),
     // ImageResponse options
     {
-      // For convenience, we can re-use the exported icons size metadata
-      // config to also set the ImageResponse's width and height.
       ...size,
     }
   )

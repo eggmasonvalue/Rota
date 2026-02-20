@@ -17,40 +17,61 @@ export default function Icon() {
       // ImageResponse JSX element
       <div
         style={{
-          fontSize: 120,
-          background: '#66023C',
+          background: '#1A1A2E',
           width: '100%',
           height: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#D4AF37',
-          borderRadius: '20%', // Apple icons usually have rounded corners, but iOS applies mask. PWA maskable icons should be square?
-          // Apple touch icon is usually square, iOS adds effects.
-          // But let's just make it full square with background.
-          // border: '4px solid #D4AF37',
+          // Apple icons are usually square, masked by OS.
         }}
       >
-        <div style={{
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            width: '100%',
-            height: '100%',
-            borderRadius: '0',
-            border: '8px solid #D4AF37',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-        }}>
-           R
+        {/* Outer Ring */}
+        <div
+            style={{
+                width: '160px',
+                height: '160px',
+                borderRadius: '50%',
+                border: '8px solid #D4AF37',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
+            }}
+        >
+            {/* Spokes */}
+            {/* Vertical */}
+            <div style={{ position: 'absolute', width: '4px', height: '100%', background: '#D4AF37' }} />
+            {/* Horizontal */}
+            <div style={{ position: 'absolute', width: '100%', height: '4px', background: '#D4AF37' }} />
+            {/* Diagonals */}
+            <div style={{ position: 'absolute', width: '4px', height: '100%', background: '#D4AF37', transform: 'rotate(45deg)' }} />
+            <div style={{ position: 'absolute', width: '4px', height: '100%', background: '#D4AF37', transform: 'rotate(-45deg)' }} />
+
+            {/* Center Hub (Purple Piece) */}
+            <div
+                style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: '#66023C',
+                    border: '4px solid #D4AF37',
+                    zIndex: 10,
+                    boxShadow: '0 0 15px rgba(102, 2, 60, 0.8)',
+                }}
+            />
+
+            {/* Decorative Dots on Rim (representing placement spots) */}
+            <div style={{ position: 'absolute', top: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#D4AF37' }} />
+            <div style={{ position: 'absolute', bottom: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#D4AF37' }} />
+            <div style={{ position: 'absolute', left: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#D4AF37' }} />
+            <div style={{ position: 'absolute', right: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#D4AF37' }} />
         </div>
       </div>
     ),
     // ImageResponse options
     {
-      // For convenience, we can re-use the exported icons size metadata
-      // config to also set the ImageResponse's width and height.
       ...size,
     }
   )
