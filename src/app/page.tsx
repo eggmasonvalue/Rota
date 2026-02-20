@@ -7,6 +7,7 @@ import { Board } from '@/components/game/Board';
 import { Button } from '@/components/ui/Button';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 import { Modal } from '@/components/ui/Modal';
+import { HowToPlay } from '@/components/game/HowToPlay';
 
 type Action =
   | { type: 'PLACE_PIECE'; index: number }
@@ -246,6 +247,9 @@ export default function Home() {
               {state.phase === 'MOVEMENT' && "Move a piece to an adjacent empty spot"}
             </p>
         </div>
+
+        {/* How to Play Section */}
+        <HowToPlay />
       </div>
 
       {/* Game Over Modal */}
