@@ -32,6 +32,15 @@ Make sure your latest code is pushed to your GitHub repository.
 
 Netlify should automatically detect that this is a Next.js project. Thanks to the `netlify.toml` file we added, the settings should be pre-filled correctly.
 
+### Environment Variables
+
+You need to set the following environment variables for the application to function correctly (e.g., Google Analytics).
+
+1.  Click on **"Advanced build settings"** (or go to **"Site settings" > "Environment variables"** after the site is created).
+2.  Add a new variable:
+    *   **Key:** `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`
+    *   **Value:** `G-XXXXXXXXXX` (Your Google Analytics Measurement ID)
+
 Verify the following:
 
 *   **Build command:** `npm run build`
