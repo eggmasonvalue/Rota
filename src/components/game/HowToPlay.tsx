@@ -50,16 +50,6 @@ export function HowToPlay() {
           </article>
 
           <article className="space-y-4">
-             <h3 className="text-xl font-marcellus text-primary-bright tracking-wide border-b border-white/10 pb-2">
-              Strategy Tips
-            </h3>
-            <p>
-              The center spot (the <em>hub</em>) is powerful because it connects to everything, but it can also be a trap.
-              A common tactic is to block your opponent from taking the center early, or to use the outer rim to set up a double threat.
-            </p>
-          </article>
-
-          <article className="space-y-4">
             <h3 className="text-xl font-marcellus text-primary-bright tracking-wide border-b border-white/10 pb-2">
               History
             </h3>

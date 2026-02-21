@@ -194,15 +194,15 @@ export default function Home() {
             <div className="flex flex-wrap items-end justify-center sm:justify-end gap-3 w-full sm:w-auto">
                  {/* Game Mode Selector */}
                  <div className="flex flex-col gap-1">
-                   <label className="text-xs text-secondary/70 font-heading uppercase tracking-widest">Mode</label>
+                   <label className="text-xs text-secondary/70 font-heading uppercase tracking-widest">OPPONENT</label>
                    <select
                       value={state.gameMode}
                       onChange={(e) => dispatch({ type: 'SET_GAME_MODE', mode: e.target.value as GameMode })}
                       className="bg-black/40 border border-secondary/30 rounded-xl px-3 py-1 text-sm text-secondary font-body outline-none focus:border-secondary hover:bg-black/60 transition-colors cursor-pointer"
                       disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0 || state.piecesCount.PLAYER2 > 0)}
                   >
-                      <option value="HvC" className="bg-background text-foreground">Human vs CPU</option>
-                      <option value="HvH" className="bg-background text-foreground">Human vs Human</option>
+                      <option value="HvC" className="bg-background text-foreground">Machine</option>
+                      <option value="HvH" className="bg-background text-foreground">Human</option>
                   </select>
                  </div>
 
