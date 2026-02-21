@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Marcellus, Lora } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
@@ -72,6 +73,7 @@ export default function RootLayout({
         />
         <ServiceWorkerRegister />
         {children}
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID!} />
       </body>
     </html>
   );
