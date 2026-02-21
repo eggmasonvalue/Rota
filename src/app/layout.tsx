@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description: "Play Rota, the classic Roman strategy game of 'Terni Lapilli'. Challenge the CPU or a friend in this atmospheric, Imperial-themed board game.",
   keywords: ["Rota", "Roman Game", "Terni Lapilli", "Strategy Game", "Abstract Board Game", "Ancient Roman Games", "Tic Tac Toe", "Three Mens Morris"],
   alternates: {
-    canonical: '/',
+    canonical: 'https://rota-roman-game.netlify.app',
   },
   openGraph: {
     title: "Rota - Imperial Senate",
