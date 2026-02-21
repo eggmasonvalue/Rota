@@ -39,7 +39,7 @@ You need to set the following environment variables for the application to funct
 1.  Click on **"Advanced build settings"** (or go to **"Site settings" > "Environment variables"** after the site is created).
 2.  Add a new variable:
     *   **Key:** `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`
-    *   **Value:** `G-6D16KGXXT5`
+    *   **Value:** `G-XXXXXXXXXX` (Your Google Analytics Measurement ID)
 
 Verify the following:
 
