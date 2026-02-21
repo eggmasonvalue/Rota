@@ -1,22 +1,15 @@
 'use client';
 
-import { useReducer, useEffect, useCallback, useState, useRef } from 'react';
-import { GameState, Phase, INITIAL_STATE, getNextPlayer, checkWin, isValidPlacement, isValidMovement, isBlocked, checkRepetition, Player, GameMode } from '@/lib/game-logic';
-import { Difficulty } from '@/lib/ai';
+import { useReducer, useEffect, useCallback, useState, useRef, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { GameState, Phase, INITIAL_STATE, getNextPlayer, checkWin, isValidPlacement, isValidMovement, isBlocked, checkRepetition, Player, GameMode, Action, Difficulty } from '@/lib/game-logic';
 import { Board } from '@/components/game/Board';
 import { Button } from '@/components/ui/Button';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 import { Modal } from '@/components/ui/Modal';
 import { HowToPlay } from '@/components/game/HowToPlay';
-
-type Action =
-  | { type: 'PLACE_PIECE'; index: number }
-  | { type: 'SELECT_PIECE'; index: number }
-  | { type: 'MOVE_PIECE'; to: number }
-  | { type: 'CPU_MOVE'; from: number | null; to: number }
-  | { type: 'RESET_GAME' }
-  | { type: 'SET_DIFFICULTY'; difficulty: Difficulty }
-  | { type: 'SET_GAME_MODE'; mode: GameMode };
+import { useOnlineGame } from '@/hooks/useOnlineGame';
+import { Copy, Users } from 'lucide-react';
 
 function gameReducer(state: GameState, action: Action): GameState {
   // Game logic helper
@@ -118,10 +111,60 @@ function gameReducer(state: GameState, action: Action): GameState {
   }
 }
 
-export default function Home() {
+function GameContent() {
   const [state, dispatch] = useReducer(gameReducer, INITIAL_STATE);
   const [difficulty, setDifficulty] = useState<Difficulty>('MEDIUM');
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
   const workerRef = useRef<Worker | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Sync roomId from URL on mount
+  useEffect(() => {
+    const room = searchParams.get('room');
+    if (room) {
+      // Basic sanitization: alphanumeric and hyphens only
+      if (/^[a-zA-Z0-9-]+$/.test(room)) {
+        setRoomId(room);
+        if (state.gameMode !== 'ONLINE') {
+           dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
+        }
+      } else {
+        console.warn('Invalid Room ID in URL');
+        // Optionally redirect to clean URL, but for now just ignore
+      }
+    }
+  }, [searchParams, state.gameMode]);
+
+  // Stable reference to state for callback
+  const stateRef = useRef(state);
+  useEffect(() => { stateRef.current = state; }, [state]);
+
+  const onActionReceived = useCallback((action: Action, fromPlayer: Player) => {
+     const currentState = stateRef.current;
+     // Security/Validity Check
+     // Only accept moves if it's that player's turn
+
+     if (action.type === 'RESET_GAME') {
+        // Only allow reset if the game is over to prevent griefing
+        if (currentState.phase === 'GAME_OVER') {
+           dispatch(action);
+        } else {
+           console.warn('Blocked premature RESET_GAME action');
+        }
+        return;
+     }
+
+     if (fromPlayer === currentState.currentPlayer) {
+        dispatch(action);
+     } else {
+        console.warn(`Blocked action from ${fromPlayer} during ${currentState.currentPlayer}'s turn`);
+     }
+  }, []);
+
+  const { myPlayer, connectionStatus, onlineUsersCount, sendAction } = useOnlineGame(roomId, onActionReceived);
 
   // Initialize Web Worker
   useEffect(() => {
@@ -141,7 +184,7 @@ export default function Home() {
        if (workerRef.current) {
           setTimeout(() => {
              workerRef.current?.postMessage({ state, difficulty });
-          }, 800); // Increased delay for better pacing
+          }, 800);
        }
     }
   }, [state, difficulty]);
@@ -152,16 +195,67 @@ export default function Home() {
     // Prevent interaction if it's CPU's turn in HvC mode
     if (state.gameMode === 'HvC' && state.currentPlayer === 'PLAYER2') return;
 
+    // Prevent interaction if online and not my turn
+    if (state.gameMode === 'ONLINE') {
+        if (!myPlayer || myPlayer === 'SPECTATOR') return; // Spectators can't play
+        if (myPlayer !== state.currentPlayer) return; // Not my turn
+        // Ensure opponent is present? Optional, but good UX.
+        // For now, allow placing if you are assigned a role.
+    }
+
+    let action: Action | null = null;
     if (state.phase === 'PLACEMENT') {
-      dispatch({ type: 'PLACE_PIECE', index });
+      action = { type: 'PLACE_PIECE', index };
     } else {
       if (state.board[index] === state.currentPlayer) {
-        dispatch({ type: 'SELECT_PIECE', index });
+        action = { type: 'SELECT_PIECE', index };
       } else if (state.selectedCell !== null && state.board[index] === null) {
-        dispatch({ type: 'MOVE_PIECE', to: index });
+        action = { type: 'MOVE_PIECE', to: index };
       }
     }
-  }, [state]);
+
+    if (action) {
+      dispatch(action);
+      if (state.gameMode === 'ONLINE') {
+        sendAction(action);
+      }
+    }
+  }, [state, myPlayer, sendAction]);
+
+  const handleModeChange = (mode: GameMode) => {
+    if (mode === 'ONLINE') {
+      const newRoomId = crypto.randomUUID();
+      setRoomId(newRoomId);
+      router.push(`/?room=${newRoomId}`);
+      dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
+    } else {
+      setRoomId(null);
+      router.push('/');
+      dispatch({ type: 'SET_GAME_MODE', mode });
+    }
+  };
+
+  const handleRestart = () => {
+    // In Online mode, restrict restarting to when the game is over
+    if (state.gameMode === 'ONLINE' && state.phase !== 'GAME_OVER') {
+        return;
+    }
+    const action: Action = { type: 'RESET_GAME' };
+    dispatch(action);
+    if (state.gameMode === 'ONLINE') {
+        sendAction(action);
+    }
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy', err);
+    }
+  };
 
   const isPlayer1Turn = state.currentPlayer === 'PLAYER1';
   const isPlayer2Turn = state.currentPlayer === 'PLAYER2';
@@ -174,19 +268,19 @@ export default function Home() {
 
       <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-8">
         <GlassPanel className="w-full flex justify-between items-center flex-wrap gap-4 px-8 py-6 border-gold/20 shadow-2xl">
-            {/* Title - Using Imperial Gold gradient */}
+            {/* Title */}
             <h1 className="text-4xl font-heading font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary tracking-widest drop-shadow-sm">
               ROTA
             </h1>
 
-            {/* Turn Indicator - Improved Contrast */}
+            {/* Turn Indicator */}
             <div className="flex gap-6 items-center text-lg font-heading tracking-wide">
                 <div className={`transition-all duration-300 ${isPlayer1Turn ? 'text-primary-bright font-bold drop-shadow-[0_0_8px_rgba(208,32,144,0.6)] scale-110' : 'text-gray-500'}`}>
-                  {state.gameMode === 'HvH' ? 'PLAYER 1' : 'PLAYER'}
+                  {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 1' : 'PLAYER'}
                 </div>
                 <div className="text-gray-600 text-sm">VS</div>
                 <div className={`transition-all duration-300 ${isPlayer2Turn ? 'text-secondary drop-shadow-[0_0_8px_rgba(212,175,55,0.8)] scale-110' : 'text-gray-500'}`}>
-                   {state.gameMode === 'HvH' ? 'PLAYER 2' : 'CPU'}
+                   {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 2' : 'CPU'}
                 </div>
             </div>
 
@@ -197,12 +291,13 @@ export default function Home() {
                    <label className="text-xs text-secondary/70 font-heading uppercase tracking-widest">OPPONENT</label>
                    <select
                       value={state.gameMode}
-                      onChange={(e) => dispatch({ type: 'SET_GAME_MODE', mode: e.target.value as GameMode })}
+                      onChange={(e) => handleModeChange(e.target.value as GameMode)}
                       className="bg-black/40 border border-secondary/30 rounded-xl px-3 py-1 text-sm text-secondary font-body outline-none focus:border-secondary hover:bg-black/60 transition-colors cursor-pointer"
                       disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0 || state.piecesCount.PLAYER2 > 0)}
                   >
                       <option value="HvC" className="bg-background text-foreground">Machine</option>
                       <option value="HvH" className="bg-background text-foreground">Human</option>
+                      <option value="ONLINE" className="bg-background text-foreground">Online</option>
                   </select>
                  </div>
 
@@ -224,7 +319,7 @@ export default function Home() {
                 )}
 
                 <Button
-                  onClick={() => dispatch({ type: 'RESET_GAME' })}
+                  onClick={handleRestart}
                   variant="glass"
                   className="text-sm py-2 px-6 ml-2 font-heading tracking-wider hover:text-secondary border-secondary/30 hover:border-secondary/80 h-full self-end mb-0.5"
                 >
@@ -232,6 +327,34 @@ export default function Home() {
                 </Button>
             </div>
         </GlassPanel>
+
+        {/* Online Status Bar */}
+        {state.gameMode === 'ONLINE' && (
+          <GlassPanel className="w-full flex justify-between items-center px-6 py-3 border-secondary/20 bg-black/40">
+             <div className="flex items-center gap-4">
+                <div className={`w-3 h-3 rounded-full ${connectionStatus === 'CONNECTED' ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-yellow-500 animate-pulse'}`} />
+                <span className="text-secondary/80 text-sm font-heading tracking-wider">
+                  {connectionStatus === 'CONNECTED'
+                    ? (myPlayer ? (myPlayer === 'SPECTATOR' ? 'SPECTATING' : `YOU ARE ${myPlayer === 'PLAYER1' ? 'PLAYER 1' : 'PLAYER 2'}`) : 'ASSIGNING ROLE...')
+                    : 'CONNECTING...'}
+                </span>
+                {onlineUsersCount > 0 && (
+                  <span className="flex items-center gap-1 text-xs text-gray-500 ml-2">
+                    <Users size={14} /> {onlineUsersCount} Online
+                  </span>
+                )}
+             </div>
+
+             <div className="flex items-center gap-2">
+               <button
+                  onClick={copyLink}
+                  className="flex items-center gap-2 text-xs text-secondary hover:text-white transition-colors uppercase tracking-widest font-heading border border-secondary/30 rounded-lg px-3 py-1.5 hover:bg-secondary/10"
+               >
+                 {copied ? 'COPIED' : 'COPY LINK'} <Copy size={14} />
+               </button>
+             </div>
+          </GlassPanel>
+        )}
 
         {/* Game Board */}
         <div className="w-full flex justify-center relative">
@@ -277,7 +400,7 @@ export default function Home() {
                 {state.winner === 'DRAW' && "Even the Gods cannot decide a winner."}
             </p>
             <Button
-              onClick={() => dispatch({ type: 'RESET_GAME' })}
+              onClick={handleRestart}
               variant="primary"
               className="mt-4 px-8 py-3 text-lg font-heading tracking-widest bg-primary hover:bg-primary/80 text-white shadow-[0_0_20px_rgba(102,2,60,0.4)]"
             >
@@ -286,5 +409,13 @@ export default function Home() {
         </div>
       </Modal>
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background text-foreground flex items-center justify-center">Loading...</div>}>
+      <GameContent />
+    </Suspense>
   );
 }

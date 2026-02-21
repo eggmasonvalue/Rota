@@ -1,6 +1,4 @@
-import { GameState, Player, getPossibleMoves, checkWin, getNextPlayer, WINNING_LINES } from './game-logic';
-
-export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
+import { GameState, Player, getPossibleMoves, checkWin, getNextPlayer, WINNING_LINES, Difficulty } from './game-logic';
 
 // Helper to simulate a move without mutating the original state
 function applyMove(state: GameState, move: { from: number | null, to: number }): GameState {
