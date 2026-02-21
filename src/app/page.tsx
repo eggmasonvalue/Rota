@@ -173,14 +173,14 @@ export default function Home() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(102,2,60,0.15)_0%,rgba(26,26,46,0)_70%)] pointer-events-none" />
 
       <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-8">
-        <GlassPanel className="w-full flex justify-between items-center flex-wrap gap-4 px-8 py-6 border-gold/20 shadow-2xl">
+        <GlassPanel className="w-full flex justify-between items-center flex-wrap gap-2 sm:gap-4 px-4 sm:px-8 py-6 border-gold/20 shadow-2xl">
             {/* Title - Using Imperial Gold gradient */}
-            <h1 className="text-4xl font-heading font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary tracking-widest drop-shadow-sm">
+            <h1 className="text-2xl sm:text-4xl font-heading font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary tracking-widest drop-shadow-sm">
               ROTA
             </h1>
 
             {/* Turn Indicator - Improved Contrast */}
-            <div className="flex gap-6 items-center text-lg font-heading tracking-wide">
+            <div className="flex gap-3 sm:gap-6 items-center text-base sm:text-lg font-heading tracking-wide">
                 <div className={`transition-all duration-300 ${isPlayer1Turn ? 'text-primary-bright font-bold drop-shadow-[0_0_8px_rgba(208,32,144,0.6)] scale-110' : 'text-gray-500'}`}>
                   {state.gameMode === 'HvH' ? 'PLAYER 1' : 'PLAYER'}
                 </div>
