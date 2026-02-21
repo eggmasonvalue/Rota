@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Marcellus, Lora } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import { JsonLd } from "@/components/JsonLd";
 import "./globals.css";
 
 const marcellus = Marcellus({
@@ -39,38 +40,35 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "Rota - Imperial Senate",
+  "description": "An online version of the ancient Roman board game Rota (Terni Lapilli).",
+  "genre": ["Board Game", "Strategy", "Abstract"],
+  "url": "https://rota-roman-game.netlify.app",
+  "image": "https://rota-roman-game.netlify.app/pwa-icon?size=512",
+  "author": {
+    "@type": "Person",
+    "name": "Jules"
+  },
+  "audience": {
+    "@type": "PeopleAudience",
+    "suggestedMinAge": "6"
+  }
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Game",
-    "name": "Rota - Imperial Senate",
-    "description": "An online version of the ancient Roman board game Rota (Terni Lapilli).",
-    "genre": ["Board Game", "Strategy", "Abstract"],
-    "url": "https://rota-roman-game.netlify.app",
-    "image": "https://rota-roman-game.netlify.app/pwa-icon?size=512",
-    "author": {
-      "@type": "Person",
-      "name": "Jules"
-    },
-    "audience": {
-      "@type": "PeopleAudience",
-      "suggestedMinAge": "6"
-    }
-  };
-
   return (
     <html lang="en">
       <body
         className={`${marcellus.variable} ${lora.variable} antialiased bg-[var(--background)] text-[var(--foreground)] font-[family-name:var(--font-lora)]`}
       >
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <JsonLd data={jsonLd} />
         <ServiceWorkerRegister />
         {children}
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID!} />
