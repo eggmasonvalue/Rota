@@ -1,5 +1,5 @@
-import { getBestMove, Difficulty } from '@/lib/ai';
-import { GameState } from '@/lib/game-logic';
+import { getBestMove } from '@/lib/ai';
+import { GameState, Difficulty } from '@/lib/game-logic';
 
 self.onmessage = (event: MessageEvent) => {
   const { state, difficulty } = event.data as { state: GameState, difficulty: Difficulty };
