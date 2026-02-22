@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+- Integrated Supabase Realtime for Online Multiplayer (BETA).
+- Added `useOnlineGame` hook to manage synchronized game state.
 - Refined UI theme to "Imperial Senate" (Tyrian Purple & Gold) from generic Glassmorphism.
 - Implemented "Human vs Human" (HvH) game mode for local multiplayer.
 - Updated typography to Marcellus (headings) and Lora (body).

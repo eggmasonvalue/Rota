@@ -1,42 +1,47 @@
 # Architecture
 
-## Tech Stack (2026 Context)
-- **Framework:** Next.js 16+ (App Router)
-- **Language:** TypeScript 5.x
-- **Styling:** Tailwind CSS v4 (Native CSS variables, zero-runtime)
-- **Animation:** Framer Motion 12+ (Layout animations, shared element transitions)
-- **State Management:** React `useReducer`
-- **Testing:** Vitest
-- **AI Engine:** Pure TypeScript implementation of Minimax with Alpha-Beta Pruning (executed in a Web Worker).
+## Technical Stack
+- **Framework:** Next.js 16 (App Router)
+- **Runtime:** React 19
+- **Styling:** Tailwind CSS v4 (Using native CSS variables and `@theme` blocks)
+- **Animation:** Framer Motion 12 (Layout transitions and spring physics)
+- **Realtime:** Supabase (Presence and Broadcast Channels)
+- **Testing:** Vitest for pure logic validation
 
-## High-Level Structure
-```
-src/
-├── app/                  # Next.js App Router pages
-├── components/           # React components
-│   ├── game/             # Game-specific components (Board, Cell, Piece)
-│   ├── ui/               # Reusable UI components (Button, Modal, GlassPanel)
-│   └── ServiceWorkerRegister.tsx
-├── lib/                  # Utilities and Logic
-│   ├── game-logic.ts     # Core rules (move validation, win check)
-│   ├── ai.ts             # CPU opponent logic (Minimax)
-│   ├── utils.ts          # Utility functions (cn, etc.)
-│   └── game-logic.test.ts # Unit tests for game logic
-└── worker/               # Web Workers
-    └── ai.worker.ts      # Worker entry point for AI calculations
-```
+## Core Modules
+### 1. Game Engine (`src/lib/game-logic.ts`)
+A pure, functional engine that manages the Rota state machine.
+- **Adjacency Map:** Hardcoded graph representing the board connectivity (Outer ring + Center hub).
+- **Validation:** Strict rules for placement and movement (must be adjacent, cannot jump).
+- **State Management:** Driven by a `useReducer` hook in the main page component for predictable state transitions.
+
+### 2. AI Opponent (`src/lib/ai.ts`)
+A Minimax algorithm with Alpha-Beta pruning.
+- **Heuristics:** 
+    - **Center Control:** High weight (+20) for holding the center hub (point 8).
+    - **Winning Threats:** Significant weight (+50) for 2-in-a-row with an empty third spot.
+    - **Defensive Priority:** Penalty (-60) for opponent's 2-in-a-row threats.
+- **Difficulty Scaling:** 
+    - **Easy:** Depth 1 + 40% random move chance.
+    - **Medium:** Depth 2.
+    - **Senator (Hard):** Depth 4 (sufficient for Rota's small state space).
+
+### 3. Multiplayer Sync (`src/hooks/useOnlineGame.ts`)
+A custom hook leveraging Supabase Realtime.
+- **Presence Sorting:** Roles (`PLAYER1`, `PLAYER2`, `SPECTATOR`) are determined by sorting users by their `joinedAt` timestamp in the presence state.
+- **Broadcast Pattern:** Move actions are broadcasted as JSON payloads. The receiving client re-plays the action through their local reducer to ensure state consistency.
 
 ## Data Flow
-1.  **User Input:** Click/Tap events on the board.
-2.  **Game Logic:** Validates move -> Updates State via `useReducer`.
-3.  **UI Update:** React re-renders with new state -> Framer Motion animates transitions.
-4.  **AI Turn (HvC):**
-    - UI triggers Web Worker message with current state.
-    - Worker runs Minimax algorithm (non-blocking).
-    - Worker posts message back with best move.
-    - UI dispatches `CPU_MOVE` action to update state.
-
-## Key Design Decisions
-- **Web Workers:** AI computation is offloaded to a worker thread to ensure the UI remains buttery smooth (60fps) even during complex Minimax calculations.
-- **CSS-in-JS vs Utility:** Tailwind v4 is used for performance and maintainability, with complex animations handled by Framer Motion.
-- **State Encapsulation:** Game logic is separated into pure functions in `src/lib/game-logic.ts` to facilitate testing and reuse in both the UI and the Web Worker.
+```
+[User Interaction] -> [Action Dispatched] 
+                           |
+          -----------------------------------
+          |                |                |
+    [Local Reducer] -> [Supabase Broadcast] -> [Web Worker (AI)]
+          |                |                |
+    [State Update]    [Remote Peer Sync]    [CPU Action Received]
+          |                |                |
+    [React Render] <-------------------------
+          |
+    [Framer Motion Animate]
+```

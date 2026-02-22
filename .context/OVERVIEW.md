@@ -1,19 +1,22 @@
 # Rota Web App - Overview
 
 ## Project Vision
-To build the most visually stunning and responsive web implementation of the ancient Roman game **Rota**, leveraging the best web technologies available as of February 2026. The focus is on a high-fidelity user experience with an **"Imperial Senate"** aesthetic, featuring Tyrian Purple and Imperial Gold accents on a Deep Marble background.
+To deliver a high-fidelity, interactive implementation of **Rota**, an ancient Roman strategy game, optimized for the 2026 web ecosystem. The project emphasizes a "Modern Antiquity" aesthetic—blending classical Roman visual cues (Marcellus typography, Tyrian Purple/Imperial Gold palette) with advanced web technologies (Next.js 16, Tailwind v4, Framer Motion 12).
 
-## Core Gameplay
-- **Game:** Rota (3 pieces per player, 3-in-a-row win condition).
-- **Modes:**
-    - Human vs Human (Local Multiplayer).
-    - Human vs CPU.
-- **Difficulty:** Adjustable CPU difficulty (Novice, Legionary, Senator).
+## Core Gameplay Mechanics
+Rota is a simplified relative of Nine Men's Morris, played on a circular board with 8 outer points and 1 central point (9 total).
+- **Setup:** Each player starts with 3 pieces.
+- **Phase 1 (Placement):** Players take turns placing their 3 pieces on any empty cell.
+- **Phase 2 (Movement):** Once all pieces are placed, players take turns moving one piece to an adjacent empty cell.
+- **Winning:** The first player to align 3 pieces in a straight line (including the center or across the outer circle) wins.
+- **Draws:** Detected via 3-fold repetition of the board state or if a player is completely blocked from moving.
+
+## Game Modes
+- **Local (HvH):** Pass-and-play on a single device.
+- **Vs CPU (HvC):** Single-player against a Minimax-driven AI with selectable difficulty.
+- **Online (BETA):** Real-time multiplayer using Supabase Channels.
 
 ## Technical Philosophy
-- **Visuals First:** Prioritize visual impact and smooth motion (60fps+) using Framer Motion.
-- **Modern Stack:** Utilize the React ecosystem's bleeding edge (Next.js 16 App Router, React 19, Tailwind CSS v4).
-- **Performance:** Game state and AI logic run entirely in the browser, with AI computation offloaded to Web Workers for non-blocking UI.
-
-## Target Audience
-Players who appreciate both strategy games and high-quality digital design with a classical Roman theme.
+- **Zero-Blocking UI:** Heavy computations (AI Minimax) are offloaded to Web Workers to maintain a consistent 120fps (ProMotion/High-refresh support).
+- **Synchronized State:** Multiplayer relies on a "Broadcast and Sync" pattern via Supabase Realtime, with role determination based on presence-joining timestamps.
+- **declarative Aesthetics:** All UI states and transitions are driven by React and Framer Motion, avoiding imperative DOM manipulation for a more maintainable codebase.

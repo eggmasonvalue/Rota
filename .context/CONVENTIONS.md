@@ -1,33 +1,25 @@
 # Coding Conventions
 
-## General
-- **Language:** TypeScript (Strict Mode). No `any`.
-- **Formatting:** Prettier (default config).
-- **Linting:** ESLint (Next.js core web vitals + strict type checking).
-- **Testing:** Unit tests (Vitest) should accompany core logic (`src/lib/game-logic.test.ts`).
+## TypeScript Standards
+- **Strict Mode:** Absolutely no `any`. Use `unknown` or specific interfaces.
+- **Discriminated Unions:** Always use discriminated unions for `Action` types in reducers.
+- **Literal Types:** Prefer string literals for fixed states (e.g., `'PLAYER1' | 'PLAYER2'`).
 
-## React Components
-- **Functional Components:** Use `const Component = () => {}` syntax.
-- **Props:** Define interfaces for all props. Destructure props in the function signature.
-- **Hooks:** Custom hooks for logic reuse (e.g., `useGameState`, `useAI` if applicable).
-- **Composition:** Prefer composition over inheritance.
+## State Management
+- **Immutability:** Never mutate the `board` array or `piecesCount` object directly. Use spread operators or `immer` if complexity grows.
+- **Pure Functions:** Keep `game-logic.ts` pure. It should take a state and an action and return a new state without side effects.
 
-## Styling (Tailwind v4)
-- **Utility-First:** Use utility classes for layout, spacing, and typography.
-- **Theme Colors:**
-  - **Primary:** Tyrian Purple (#66023C)
-  - **Secondary:** Imperial Gold (#D4AF37)
-  - **Background:** Deep Marble (#1A1A2E)
-- **Typography:**
-  - **Headings:** Marcellus
-  - **Body:** Lora
-- **Utilities:** Use `cn` from `src/lib/utils.ts` for class merging and conditional classes.
+## UI & Styling
+- **Tailwind v4:** Leverage the new CSS-first configuration. Avoid legacy `tailwind.config.js`.
+- **CSS Variables:** Define brand colors (Tyrian Purple, Gold) as CSS variables in `globals.css` for easy theme switching.
+- **Component Structure:**
+    - `Board.tsx`: Container and layout.
+    - `Cell.tsx`: Visual representation of a board point.
+    - `Piece.tsx`: Interactive element with spring animations.
 
-## Animation (Framer Motion)
-- **declarative:** Use `initial`, `animate`, `exit` props.
-- **Performance:** Animate `transform` and `opacity` properties primarily. Avoid layout thrashing.
-- **Feedback:** All interactive elements must have hover/tap feedback (scale, glow).
+## Realtime & Async
+- **Web Workers:** Any function with O(b^d) complexity (Minimax) must be called through `src/worker/ai.worker.ts`.
+- **Race Conditions:** Use `useRef` to track `sessionId` and `joinedAt` in the `useOnlineGame` hook to prevent stale closures during presence sync events.
 
-## Comments
-- **JSDoc:** Document complex logic (especially AI and game rules).
-- **"Why" over "What":** Explain the *intent* behind non-obvious code.
+## Documentation
+- **JSDoc:** Required for the `evaluate` function in `ai.ts` and `ADJACENCY` map to explain scoring weights and graph connections.
