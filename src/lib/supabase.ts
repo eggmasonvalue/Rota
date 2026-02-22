@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 // Create a dummy client or throw ONLY if we are actually trying to use it at runtime?
 // Or better: warn and use placeholder strings.
@@ -9,9 +9,9 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 // But valid URL structure is required.
 
 const validUrl = supabaseUrl && supabaseUrl.startsWith('http') ? supabaseUrl : 'https://placeholder.supabase.co';
-const validKey = supabaseAnonKey || 'placeholder';
+const validKey = supabaseKey || 'placeholder';
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!supabaseUrl || !supabaseKey) {
   // Check if we are in a browser environment to avoid spamming server logs during build
   if (typeof window !== 'undefined') {
     console.warn('Missing Supabase environment variables. Realtime features will not work.');
