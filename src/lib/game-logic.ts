@@ -1,7 +1,17 @@
 export type Player = 'PLAYER1' | 'PLAYER2';
 export type Phase = 'PLACEMENT' | 'MOVEMENT' | 'GAME_OVER';
 export type Winner = Player | 'DRAW' | null;
-export type GameMode = 'HvH' | 'HvC';
+export type GameMode = 'HvH' | 'HvC' | 'ONLINE';
+export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
+
+export type Action =
+  | { type: 'PLACE_PIECE'; index: number }
+  | { type: 'SELECT_PIECE'; index: number }
+  | { type: 'MOVE_PIECE'; to: number }
+  | { type: 'CPU_MOVE'; from: number | null; to: number }
+  | { type: 'RESET_GAME' }
+  | { type: 'SET_DIFFICULTY'; difficulty: Difficulty }
+  | { type: 'SET_GAME_MODE'; mode: GameMode };
 
 export interface GameState {
   board: (Player | null)[];
