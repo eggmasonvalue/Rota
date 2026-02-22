@@ -129,14 +129,19 @@ function GameContent() {
       if (/^[a-zA-Z0-9-]+$/.test(room)) {
         setRoomId(room);
         if (state.gameMode !== 'ONLINE') {
+           console.log('Detected room in URL, switching to ONLINE mode');
            dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
         }
       } else {
         console.warn('Invalid Room ID in URL');
-        // Optionally redirect to clean URL, but for now just ignore
       }
+    } else {
+       // If no room in URL, ensure we are not stuck in ONLINE mode.
+       if (state.gameMode === 'ONLINE') {
+         dispatch({ type: 'SET_GAME_MODE', mode: 'HvC' });
+       }
     }
-  }, [searchParams, state.gameMode]);
+  }, [searchParams]);
 
   // Stable reference to state for callback
   const stateRef = useRef(state);
@@ -223,6 +228,7 @@ function GameContent() {
   }, [state, myPlayer, sendAction]);
 
   const handleModeChange = (mode: GameMode) => {
+    console.log(`Switching mode to: ${mode}`);
     if (mode === 'ONLINE') {
       const newRoomId = crypto.randomUUID();
       setRoomId(newRoomId);
@@ -230,8 +236,9 @@ function GameContent() {
       dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
     } else {
       setRoomId(null);
-      router.push('/');
-      dispatch({ type: 'SET_GAME_MODE', mode });
+      // Force a hard navigation to reset game state cleanly when leaving Online mode
+      console.log('Forcing navigation to /');
+      window.location.href = '/';
     }
   };
 
