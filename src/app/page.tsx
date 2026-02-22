@@ -252,6 +252,8 @@ function GameContent() {
       // Switching between local modes (HvC <-> HvH) - no reload needed
       setRoomId(null);
       dispatch({ type: 'SET_GAME_MODE', mode });
+      // Update URL so refresh works
+      router.replace(`/?mode=${mode}`);
     }
   };
 
