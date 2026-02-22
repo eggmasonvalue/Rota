@@ -260,6 +260,11 @@ function GameContent() {
     if (state.gameMode === 'ONLINE' && state.phase !== 'GAME_OVER') {
         return;
     }
+    // Prevent spectators from restarting
+    if (state.gameMode === 'ONLINE' && myPlayer === 'SPECTATOR') {
+        return;
+    }
+
     const action: Action = { type: 'RESET_GAME' };
     dispatch(action);
     if (state.gameMode === 'ONLINE') {
@@ -400,32 +405,34 @@ function GameContent() {
         <div className="flex flex-col gap-6 items-center p-4">
             <h2 className="text-5xl font-heading font-bold mb-2 tracking-widest text-center">
                 {state.winner === 'PLAYER1' && <span className="text-primary drop-shadow-[0_0_15px_rgba(102,2,60,0.8)]">
-                  {state.gameMode === 'HvH' ? 'PLAYER 1 WINS' : 'VICTORY'}
+                  {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 1 WINS' : 'VICTORY'}
                 </span>}
-                {state.winner === 'PLAYER2' && <span className={state.gameMode === 'HvH' ? "text-secondary drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]" : "text-gray-500"}>
-                  {state.gameMode === 'HvH' ? 'PLAYER 2 WINS' : 'DEFEAT'}
+                {state.winner === 'PLAYER2' && <span className={state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? "text-secondary drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]" : "text-gray-500"}>
+                  {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 2 WINS' : 'DEFEAT'}
                 </span>}
                 {state.winner === 'DRAW' && <span className="text-secondary">STALEMATE</span>}
             </h2>
             <div className="w-full h-px bg-gradient-to-r from-transparent via-secondary/50 to-transparent" />
             <p className="text-xl text-gray-300 font-body text-center max-w-md">
                 {state.winner === 'PLAYER1' ?
-                  (state.gameMode === 'HvH' ? "Player 1 has conquered the wheel." : "The Senate applauds your strategy. Rome is yours.")
+                  (state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? "Player 1 has conquered the wheel." : "The Senate applauds your strategy. Rome is yours.")
                   : ""
                 }
                 {state.winner === 'PLAYER2' ?
-                  (state.gameMode === 'HvH' ? "Player 2 has conquered the wheel." : "The machine has outmaneuvered you this time.")
+                  (state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? "Player 2 has conquered the wheel." : "The machine has outmaneuvered you this time.")
                   : ""
                 }
                 {state.winner === 'DRAW' && "Even the Gods cannot decide a winner."}
             </p>
-            <Button
-              onClick={handleRestart}
-              variant="primary"
-              className="mt-4 px-8 py-3 text-lg font-heading tracking-widest bg-primary hover:bg-primary/80 text-white shadow-[0_0_20px_rgba(102,2,60,0.4)]"
-            >
-              Play Again
-            </Button>
+            {(!state.gameMode || state.gameMode !== 'ONLINE' || (myPlayer && myPlayer !== 'SPECTATOR')) && (
+              <Button
+                onClick={handleRestart}
+                variant="primary"
+                className="mt-4 px-8 py-3 text-lg font-heading tracking-widest bg-primary hover:bg-primary/80 text-white shadow-[0_0_20px_rgba(102,2,60,0.4)]"
+              >
+                Play Again
+              </Button>
+            )}
         </div>
       </Modal>
     </main>
