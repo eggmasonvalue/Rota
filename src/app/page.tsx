@@ -124,6 +124,8 @@ function GameContent() {
   // Sync roomId from URL on mount
   useEffect(() => {
     const room = searchParams.get('room');
+    const modeParam = searchParams.get('mode');
+
     if (room) {
       // Basic sanitization: alphanumeric and hyphens only
       if (/^[a-zA-Z0-9-]+$/.test(room)) {
@@ -136,9 +138,16 @@ function GameContent() {
         console.warn('Invalid Room ID in URL');
       }
     } else {
-       // If no room in URL, ensure we are not stuck in ONLINE mode.
-       if (state.gameMode === 'ONLINE') {
-         dispatch({ type: 'SET_GAME_MODE', mode: 'HvC' });
+       // Check for explicit mode parameter (e.g. returning from Online)
+       if (modeParam === 'HvH' || modeParam === 'HvC') {
+         if (state.gameMode !== modeParam) {
+            dispatch({ type: 'SET_GAME_MODE', mode: modeParam as GameMode });
+         }
+       } else {
+         // If no room in URL and no mode param, ensure we are not stuck in ONLINE mode.
+         if (state.gameMode === 'ONLINE') {
+           dispatch({ type: 'SET_GAME_MODE', mode: 'HvC' });
+         }
        }
     }
   }, [searchParams]);
@@ -234,11 +243,15 @@ function GameContent() {
       setRoomId(newRoomId);
       router.push(`/?room=${newRoomId}`);
       dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
-    } else {
+    } else if (state.gameMode === 'ONLINE') {
+      // If we are currently in ONLINE mode, we must force a hard reload to clear Supabase subscriptions cleanly
       setRoomId(null);
-      // Force a hard navigation to reset game state cleanly when leaving Online mode
-      console.log('Forcing navigation to /');
-      window.location.href = '/';
+      console.log(`Leaving ONLINE mode, forcing navigation to /?mode=${mode}`);
+      window.location.href = `/?mode=${mode}`;
+    } else {
+      // Switching between local modes (HvC <-> HvH) - no reload needed
+      setRoomId(null);
+      dispatch({ type: 'SET_GAME_MODE', mode });
     }
   };
 
