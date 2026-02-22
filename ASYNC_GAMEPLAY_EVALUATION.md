@@ -93,6 +93,8 @@ Similar to Option 2, but using a relational database (PostgreSQL) instead of Red
 
 ## Recommendation
 
+**DECISION: Option 2 (Upstash Redis) has been selected for implementation.**
+
 For a **seamless async experience**, **Option 2 (Upstash Redis)** is the best choice. It balances implementation simplicity with a high-quality user experience (single persistent link).
 
 If **zero cost/maintenance** is the absolute priority and slightly higher user friction is acceptable, **Option 1 (State-in-URL)** is a clever fallback that requires no backend at all.
