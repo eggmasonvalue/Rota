@@ -38,6 +38,9 @@ export const metadata: Metadata = {
     title: "Rota - Imperial Senate",
     description: "Experience the ancient Roman game of Rota. Simple rules, deep strategy.",
   },
+  verification: {
+    google: "2Pr6D6hdjkh5SuQFZCmGm-tF02E66oXrCkFRA75yIP0",
+  },
 };
 
 const jsonLd = {
