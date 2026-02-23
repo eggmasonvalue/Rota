@@ -9,7 +9,8 @@ import { GlassPanel } from '@/components/ui/GlassPanel';
 import { Modal } from '@/components/ui/Modal';
 import { HowToPlay } from '@/components/game/HowToPlay';
 import { useOnlineGame } from '@/hooks/useOnlineGame';
-import { Copy, Users } from 'lucide-react';
+import { useSoundEffects } from '@/hooks/useSoundEffects';
+import { Copy, Users, Volume2, VolumeX } from 'lucide-react';
 
 function gameReducer(state: GameState, action: Action): GameState {
   // Game logic helper
@@ -180,6 +181,36 @@ function GameContent() {
 
   const { myPlayer, connectionStatus, onlineUsersCount, sendAction } = useOnlineGame(roomId, onActionReceived);
 
+  // Sound Effects
+  const { playMove, playWin, playLoss, playDraw, playClick, muted, toggleMute } = useSoundEffects();
+  const prevHistoryLength = useRef(state.history.length);
+
+  // Trigger move sounds
+  useEffect(() => {
+    if (state.history.length > prevHistoryLength.current) {
+        playMove();
+    }
+    prevHistoryLength.current = state.history.length;
+  }, [state.history.length, playMove]);
+
+  // Trigger game over sounds
+  useEffect(() => {
+    if (state.winner) {
+        if (state.winner === 'DRAW') {
+            playDraw();
+        } else if (state.gameMode === 'HvC') {
+            if (state.winner === 'PLAYER1') playWin();
+            else playLoss();
+        } else if (state.gameMode === 'ONLINE') {
+            if (myPlayer === state.winner) playWin();
+            else if (myPlayer === 'SPECTATOR') playDraw(); // Neutral for spectator
+            else playLoss();
+        } else {
+            playWin(); // HvH
+        }
+    }
+  }, [state.winner, state.gameMode, myPlayer, playWin, playLoss, playDraw]);
+
   // Initialize Web Worker
   useEffect(() => {
     workerRef.current = new Worker(new URL('../worker/ai.worker.ts', import.meta.url));
@@ -318,7 +349,10 @@ function GameContent() {
                    <label className="text-xs text-secondary/70 font-heading uppercase tracking-widest">OPPONENT</label>
                    <select
                       value={state.gameMode}
-                      onChange={(e) => handleModeChange(e.target.value as GameMode)}
+                      onChange={(e) => {
+                          playClick();
+                          handleModeChange(e.target.value as GameMode);
+                      }}
                       className="bg-black/40 border border-secondary/30 rounded-xl px-3 py-1 text-sm text-secondary font-body outline-none focus:border-secondary hover:bg-black/60 transition-colors cursor-pointer"
                       disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0 || state.piecesCount.PLAYER2 > 0)}
                   >
@@ -334,7 +368,10 @@ function GameContent() {
                     <label className="text-xs text-secondary/70 font-heading uppercase tracking-widest">Difficulty</label>
                     <select
                         value={difficulty}
-                        onChange={(e) => setDifficulty(e.target.value as Difficulty)}
+                        onChange={(e) => {
+                            playClick();
+                            setDifficulty(e.target.value as Difficulty);
+                        }}
                         className="bg-black/40 border border-secondary/30 rounded-xl px-3 py-1 text-sm text-secondary font-body outline-none focus:border-secondary hover:bg-black/60 transition-colors cursor-pointer"
                         disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0)}
                     >
@@ -345,10 +382,25 @@ function GameContent() {
                   </div>
                 )}
 
+                {/* Sound Toggle */}
+                <button
+                    onClick={() => {
+                        toggleMute();
+                        playClick();
+                    }}
+                    className="p-2 rounded-xl border border-secondary/30 hover:border-secondary/80 text-secondary transition-colors self-end mb-0.5"
+                    title={muted ? "Unmute" : "Mute"}
+                >
+                    {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                </button>
+
                 <Button
-                  onClick={handleRestart}
+                  onClick={() => {
+                      playClick();
+                      handleRestart();
+                  }}
                   variant="glass"
-                  className="text-sm py-2 px-6 ml-2 font-heading tracking-wider hover:text-secondary border-secondary/30 hover:border-secondary/80 h-full self-end mb-0.5"
+                  className="text-sm py-2 px-6 font-heading tracking-wider hover:text-secondary border-secondary/30 hover:border-secondary/80 h-full self-end mb-0.5"
                 >
                   Restart
                 </Button>
@@ -374,7 +426,10 @@ function GameContent() {
 
              <div className="flex items-center gap-2">
                <button
-                  onClick={copyLink}
+                  onClick={() => {
+                      playClick();
+                      copyLink();
+                  }}
                   className="flex items-center gap-2 text-xs text-secondary hover:text-white transition-colors uppercase tracking-widest font-heading border border-secondary/30 rounded-lg px-3 py-1.5 hover:bg-secondary/10"
                >
                  {copied ? 'COPIED' : 'COPY LINK'} <Copy size={14} />
@@ -428,7 +483,10 @@ function GameContent() {
             </p>
             {(!state.gameMode || state.gameMode !== 'ONLINE' || (myPlayer && myPlayer !== 'SPECTATOR')) && (
               <Button
-                onClick={handleRestart}
+                onClick={() => {
+                    playClick();
+                    handleRestart();
+                }}
                 variant="primary"
                 className="mt-4 px-8 py-3 text-lg font-heading tracking-widest bg-primary hover:bg-primary/80 text-white shadow-[0_0_20px_rgba(102,2,60,0.4)]"
               >

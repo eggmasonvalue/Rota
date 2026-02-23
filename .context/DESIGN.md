@@ -18,11 +18,12 @@
     - [x] "Imperial Senate" theme implementation.
     - [x] Responsive hex/circular board layout.
     - [x] Spring-based piece animations.
+    - [x] **Soundscape:** Synthesized stone-clinking SFX for moves, victory/defeat fanfares, and UI clicks (Web Audio API).
 
 ## Planned / In Progress
-- [ ] **Soundscape:** Ambient Roman senate background noise and stone-clinking SFX for moves.
 - [ ] **Leaderboard:** Persistent wins tracking via Supabase Database.
 - [ ] **Reconnect Logic:** Handling transient disconnects in online games without losing state.
+- [ ] **Haptics:** Deferred until iOS WebKit supports `navigator.vibrate` or equivalent web haptic APIs.
 
 ## Aesthetic Specification
 - **Theme Name:** "Imperial Senate"
