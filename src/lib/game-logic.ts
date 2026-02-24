@@ -24,8 +24,13 @@ export interface GameState {
   gameMode: GameMode;
 }
 
-// 0-7 are outer circle, 8 is center
-// Connectivity: Center (8) connected to all outer points. Outer points form a circle.
+/**
+ * Adjacency list representing the graph connections of the Rota board.
+ *
+ * Board Layout:
+ * - Indices 0-7: Outer circle points (connected in a ring).
+ * - Index 8: Center hub (connected to all outer points).
+ */
 export const ADJACENCY: { [key: number]: number[] } = {
   0: [1, 7, 8],
   1: [0, 2, 8],

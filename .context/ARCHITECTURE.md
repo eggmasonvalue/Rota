@@ -16,8 +16,10 @@ A pure, functional engine that manages the Rota state machine.
 - **Validation:** Strict rules for placement and movement (must be adjacent, cannot jump).
 - **State Management:** Driven by a `useReducer` hook in the main page component for predictable state transitions.
 
-### 2. AI Opponent (`src/lib/ai.ts`)
-A Minimax algorithm with Alpha-Beta pruning.
+### 2. AI Opponent (`src/worker/ai.worker.ts` & `src/lib/ai.ts`)
+A Minimax algorithm with Alpha-Beta pruning, offloaded to a Web Worker for zero-blocking UI.
+- **Worker Entry:** `src/worker/ai.worker.ts` handles message passing.
+- **Core Logic:** `src/lib/ai.ts` contains the pure Minimax implementation.
 - **Heuristics:** 
     - **Center Control:** High weight (+20) for holding the center hub (point 8).
     - **Winning Threats:** Significant weight (+50) for 2-in-a-row with an empty third spot.
