@@ -35,6 +35,18 @@ function applyMove(state: GameState, move: { from: number | null, to: number }):
   };
 }
 
+/**
+ * Evaluates the current game state for the given player.
+ * A positive score indicates a favorable state for the player, while a negative score indicates a disadvantage.
+ *
+ * Scoring Weights:
+ * - Win: +10,000
+ * - Loss: -10,000
+ * - Draw: 0
+ * - Center Control (Index 8): +20 if owned, -20 if opponent owns
+ * - 2-in-a-row Threat (Offensive): +50
+ * - 2-in-a-row Threat (Defensive): -60 (Higher priority to block)
+ */
 function evaluate(state: GameState, player: Player): number {
   if (state.winner === player) return 10000;
   if (state.winner && state.winner !== 'DRAW') return -10000;
