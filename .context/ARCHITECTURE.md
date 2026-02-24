@@ -34,7 +34,8 @@ A custom hook leveraging Supabase Realtime.
 
 ### 4. Audio Synthesis (`src/hooks/useSoundEffects.ts`)
 A custom hook encapsulating procedural audio generation.
-- **Oscillator Strategy:** Uses `triangle`, `sine`, and `sawtooth` waves to simulate physical object interactions (stone thuds, scrapes) without external assets.
+- **Oscillator Strategy:** Uses `triangle`, `sine`, and `sawtooth` waves for tonal sounds (chords, clicks).
+- **Noise Synthesis:** Uses `AudioBuffer` filled with random values (White Noise) processed through a `BiquadFilterNode` (Bandpass) to simulate friction/scraping sounds for piece movement.
 - **Context Management:** Lazily initializes `AudioContext` to comply with browser autoplay policies.
 - **Integration:** Reacts to `state.history.length` and `state.winner` changes to trigger sounds, ensuring synchronization across all game modes (Local, AI, Online).
 - **Persistence:** Mute preference is stored in `localStorage` under the key `rota_muted`.

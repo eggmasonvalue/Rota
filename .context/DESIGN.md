@@ -20,7 +20,7 @@
     - [x] Spring-based piece animations.
     - [x] **Soundscape:** Procedural audio synthesis via Web Audio API.
         - [x] *Placement:* Heavy, dull thud (stone on marble).
-        - [x] *Movement:* Sliding/scraping clack (stone dragging).
+        - [x] *Movement:* Filtered white noise scrape + low frequency rumble (stone sliding on stone).
         - [x] *Victory/Defeat:* Resonant chords (Major/Minor) with sine wave purity.
         - [x] *UI:* Subtle stone taps.
 

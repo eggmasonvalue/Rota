@@ -96,39 +96,61 @@ export function useSoundEffects() {
   }, [muted, initAudio]);
 
   const playMove = useCallback(() => {
-    // Lighter, sliding sound - stone scraping slightly on stone
-    // Higher pitch, slightly longer, scrape-like quality (simulated with sawtooth/triangle)
+    // Stone sliding on stone: needs friction texture (filtered noise) + heavy base
+    // This sounds more like a "shhh-clunk" or a heavy drag
     if (muted) return;
     initAudio();
     if (!audioContextRef.current) return;
 
     const ctx = audioContextRef.current;
+    const duration = 0.25;
 
-    // Create two oscillators to create friction texture
-    const osc1 = ctx.createOscillator();
-    const osc2 = ctx.createOscillator();
-    const gain = ctx.createGain();
+    // 1. Friction Noise (The "Slide")
+    // Create a buffer with white noise
+    const bufferSize = ctx.sampleRate * duration;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+    }
 
-    osc1.type = 'triangle';
-    osc1.frequency.setValueAtTime(200, ctx.currentTime);
-    osc1.frequency.linearRampToValueAtTime(180, ctx.currentTime + 0.15);
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
 
-    osc2.type = 'sawtooth'; // Sawtooth adds the "scrape" grit
-    osc2.frequency.setValueAtTime(205, ctx.currentTime); // Slight detune for texture
-    osc2.frequency.linearRampToValueAtTime(185, ctx.currentTime + 0.15);
+    // Filter the noise to make it sound like stone (low-pass + band-pass characteristics)
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.setValueAtTime(400, ctx.currentTime); // Center around 400Hz for "rough stone"
+    noiseFilter.Q.value = 1.0; // Moderate resonance
 
-    gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0, ctx.currentTime);
+    noiseGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05); // Fade in
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration); // Fade out
 
-    osc1.connect(gain);
-    osc2.connect(gain);
-    gain.connect(ctx.destination);
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
 
-    osc1.start();
-    osc2.start();
-    osc1.stop(ctx.currentTime + 0.25);
-    osc2.stop(ctx.currentTime + 0.25);
+    // 2. Low Frequency Rumble (The Weight)
+    const rumble = ctx.createOscillator();
+    const rumbleGain = ctx.createGain();
+
+    rumble.type = 'sine';
+    rumble.frequency.setValueAtTime(60, ctx.currentTime); // Deep rumble
+    rumble.frequency.linearRampToValueAtTime(40, ctx.currentTime + duration); // Pitch down
+
+    rumbleGain.gain.setValueAtTime(0, ctx.currentTime);
+    rumbleGain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.05);
+    rumbleGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+
+    rumble.connect(rumbleGain);
+    rumbleGain.connect(ctx.destination);
+
+    // Start everything
+    noise.start();
+    rumble.start();
+    rumble.stop(ctx.currentTime + duration);
   }, [muted, initAudio]);
 
   const playWin = useCallback(() => {
