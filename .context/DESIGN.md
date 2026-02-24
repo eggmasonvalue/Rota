@@ -18,7 +18,11 @@
     - [x] "Imperial Senate" theme implementation.
     - [x] Responsive hex/circular board layout.
     - [x] Spring-based piece animations.
-    - [x] **Soundscape:** Synthesized stone-clinking SFX for moves, victory/defeat fanfares, and UI clicks (Web Audio API).
+    - [x] **Soundscape:** Procedural audio synthesis via Web Audio API.
+        - [x] *Placement:* Heavy, dull thud (stone on marble).
+        - [x] *Movement:* Sliding/scraping clack (stone dragging).
+        - [x] *Victory/Defeat:* Resonant chords (Major/Minor) with sine wave purity.
+        - [x] *UI:* Subtle stone taps.
 
 ## Planned / In Progress
 - [ ] **Leaderboard:** Persistent wins tracking via Supabase Database.

@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 /**
- * A custom hook to synthesize simple game sounds using the Web Audio API.
+ * A custom hook to synthesize game sounds using the Web Audio API.
  * No external audio files are required.
+ *
+ * Theme: "Imperial Senate" - Sounds should be heavy, resonant, and stone-like.
  */
 export function useSoundEffects() {
   const [muted, setMuted] = useState(false);
@@ -35,7 +37,7 @@ export function useSoundEffects() {
   }, []);
 
   // Helper to create a simple oscillator-based sound
-  const playTone = useCallback((frequency: number, type: OscillatorType, duration: number, volume: number = 0.1) => {
+  const playTone = useCallback((frequency: number, type: OscillatorType, duration: number, volume: number = 0.1, rampType: 'linear' | 'exponential' = 'exponential') => {
     if (muted) return;
     initAudio();
     if (!audioContextRef.current) return;
@@ -49,8 +51,12 @@ export function useSoundEffects() {
 
     // Envelope
     gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.02); // Fast attack
+    if (rampType === 'exponential') {
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    } else {
+        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+    }
 
     osc.connect(gain);
     gain.connect(ctx.destination);
@@ -59,10 +65,11 @@ export function useSoundEffects() {
     osc.stop(ctx.currentTime + duration);
   }, [muted, initAudio]);
 
-  // Specific Game Sounds
-  const playMove = useCallback(() => {
-    // A low thud/clack for placing a stone
-    // Using a low frequency sine wave with a quick decay mimics a heavy object hitting a surface
+  // Specific Game Sounds aligned with "Imperial Senate" theme
+
+  const playPlace = useCallback(() => {
+    // Heavy, dull thud - like placing a heavy stone piece on marble
+    // Low frequency sine wave with very short decay
     if (muted) return;
     initAudio();
     if (!audioContextRef.current) return;
@@ -71,48 +78,145 @@ export function useSoundEffects() {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    osc.type = 'triangle'; // Triangle wave has a bit more "body" than sine
-    osc.frequency.setValueAtTime(150, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.15); // Pitch drop simulates impact
+    // Use a mix of low sine and filtered noise if possible, but keeping it simple with oscillators
+    // A low triangle wave gives a bit more texture than sine
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(80, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1); // Pitch drop for weight
 
     gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+    gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.01); // Sharp attack
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2); // Short decay
 
     osc.connect(gain);
     gain.connect(ctx.destination);
 
     osc.start();
-    osc.stop(ctx.currentTime + 0.15);
+    osc.stop(ctx.currentTime + 0.2);
+  }, [muted, initAudio]);
+
+  const playMove = useCallback(() => {
+    // Lighter, sliding sound - stone scraping slightly on stone
+    // Higher pitch, slightly longer, scrape-like quality (simulated with sawtooth/triangle)
+    if (muted) return;
+    initAudio();
+    if (!audioContextRef.current) return;
+
+    const ctx = audioContextRef.current;
+
+    // Create two oscillators to create friction texture
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc1.type = 'triangle';
+    osc1.frequency.setValueAtTime(200, ctx.currentTime);
+    osc1.frequency.linearRampToValueAtTime(180, ctx.currentTime + 0.15);
+
+    osc2.type = 'sawtooth'; // Sawtooth adds the "scrape" grit
+    osc2.frequency.setValueAtTime(205, ctx.currentTime); // Slight detune for texture
+    osc2.frequency.linearRampToValueAtTime(185, ctx.currentTime + 0.15);
+
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc1.start();
+    osc2.start();
+    osc1.stop(ctx.currentTime + 0.25);
+    osc2.stop(ctx.currentTime + 0.25);
   }, [muted, initAudio]);
 
   const playWin = useCallback(() => {
-    // A triumphant chord (Major Triad: C, E, G)
-    playTone(523.25, 'sine', 0.6, 0.2); // C5
-    setTimeout(() => playTone(659.25, 'sine', 0.6, 0.2), 100); // E5
-    setTimeout(() => playTone(783.99, 'sine', 0.8, 0.2), 200); // G5
-  }, [playTone]);
+    // Triumphant, resonant chord (Major) - but ancient/solemn
+    // C Major Chord: C4, E4, G4
+    // Using sine waves for a pure, bell-like quality (senate bells/fanfare)
+    if (muted) return;
+    initAudio();
+
+    const playNote = (freq: number, startTime: number, duration: number) => {
+        if (!audioContextRef.current) return;
+        const ctx = audioContextRef.current;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, startTime);
+
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.2, startTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+    };
+
+    if (audioContextRef.current) {
+        const now = audioContextRef.current.currentTime;
+        playNote(523.25, now, 1.5);       // C5
+        playNote(659.25, now + 0.1, 1.5); // E5
+        playNote(783.99, now + 0.2, 2.0); // G5 (sustained)
+    }
+  }, [muted, initAudio]);
 
   const playLoss = useCallback(() => {
-    // A dissonant, descending sound
-    playTone(150, 'sawtooth', 0.4, 0.1);
-    setTimeout(() => playTone(140, 'sawtooth', 0.5, 0.1), 150);
-  }, [playTone]);
+    // Solemn, dissonant chord (Diminished or Minor)
+    // C Minor: C4, Eb4, G4 - slow and low
+    if (muted) return;
+    initAudio();
+
+    const playNote = (freq: number, startTime: number, duration: number) => {
+        if (!audioContextRef.current) return;
+        const ctx = audioContextRef.current;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'triangle'; // Mellower, sadder tone
+        osc.frequency.setValueAtTime(freq, startTime);
+
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.15, startTime + 0.2); // Slower attack
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+    };
+
+    if (audioContextRef.current) {
+        const now = audioContextRef.current.currentTime;
+        playNote(261.63, now, 2.0);       // C4
+        playNote(311.13, now + 0.1, 2.0); // Eb4
+        playNote(392.00, now + 0.2, 2.0); // G4
+        // Add a dissonant tritone for defeat? Maybe too harsh. Stick to minor.
+    }
+  }, [muted, initAudio]);
 
   const playDraw = useCallback(() => {
-      // Neutral, flat sound
-      playTone(300, 'sine', 0.3, 0.1);
-      setTimeout(() => playTone(300, 'sine', 0.3, 0.1), 150);
+      // Neutral, unresolved sound
+      // Two notes a whole tone apart
+      playTone(300, 'sine', 0.5, 0.15, 'linear');
+      setTimeout(() => playTone(300, 'sine', 0.5, 0.15, 'linear'), 200);
   }, [playTone]);
 
   const playClick = useCallback(() => {
-    // A high, short blip for UI interactions
-    playTone(800, 'sine', 0.05, 0.05);
+    // A clean, sharp click for UI - like a light stone tap
+    playTone(1200, 'sine', 0.05, 0.03, 'exponential');
   }, [playTone]);
 
   return {
     muted,
     toggleMute,
+    playPlace,
     playMove,
     playWin,
     playLoss,

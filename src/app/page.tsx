@@ -182,16 +182,28 @@ function GameContent() {
   const { myPlayer, connectionStatus, onlineUsersCount, sendAction } = useOnlineGame(roomId, onActionReceived);
 
   // Sound Effects
-  const { playMove, playWin, playLoss, playDraw, playClick, muted, toggleMute } = useSoundEffects();
+  const { playPlace, playMove, playWin, playLoss, playDraw, playClick, muted, toggleMute } = useSoundEffects();
   const prevHistoryLength = useRef(state.history.length);
+  const prevPhaseRef = useRef<Phase>(state.phase);
 
-  // Trigger move sounds
+  // Trigger move/placement sounds based on state changes
   useEffect(() => {
+    // Check if a move was just made (history grew)
     if (state.history.length > prevHistoryLength.current) {
-        playMove();
+        // Use the *previous* phase to determine the sound.
+        // If we were in PLACEMENT and history grew, a piece was placed.
+        // If we were in MOVEMENT and history grew, a piece was moved.
+        if (prevPhaseRef.current === 'PLACEMENT') {
+            playPlace();
+        } else if (prevPhaseRef.current === 'MOVEMENT') {
+            playMove();
+        }
     }
+
+    // Update refs for next render
     prevHistoryLength.current = state.history.length;
-  }, [state.history.length, playMove]);
+    prevPhaseRef.current = state.phase;
+  }, [state.history.length, state.phase, playPlace, playMove]);
 
   // Trigger game over sounds
   useEffect(() => {
