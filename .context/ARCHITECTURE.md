@@ -6,6 +6,7 @@
 - **Styling:** Tailwind CSS v4 (Using native CSS variables and `@theme` blocks)
 - **Animation:** Framer Motion 12 (Layout transitions and spring physics)
 - **Realtime:** Supabase (Presence and Broadcast Channels)
+- **Audio:** Web Audio API (Synthesized procedural audio)
 - **Testing:** Vitest for pure logic validation
 
 ## Core Modules
@@ -31,6 +32,13 @@ A custom hook leveraging Supabase Realtime.
 - **Presence Sorting:** Roles (`PLAYER1`, `PLAYER2`, `SPECTATOR`) are determined by sorting users by their `joinedAt` timestamp in the presence state.
 - **Broadcast Pattern:** Move actions are broadcasted as JSON payloads. The receiving client re-plays the action through their local reducer to ensure state consistency.
 
+### 4. Audio Synthesis (`src/hooks/useSoundEffects.ts`)
+A custom hook encapsulating procedural audio generation.
+- **Oscillator Strategy:** Uses `triangle`, `sine`, and `sawtooth` waves to simulate physical object interactions (stone thuds, scrapes) without external assets.
+- **Context Management:** Lazily initializes `AudioContext` to comply with browser autoplay policies.
+- **Integration:** Reacts to `state.history.length` and `state.winner` changes to trigger sounds, ensuring synchronization across all game modes (Local, AI, Online).
+- **Persistence:** Mute preference is stored in `localStorage` under the key `rota_muted`.
+
 ## Data Flow
 ```
 [User Interaction] -> [Action Dispatched] 
@@ -44,4 +52,6 @@ A custom hook leveraging Supabase Realtime.
     [React Render] <-------------------------
           |
     [Framer Motion Animate]
+          |
+    [Sound Effect Trigger (useEffect)]
 ```

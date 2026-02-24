@@ -19,4 +19,8 @@ Rota is a simplified relative of Nine Men's Morris, played on a circular board w
 ## Technical Philosophy
 - **Zero-Blocking UI:** Heavy computations (AI Minimax) are offloaded to Web Workers to maintain a consistent 120fps (ProMotion/High-refresh support).
 - **Synchronized State:** Multiplayer relies on a "Broadcast and Sync" pattern via Supabase Realtime, with role determination based on presence-joining timestamps.
-- **declarative Aesthetics:** All UI states and transitions are driven by React and Framer Motion, avoiding imperative DOM manipulation for a more maintainable codebase.
+- **Declarative Aesthetics:** All UI states and transitions are driven by React and Framer Motion, avoiding imperative DOM manipulation for a more maintainable codebase.
+- **Synthesized Audio:** Game sound effects are procedurally generated using the Web Audio API, avoiding external asset dependencies and ensuring instant load times while maintaining the "Imperial Senate" theme.
+
+## Future Considerations
+- **Haptics:** Deferred until iOS WebKit provides robust support for the Vibration API.
