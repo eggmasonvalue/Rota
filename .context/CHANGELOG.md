@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+- **Soundscape:** Implemented procedural audio synthesis for game actions (Placement, Movement, Win/Loss/Draw) and UI interactions. Sounds are designed to fit the "Imperial Senate" theme (stone thuds, sliding clacks).
+- **Haptics:** Deferred implementation until iOS WebKit provides robust support for the Vibration API.
 - Integrated Supabase Realtime for Online Multiplayer (BETA).
 - Added `useOnlineGame` hook to manage synchronized game state.
 - Refined UI theme to "Imperial Senate" (Tyrian Purple & Gold) from generic Glassmorphism.
