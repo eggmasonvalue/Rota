@@ -114,7 +114,7 @@ function gameReducer(state: GameState, action: Action): GameState {
 
 function GameContent() {
   const [state, dispatch] = useReducer(gameReducer, INITIAL_STATE);
-  const [difficulty, setDifficulty] = useState<Difficulty>('MEDIUM');
+  const [difficulty, setDifficulty] = useState<Difficulty>('EQUITES');
   const [roomId, setRoomId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -330,6 +330,54 @@ function GameContent() {
   const isPlayer1Turn = state.currentPlayer === 'PLAYER1';
   const isPlayer2Turn = state.currentPlayer === 'PLAYER2';
 
+  // Helper for dynamic difficulty name display
+  const getOpponentName = () => {
+      if (state.gameMode === 'HvH') return 'PLAYER 2';
+      if (state.gameMode === 'ONLINE') return 'PLAYER 2';
+      // Solo mode (HvC)
+      switch (difficulty) {
+          case 'PLEBEIAN': return 'PLEBEIAN';
+          case 'MERCHANT': return 'MERCHANT';
+          case 'EQUITES': return 'EQUITES';
+          case 'SENATOR': return 'SENATOR';
+          case 'CONSUL': return 'CONSUL';
+          default: return 'CPU';
+      }
+  };
+
+  // Helper for game over messages
+  const getWinMessage = () => {
+      if (state.gameMode !== 'HvC') {
+         return state.winner === 'PLAYER1' ? 'PLAYER 1 WINS' : 'PLAYER 2 WINS';
+      }
+
+      // Solo Mode Custom Messages
+      switch(difficulty) {
+          case 'PLEBEIAN': return "You have risen above the rabble.";
+          case 'MERCHANT': return "Your strategy pays dividends.";
+          case 'EQUITES': return "You command respect among the elite!";
+          case 'SENATOR': return "The Senate stands in awe of your strategy.";
+          case 'CONSUL': return "History will remember this triumph.";
+          default: return "VICTORY";
+      }
+  };
+
+  const getLossMessage = () => {
+      if (state.gameMode !== 'HvC') {
+         return state.winner === 'PLAYER1' ? 'PLAYER 1 WINS' : 'PLAYER 2 WINS';
+      }
+
+      // Solo Mode Custom Messages
+      switch(difficulty) {
+          case 'PLEBEIAN': return "Defeated by a pleb? Humiliating!";
+          case 'MERCHANT': return "You've been swindled out of victory.";
+          case 'EQUITES': return "The equestrian order remains exclusive.";
+          case 'SENATOR': return "Outwitted by a seasoned statesman.";
+          case 'CONSUL': return "The Consul's authority is absolute.";
+          default: return "DEFEAT";
+      }
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden font-body">
 
@@ -346,11 +394,11 @@ function GameContent() {
             {/* Turn Indicator */}
             <div className="flex gap-6 items-center text-lg font-heading tracking-wide">
                 <div className={`transition-all duration-300 ${isPlayer1Turn ? 'text-primary-bright font-bold drop-shadow-[0_0_8px_rgba(208,32,144,0.6)] scale-110' : 'text-gray-500'}`}>
-                  {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 1' : 'PLAYER'}
+                  {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 1' : 'YOU'}
                 </div>
                 <div className="text-gray-600 text-sm">VS</div>
                 <div className={`transition-all duration-300 ${isPlayer2Turn ? 'text-secondary drop-shadow-[0_0_8px_rgba(212,175,55,0.8)] scale-110' : 'text-gray-500'}`}>
-                   {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 2' : 'CPU'}
+                   {getOpponentName()}
                 </div>
             </div>
 
@@ -368,8 +416,8 @@ function GameContent() {
                       className="bg-black/40 border border-secondary/30 rounded-xl px-3 py-1 text-sm text-secondary font-body outline-none focus:border-secondary hover:bg-black/60 transition-colors cursor-pointer"
                       disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0 || state.piecesCount.PLAYER2 > 0)}
                   >
-                      <option value="HvC" className="bg-background text-foreground">Machine</option>
-                      <option value="HvH" className="bg-background text-foreground">Human</option>
+                      <option value="HvC" className="bg-background text-foreground">Solo</option>
+                      <option value="HvH" className="bg-background text-foreground">Versus</option>
                       <option value="ONLINE" className="bg-background text-foreground">Online</option>
                   </select>
                  </div>
@@ -377,7 +425,7 @@ function GameContent() {
                 {/* Difficulty Selector (Only visible/enabled in HvC) */}
                 {state.gameMode === 'HvC' && (
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs text-secondary/70 font-heading uppercase tracking-widest">Difficulty</label>
+                    <label className="text-xs text-secondary/70 font-heading uppercase tracking-widest">Rank</label>
                     <select
                         value={difficulty}
                         onChange={(e) => {
@@ -387,9 +435,11 @@ function GameContent() {
                         className="bg-black/40 border border-secondary/30 rounded-xl px-3 py-1 text-sm text-secondary font-body outline-none focus:border-secondary hover:bg-black/60 transition-colors cursor-pointer"
                         disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0)}
                     >
-                        <option value="EASY" className="bg-background text-foreground">Novice</option>
-                        <option value="MEDIUM" className="bg-background text-foreground">Legionary</option>
-                        <option value="HARD" className="bg-background text-foreground">Senator</option>
+                        <option value="PLEBEIAN" className="bg-background text-foreground">Plebeian</option>
+                        <option value="MERCHANT" className="bg-background text-foreground">Merchant</option>
+                        <option value="EQUITES" className="bg-background text-foreground">Equites</option>
+                        <option value="SENATOR" className="bg-background text-foreground">Senator</option>
+                        <option value="CONSUL" className="bg-background text-foreground">Consul</option>
                     </select>
                   </div>
                 )}
@@ -426,8 +476,8 @@ function GameContent() {
                 <div className={`w-3 h-3 rounded-full ${connectionStatus === 'CONNECTED' ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-yellow-500 animate-pulse'}`} />
                 <span className="text-secondary/80 text-sm font-heading tracking-wider">
                   {connectionStatus === 'CONNECTED'
-                    ? (myPlayer ? (myPlayer === 'SPECTATOR' ? 'SPECTATING' : `YOU ARE ${myPlayer === 'PLAYER1' ? 'PLAYER 1' : 'PLAYER 2'}`) : 'ASSIGNING ROLE...')
-                    : 'CONNECTING...'}
+                    ? (myPlayer ? (myPlayer === 'SPECTATOR' ? 'WITNESSING HISTORY...' : `YOU ARE ${myPlayer === 'PLAYER1' ? 'PLAYER 1' : 'PLAYER 2'}`) : 'ENTERING THE FORUM...')
+                    : 'SEEKING A WORTHY CHALLENGER...'}
                 </span>
                 {onlineUsersCount > 0 && (
                   <span className="flex items-center gap-1 text-xs text-gray-500 ml-2">
@@ -484,14 +534,14 @@ function GameContent() {
             <div className="w-full h-px bg-gradient-to-r from-transparent via-secondary/50 to-transparent" />
             <p className="text-xl text-gray-300 font-body text-center max-w-md">
                 {state.winner === 'PLAYER1' ?
-                  (state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? "Player 1 has conquered the wheel." : "The Senate applauds your strategy. Rome is yours.")
+                  getWinMessage()
                   : ""
                 }
                 {state.winner === 'PLAYER2' ?
-                  (state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? "Player 2 has conquered the wheel." : "The machine has outmaneuvered you this time.")
+                  getLossMessage()
                   : ""
                 }
-                {state.winner === 'DRAW' && "Even the Gods cannot decide a winner."}
+                {state.winner === 'DRAW' && "A stalemate in the Curia."}
             </p>
             {(!state.gameMode || state.gameMode !== 'ONLINE' || (myPlayer && myPlayer !== 'SPECTATOR')) && (
               <Button

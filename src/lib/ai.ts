@@ -75,12 +75,28 @@ export function getBestMove(state: GameState, difficulty: Difficulty): { from: n
   const possibleMoves = getPossibleMoves(state);
   if (possibleMoves.length === 0) return null;
 
-  // Easy: 40% chance of random move
-  if (difficulty === 'EASY' && Math.random() < 0.4) {
+  // PLEBEIAN: 50% chance of random move
+  if (difficulty === 'PLEBEIAN' && Math.random() < 0.5) {
     return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
   }
 
-  const depth = difficulty === 'EASY' ? 1 : difficulty === 'MEDIUM' ? 2 : 4;
+  // Define depth based on difficulty
+  let depth = 1;
+  switch (difficulty) {
+    case 'PLEBEIAN':
+    case 'MERCHANT':
+      depth = 1;
+      break;
+    case 'EQUITES':
+      depth = 2;
+      break;
+    case 'SENATOR':
+      depth = 3;
+      break;
+    case 'CONSUL':
+      depth = 4;
+      break;
+  }
 
   let bestMove = possibleMoves[0];
   let maxEval = -Infinity;

@@ -6,15 +6,15 @@ export function HowToPlay() {
       <GlassPanel className="border-secondary/20 bg-black/40 backdrop-blur-md p-8 md:p-10">
         <h2
           id="how-to-play-title"
-          className="text-3xl md:text-4xl font-marcellus text-secondary text-center mb-8 tracking-widest drop-shadow-sm"
+          className="text-3xl md:text-4xl font-heading text-secondary text-center mb-8 tracking-widest drop-shadow-sm"
         >
           How to Play Rota
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-8 text-gray-300 font-lora leading-relaxed">
+        <div className="grid md:grid-cols-2 gap-8 text-gray-300 font-body leading-relaxed">
 
           <article className="space-y-4">
-            <h3 className="text-xl font-marcellus text-primary-bright tracking-wide border-b border-white/10 pb-2">
+            <h3 className="text-xl font-heading text-primary-bright tracking-wide border-b border-white/10 pb-2">
               Objective
             </h3>
             <p>
@@ -27,7 +27,7 @@ export function HowToPlay() {
           </article>
 
           <article className="space-y-4">
-            <h3 className="text-xl font-marcellus text-primary-bright tracking-wide border-b border-white/10 pb-2">
+            <h3 className="text-xl font-heading text-primary-bright tracking-wide border-b border-white/10 pb-2">
               The Rules
             </h3>
             <ol className="list-decimal list-inside space-y-2 marker:text-secondary">
@@ -50,7 +50,7 @@ export function HowToPlay() {
           </article>
 
           <article className="space-y-4">
-            <h3 className="text-xl font-marcellus text-primary-bright tracking-wide border-b border-white/10 pb-2">
+            <h3 className="text-xl font-heading text-primary-bright tracking-wide border-b border-white/10 pb-2">
               History
             </h3>
             <p>

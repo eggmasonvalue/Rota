@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rota - Color Palette Mockups</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Merriweather', serif; }
+        h1, h2, h3 { font-family: 'Cormorant Garamond', serif; letter-spacing: 0.05em; text-transform: uppercase; }
+
+        /* 1. THE FORUM (Warm/Stone) */
+        .theme-forum-light { --bg: #F5F0E6; --fg: #333333; --p1: #9C382F; --p2: #2C5D8F; --acc: #5D5C43; }
+        .theme-forum-dark { --bg: #2C241B; --fg: #E8DCC4; --p1: #C24538; --p2: #4A8BC2; --acc: #8C8A6B; }
+
+        /* 2. THE SENATE (Clean/High Contrast) */
+        .theme-senate-light { --bg: #F9FAFB; --fg: #1F2937; --p1: #6A0F49; --p2: #B91C1C; --acc: #D97706; }
+        .theme-senate-dark { --bg: #111827; --fg: #F3F4F6; --p1: #9D176C; --p2: #EF4444; --acc: #FBBF24; }
+
+        /* 3. THE LEGION (Dark/Metallic) */
+        .theme-legion-light { --bg: #E5E7EB; --fg: #111827; --p1: #B91C1C; --p2: #B45309; --acc: #4B5563; }
+        .theme-legion-dark { --bg: #1F2937; --fg: #E5E7EB; --p1: #DC2626; --p2: #D97706; --acc: #9CA3AF; }
+
+        /* 4. THE OLIVE GROVE (Natural) */
+        .theme-olive-light { --bg: #ECFCCB; --fg: #1A2E1A; --p1: #D97706; --p2: #9A3412; --acc: #3F6212; }
+        .theme-olive-dark { --bg: #1A2E1A; --fg: #ECFCCB; --p1: #EAB308; --p2: #EA580C; --acc: #84CC16; }
+
+        .mockup-container {
+            background-color: var(--bg);
+            color: var(--fg);
+        }
+        .player-1 { color: var(--p1); }
+        .player-2 { color: var(--p2); }
+        .accent { color: var(--acc); border-color: var(--acc); }
+        .piece-p1 { background-color: var(--p1); }
+        .piece-p2 { background-color: var(--p2); }
+    </style>
+</head>
+<body class="bg-gray-100 p-8 space-y-12">
+
+    <div class="max-w-6xl mx-auto text-center space-y-4">
+        <h1 class="text-4xl font-bold text-gray-800">Rota Theme Mockups</h1>
+        <p class="text-gray-600">Proposals for "The Game of Rome" visual overhaul.</p>
+    </div>
+
+    <!-- THEME 1: THE FORUM -->
+    <section>
+        <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">1. The Forum (Warm Stone)</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+            <!-- Light -->
+            <div class="theme-forum-light mockup-container p-8 rounded-xl shadow-lg border border-gray-200">
+                <div class="flex justify-between items-center mb-8 border-b border-[var(--acc)] pb-4">
+                    <h1 class="text-3xl font-bold">ROTA</h1>
+                    <div class="flex gap-4 text-sm font-bold">
+                        <span class="player-1">YOU</span> vs <span class="player-2">MERCHANT</span>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-8">
+                    <div class="w-48 h-48 rounded-full border-4 border-[var(--acc)] relative flex items-center justify-center">
+                        <div class="absolute w-full h-0.5 bg-[var(--acc)]"></div>
+                        <div class="absolute h-full w-0.5 bg-[var(--acc)]"></div>
+                        <div class="w-8 h-8 rounded-full piece-p1 absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-sm"></div>
+                        <div class="w-8 h-8 rounded-full piece-p2 absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 shadow-sm"></div>
+                        <div class="w-4 h-4 rounded-full bg-[var(--acc)]"></div>
+                    </div>
+                </div>
+                <div class="text-center italic opacity-80 mb-6">"A bargain well struck!"</div>
+                <button class="w-full py-2 border border-[var(--acc)] rounded text-[var(--acc)] hover:bg-black/5 uppercase tracking-widest font-bold text-sm">Restart</button>
+            </div>
+            <!-- Dark -->
+            <div class="theme-forum-dark mockup-container p-8 rounded-xl shadow-lg border border-gray-700">
+                <div class="flex justify-between items-center mb-8 border-b border-[var(--acc)] pb-4">
+                    <h1 class="text-3xl font-bold">ROTA</h1>
+                    <div class="flex gap-4 text-sm font-bold">
+                        <span class="player-1">YOU</span> vs <span class="player-2">MERCHANT</span>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-8">
+                    <div class="w-48 h-48 rounded-full border-4 border-[var(--acc)] relative flex items-center justify-center">
+                        <div class="absolute w-full h-0.5 bg-[var(--acc)]"></div>
+                        <div class="absolute h-full w-0.5 bg-[var(--acc)]"></div>
+                        <div class="w-8 h-8 rounded-full piece-p1 absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-md"></div>
+                        <div class="w-8 h-8 rounded-full piece-p2 absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 shadow-md"></div>
+                        <div class="w-4 h-4 rounded-full bg-[var(--acc)]"></div>
+                    </div>
+                </div>
+                <div class="text-center italic opacity-80 mb-6">"A bargain well struck!"</div>
+                <button class="w-full py-2 border border-[var(--acc)] rounded text-[var(--acc)] hover:bg-white/5 uppercase tracking-widest font-bold text-sm">Restart</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- THEME 2: THE SENATE -->
+    <section>
+        <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">2. The Senate (Classic High Contrast)</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+            <!-- Light -->
+            <div class="theme-senate-light mockup-container p-8 rounded-xl shadow-lg border border-gray-200">
+                <div class="flex justify-between items-center mb-8 border-b border-[var(--acc)] pb-4">
+                    <h1 class="text-3xl font-bold text-[var(--p1)]">ROTA</h1>
+                    <div class="flex gap-4 text-sm font-bold">
+                        <span class="player-1">YOU</span> vs <span class="player-2">SENATOR</span>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-8">
+                    <div class="w-48 h-48 rounded-full border-4 border-[var(--acc)] relative flex items-center justify-center">
+                         <div class="absolute w-full h-0.5 bg-[var(--acc)]"></div>
+                         <div class="absolute h-full w-0.5 bg-[var(--acc)]"></div>
+                        <div class="w-8 h-8 rounded-full piece-p1 absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-sm"></div>
+                        <div class="w-8 h-8 rounded-full piece-p2 absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 shadow-sm"></div>
+                        <div class="w-4 h-4 rounded-full bg-[var(--acc)]"></div>
+                    </div>
+                </div>
+                <div class="text-center italic opacity-80 mb-6">"The Senate stands in awe."</div>
+                <button class="w-full py-2 bg-[var(--p1)] text-white rounded shadow-md hover:opacity-90 uppercase tracking-widest font-bold text-sm">Play Again</button>
+            </div>
+             <!-- Dark -->
+             <div class="theme-senate-dark mockup-container p-8 rounded-xl shadow-lg border border-gray-700">
+                <div class="flex justify-between items-center mb-8 border-b border-[var(--acc)] pb-4">
+                    <h1 class="text-3xl font-bold text-[var(--p1)]">ROTA</h1>
+                    <div class="flex gap-4 text-sm font-bold">
+                        <span class="player-1">YOU</span> vs <span class="player-2">SENATOR</span>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-8">
+                    <div class="w-48 h-48 rounded-full border-4 border-[var(--acc)] relative flex items-center justify-center">
+                         <div class="absolute w-full h-0.5 bg-[var(--acc)]"></div>
+                         <div class="absolute h-full w-0.5 bg-[var(--acc)]"></div>
+                        <div class="w-8 h-8 rounded-full piece-p1 absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-md shadow-[var(--p1)]/50"></div>
+                        <div class="w-8 h-8 rounded-full piece-p2 absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 shadow-md shadow-[var(--p2)]/50"></div>
+                        <div class="w-4 h-4 rounded-full bg-[var(--acc)]"></div>
+                    </div>
+                </div>
+                <div class="text-center italic opacity-80 mb-6">"The Senate stands in awe."</div>
+                <button class="w-full py-2 bg-[var(--p1)] text-white rounded shadow-md hover:opacity-90 uppercase tracking-widest font-bold text-sm">Play Again</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- THEME 3: THE LEGION -->
+    <section>
+        <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">3. The Legion (Dark Metallic)</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+             <!-- Light -->
+             <div class="theme-legion-light mockup-container p-8 rounded-xl shadow-lg border border-gray-300">
+                <div class="flex justify-between items-center mb-8 border-b border-[var(--acc)] pb-4">
+                    <h1 class="text-3xl font-bold">ROTA</h1>
+                    <div class="flex gap-4 text-sm font-bold">
+                        <span class="player-1">YOU</span> vs <span class="player-2">CONSUL</span>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-8">
+                     <div class="w-48 h-48 rounded-full border-4 border-[var(--acc)] relative flex items-center justify-center bg-gray-300">
+                         <div class="absolute w-full h-0.5 bg-[var(--acc)]"></div>
+                         <div class="absolute h-full w-0.5 bg-[var(--acc)]"></div>
+                        <div class="w-8 h-8 rounded-full piece-p1 absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 ring-2 ring-white"></div>
+                        <div class="w-8 h-8 rounded-full piece-p2 absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ring-2 ring-white"></div>
+                        <div class="w-4 h-4 rounded-full bg-[var(--acc)]"></div>
+                    </div>
+                </div>
+                <div class="text-center italic opacity-80 mb-6">"History will remember this."</div>
+                <button class="w-full py-2 bg-[var(--p2)] text-white rounded uppercase tracking-widest font-bold text-sm">Restart</button>
+            </div>
+            <!-- Dark -->
+            <div class="theme-legion-dark mockup-container p-8 rounded-xl shadow-lg border border-gray-600">
+                <div class="flex justify-between items-center mb-8 border-b border-[var(--acc)] pb-4">
+                    <h1 class="text-3xl font-bold text-red-500">ROTA</h1>
+                    <div class="flex gap-4 text-sm font-bold">
+                        <span class="player-1">YOU</span> vs <span class="player-2">CONSUL</span>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-8">
+                     <div class="w-48 h-48 rounded-full border-4 border-[var(--acc)] relative flex items-center justify-center bg-gray-800">
+                         <div class="absolute w-full h-0.5 bg-[var(--acc)]"></div>
+                         <div class="absolute h-full w-0.5 bg-[var(--acc)]"></div>
+                        <div class="w-8 h-8 rounded-full piece-p1 absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 ring-2 ring-black shadow-lg shadow-red-900/50"></div>
+                        <div class="w-8 h-8 rounded-full piece-p2 absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ring-2 ring-black shadow-lg shadow-orange-900/50"></div>
+                        <div class="w-4 h-4 rounded-full bg-[var(--acc)]"></div>
+                    </div>
+                </div>
+                <div class="text-center italic opacity-80 mb-6">"History will remember this."</div>
+                <button class="w-full py-2 border border-[var(--p1)] text-[var(--p1)] rounded hover:bg-[var(--p1)] hover:text-white uppercase tracking-widest font-bold text-sm transition-colors">Restart</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- THEME 4: THE OLIVE GROVE -->
+    <section>
+        <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">4. The Olive Grove (Natural)</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+             <!-- Light -->
+             <div class="theme-olive-light mockup-container p-8 rounded-xl shadow-lg border border-green-200">
+                <div class="flex justify-between items-center mb-8 border-b border-[var(--acc)] pb-4">
+                    <h1 class="text-3xl font-bold text-[var(--acc)]">ROTA</h1>
+                    <div class="flex gap-4 text-sm font-bold">
+                        <span class="player-1">YOU</span> vs <span class="player-2">PLEBEIAN</span>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-8">
+                    <div class="w-48 h-48 rounded-full border-4 border-[var(--acc)] relative flex items-center justify-center">
+                         <div class="absolute w-full h-0.5 bg-[var(--acc)]"></div>
+                         <div class="absolute h-full w-0.5 bg-[var(--acc)]"></div>
+                        <div class="w-8 h-8 rounded-full piece-p1 absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                        <div class="w-8 h-8 rounded-full piece-p2 absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2"></div>
+                        <div class="w-4 h-4 rounded-full bg-[var(--acc)]"></div>
+                    </div>
+                </div>
+                <div class="text-center italic opacity-80 mb-6">"Risen above the rabble."</div>
+                <button class="w-full py-2 bg-[var(--acc)] text-white rounded uppercase tracking-widest font-bold text-sm">Play Again</button>
+            </div>
+             <!-- Dark -->
+             <div class="theme-olive-dark mockup-container p-8 rounded-xl shadow-lg border border-green-900">
+                <div class="flex justify-between items-center mb-8 border-b border-[var(--acc)] pb-4">
+                    <h1 class="text-3xl font-bold text-[var(--acc)]">ROTA</h1>
+                    <div class="flex gap-4 text-sm font-bold">
+                        <span class="player-1">YOU</span> vs <span class="player-2">PLEBEIAN</span>
+                    </div>
+                </div>
+                <div class="flex justify-center mb-8">
+                    <div class="w-48 h-48 rounded-full border-4 border-[var(--acc)] relative flex items-center justify-center">
+                         <div class="absolute w-full h-0.5 bg-[var(--acc)]"></div>
+                         <div class="absolute h-full w-0.5 bg-[var(--acc)]"></div>
+                        <div class="w-8 h-8 rounded-full piece-p1 absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                        <div class="w-8 h-8 rounded-full piece-p2 absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2"></div>
+                        <div class="w-4 h-4 rounded-full bg-[var(--acc)]"></div>
+                    </div>
+                </div>
+                <div class="text-center italic opacity-80 mb-6">"Risen above the rabble."</div>
+                <button class="w-full py-2 border border-[var(--acc)] text-[var(--acc)] rounded hover:bg-[var(--acc)] hover:text-black uppercase tracking-widest font-bold text-sm transition-colors">Play Again</button>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
