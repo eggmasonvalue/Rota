@@ -10,7 +10,7 @@ import { Modal } from '@/components/ui/Modal';
 import { HowToPlay } from '@/components/game/HowToPlay';
 import { useOnlineGame } from '@/hooks/useOnlineGame';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
-import { Copy, Users, Volume2, VolumeX } from 'lucide-react';
+import { Copy, Users, Volume2, VolumeX, Sun, Moon } from 'lucide-react';
 
 function gameReducer(state: GameState, action: Action): GameState {
   // Game logic helper
@@ -114,13 +114,43 @@ function gameReducer(state: GameState, action: Action): GameState {
 
 function GameContent() {
   const [state, dispatch] = useReducer(gameReducer, INITIAL_STATE);
-  const [difficulty, setDifficulty] = useState<Difficulty>('EQUITES');
+  const [difficulty, setDifficulty] = useState<Difficulty>('EQUES');
   const [roomId, setRoomId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const workerRef = useRef<Worker | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  // Theme Toggle Logic
+  useEffect(() => {
+    // Check local storage or system preference on mount
+    const storedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+    playClick();
+  };
+
 
   // Sync roomId from URL on mount
   useEffect(() => {
@@ -338,7 +368,7 @@ function GameContent() {
       switch (difficulty) {
           case 'PLEBEIAN': return 'PLEBEIAN';
           case 'MERCHANT': return 'MERCHANT';
-          case 'EQUITES': return 'EQUITES';
+          case 'EQUES': return 'EQUES';
           case 'SENATOR': return 'SENATOR';
           case 'CONSUL': return 'CONSUL';
           default: return 'CPU';
@@ -355,7 +385,7 @@ function GameContent() {
       switch(difficulty) {
           case 'PLEBEIAN': return "You have risen above the rabble.";
           case 'MERCHANT': return "Your strategy pays dividends.";
-          case 'EQUITES': return "You command respect among the elite!";
+          case 'EQUES': return "You command respect among the elite!";
           case 'SENATOR': return "The Senate stands in awe of your strategy.";
           case 'CONSUL': return "History will remember this triumph.";
           default: return "VICTORY";
@@ -371,7 +401,7 @@ function GameContent() {
       switch(difficulty) {
           case 'PLEBEIAN': return "Defeated by a pleb? Humiliating!";
           case 'MERCHANT': return "You've been swindled out of victory.";
-          case 'EQUITES': return "The equestrian order remains exclusive.";
+          case 'EQUES': return "The equestrian order remains exclusive.";
           case 'SENATOR': return "Outwitted by a seasoned statesman.";
           case 'CONSUL': return "The Consul's authority is absolute.";
           default: return "DEFEAT";
@@ -379,10 +409,10 @@ function GameContent() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden font-body">
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden font-body transition-colors duration-500">
 
       {/* Background Ambience */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(102,2,60,0.15)_0%,rgba(26,26,46,0)_70%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-primary-bright)_0%,transparent_70%)] opacity-10 pointer-events-none" />
 
       <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-8">
         <GlassPanel className="w-full flex justify-between items-center flex-wrap gap-4 px-8 py-6 border-gold/20 shadow-2xl">
@@ -437,7 +467,7 @@ function GameContent() {
                     >
                         <option value="PLEBEIAN" className="bg-background text-foreground">Plebeian</option>
                         <option value="MERCHANT" className="bg-background text-foreground">Merchant</option>
-                        <option value="EQUITES" className="bg-background text-foreground">Equites</option>
+                        <option value="EQUES" className="bg-background text-foreground">Eques</option>
                         <option value="SENATOR" className="bg-background text-foreground">Senator</option>
                         <option value="CONSUL" className="bg-background text-foreground">Consul</option>
                     </select>
@@ -454,6 +484,15 @@ function GameContent() {
                     title={muted ? "Unmute" : "Mute"}
                 >
                     {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                </button>
+
+                {/* Theme Toggle */}
+                <button
+                    onClick={toggleTheme}
+                    className="p-2 rounded-xl border border-secondary/30 hover:border-secondary/80 text-secondary transition-colors self-end mb-0.5"
+                    title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                >
+                    {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
 
                 <Button

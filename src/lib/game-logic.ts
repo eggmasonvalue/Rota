@@ -2,7 +2,7 @@ export type Player = 'PLAYER1' | 'PLAYER2';
 export type Phase = 'PLACEMENT' | 'MOVEMENT' | 'GAME_OVER';
 export type Winner = Player | 'DRAW' | null;
 export type GameMode = 'HvH' | 'HvC' | 'ONLINE';
-export type Difficulty = 'PLEBEIAN' | 'MERCHANT' | 'EQUITES' | 'SENATOR' | 'CONSUL';
+export type Difficulty = 'PLEBEIAN' | 'MERCHANT' | 'EQUES' | 'SENATOR' | 'CONSUL';
 
 export type Action =
   | { type: 'PLACE_PIECE'; index: number }

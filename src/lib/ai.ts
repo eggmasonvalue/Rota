@@ -87,7 +87,7 @@ export function getBestMove(state: GameState, difficulty: Difficulty): { from: n
     case 'MERCHANT':
       depth = 1;
       break;
-    case 'EQUITES':
+    case 'EQUES':
       depth = 2;
       break;
     case 'SENATOR':

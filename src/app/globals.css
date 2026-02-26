@@ -14,21 +14,43 @@
 }
 
 :root {
-  --background: #1A1A2E; /* Deep Marble / Slate */
-  --foreground: #E0E0E0; /* Marble White */
+  /* THE FORUM (Warm Stone) - LIGHT MODE DEFAULT */
+  --background: #F5F0E6; /* Warm Sand */
+  --foreground: #333333; /* Dark Charcoal */
 
-  --primary: #66023C; /* Tyrian Purple - Good for pieces */
-  --primary-bright: #D02090; /* Violet Red - Good for text highlights */
-  --secondary: #D4AF37; /* Imperial Gold */
+  --primary: #9C382F; /* Pompeii Red / Terracotta */
+  --primary-bright: #C24538; /* Brighter Red for highlights */
+  --secondary: #2C5D8F; /* Mediterranean Blue / Lapis */
 
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(212, 175, 55, 0.2);
+  /* Accent for borders/UI elements */
+  --accent: #5D5C43; /* Bronze / Olive */
+
+  --glass-bg: rgba(0, 0, 0, 0.05); /* Subtle dark tint for light mode */
+  --glass-border: rgba(93, 92, 67, 0.2); /* Accent color border */
+}
+
+/* DARK MODE OVERRIDE */
+.dark {
+  /* THE FORUM (Warm Stone) - DARK MODE */
+  --background: #2C241B; /* Dark Earth */
+  --foreground: #E8DCC4; /* Light Sand text */
+
+  --primary: #C24538; /* Bright Terracotta */
+  --primary-bright: #E57373; /* Light Red */
+  --secondary: #4A8BC2; /* Bright Lapis */
+
+  /* Accent */
+  --accent: #8C8A6B; /* Light Olive */
+
+  --glass-bg: rgba(255, 255, 255, 0.05); /* Subtle light tint for dark mode */
+  --glass-border: rgba(140, 138, 107, 0.2); /* Accent border */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 h1, h2, h3, h4, h5, h6 {
