@@ -24,7 +24,7 @@ export function Modal({ isOpen, children }: ModalProps) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
           >
-            <GlassPanel className="min-w-[300px] text-center border-primary/20 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+            <GlassPanel className="min-w-[300px] text-center border-[var(--glass-border)] shadow-2xl">
               {children}
             </GlassPanel>
           </motion.div>

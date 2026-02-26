@@ -32,17 +32,18 @@ export function Cell({ index, player, isValidMove, isSource, onClick, position }
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
-      {/* Hitbox/Background for the cell point - using Imperial Gold for highlights */}
-      <div className={`w-4 h-4 rounded-full transition-all duration-300 ${
+      {/* Hitbox/Background for the cell point - using Accent Color (The Forum theme) */}
+      <div className={cn(
+        "w-4 h-4 rounded-full transition-all duration-300",
         isValidMove
-          ? 'bg-secondary/50 shadow-[0_0_15px_rgba(212,175,55,0.8)] scale-150'
-          : 'bg-white/10 hover:bg-white/20'
-      }`} />
+          ? "bg-[var(--secondary)] shadow-[0_0_15px_var(--secondary)] scale-150 opacity-80"
+          : "bg-[var(--glass-border)] opacity-60 hover:opacity-100 hover:scale-125"
+      )} />
 
-      {/* Hint for valid move destination (pulsing ring) - Gold color */}
+      {/* Hint for valid move destination (pulsing ring) */}
       {isValidMove && !player && (
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-dashed border-secondary/30"
+          className="absolute inset-0 rounded-full border-2 border-dashed border-[var(--secondary)] opacity-50"
           animate={{ rotate: 360, scale: [1, 1.1, 1] }}
           transition={{
             rotate: { duration: 8, ease: "linear", repeat: Infinity },

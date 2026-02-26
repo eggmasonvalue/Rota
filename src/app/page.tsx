@@ -411,23 +411,23 @@ function GameContent() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden font-body transition-colors duration-500">
 
-      {/* Background Ambience */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-primary-bright)_0%,transparent_70%)] opacity-10 pointer-events-none" />
+      {/* Background Ambience - Subtle tint from the primary/secondary palette */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_70%)] opacity-5 pointer-events-none" />
 
       <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-8">
-        <GlassPanel className="w-full flex justify-between items-center flex-wrap gap-4 px-8 py-6 border-gold/20 shadow-2xl">
+        <GlassPanel className="w-full flex justify-between items-center flex-wrap gap-4 px-8 py-6">
             {/* Title */}
-            <h1 className="text-4xl font-heading font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary tracking-widest drop-shadow-sm">
+            <h1 className="text-4xl font-heading font-bold text-foreground tracking-widest drop-shadow-sm">
               ROTA
             </h1>
 
             {/* Turn Indicator */}
             <div className="flex gap-6 items-center text-lg font-heading tracking-wide">
-                <div className={`transition-all duration-300 ${isPlayer1Turn ? 'text-primary-bright font-bold drop-shadow-[0_0_8px_rgba(208,32,144,0.6)] scale-110' : 'text-gray-500'}`}>
+                <div className={`transition-all duration-300 ${isPlayer1Turn ? 'text-primary font-bold drop-shadow-[0_0_8px_var(--color-primary)] scale-110' : 'text-foreground/50'}`}>
                   {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 1' : 'YOU'}
                 </div>
-                <div className="text-gray-600 text-sm">VS</div>
-                <div className={`transition-all duration-300 ${isPlayer2Turn ? 'text-secondary drop-shadow-[0_0_8px_rgba(212,175,55,0.8)] scale-110' : 'text-gray-500'}`}>
+                <div className="text-foreground/40 text-sm">VS</div>
+                <div className={`transition-all duration-300 ${isPlayer2Turn ? 'text-secondary font-bold drop-shadow-[0_0_8px_var(--color-secondary)] scale-110' : 'text-foreground/50'}`}>
                    {getOpponentName()}
                 </div>
             </div>
@@ -436,14 +436,14 @@ function GameContent() {
             <div className="flex flex-wrap items-end justify-center sm:justify-end gap-3 w-full sm:w-auto">
                  {/* Game Mode Selector */}
                  <div className="flex flex-col gap-1">
-                   <label className="text-xs text-secondary/70 font-heading uppercase tracking-widest">OPPONENT</label>
+                   <label className="text-xs text-foreground/60 font-heading uppercase tracking-widest">OPPONENT</label>
                    <select
                       value={state.gameMode}
                       onChange={(e) => {
                           playClick();
                           handleModeChange(e.target.value as GameMode);
                       }}
-                      className="bg-black/40 border border-secondary/30 rounded-xl px-3 py-1 text-sm text-secondary font-body outline-none focus:border-secondary hover:bg-black/60 transition-colors cursor-pointer"
+                      className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-xl px-3 py-1 text-sm text-foreground font-body outline-none focus:border-secondary hover:bg-[var(--glass-border)]/10 transition-colors cursor-pointer"
                       disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0 || state.piecesCount.PLAYER2 > 0)}
                   >
                       <option value="HvC" className="bg-background text-foreground">Solo</option>
@@ -455,14 +455,14 @@ function GameContent() {
                 {/* Difficulty Selector (Only visible/enabled in HvC) */}
                 {state.gameMode === 'HvC' && (
                   <div className="flex flex-col gap-1">
-                    <label className="text-xs text-secondary/70 font-heading uppercase tracking-widest">Rank</label>
+                    <label className="text-xs text-foreground/60 font-heading uppercase tracking-widest">Rank</label>
                     <select
                         value={difficulty}
                         onChange={(e) => {
                             playClick();
                             setDifficulty(e.target.value as Difficulty);
                         }}
-                        className="bg-black/40 border border-secondary/30 rounded-xl px-3 py-1 text-sm text-secondary font-body outline-none focus:border-secondary hover:bg-black/60 transition-colors cursor-pointer"
+                        className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-xl px-3 py-1 text-sm text-foreground font-body outline-none focus:border-secondary hover:bg-[var(--glass-border)]/10 transition-colors cursor-pointer"
                         disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0)}
                     >
                         <option value="PLEBEIAN" className="bg-background text-foreground">Plebeian</option>
@@ -480,7 +480,7 @@ function GameContent() {
                         toggleMute();
                         playClick();
                     }}
-                    className="p-2 rounded-xl border border-secondary/30 hover:border-secondary/80 text-secondary transition-colors self-end mb-0.5"
+                    className="p-2 rounded-xl border border-[var(--glass-border)] hover:border-secondary/80 text-foreground/80 hover:text-foreground transition-colors self-end mb-0.5"
                     title={muted ? "Unmute" : "Mute"}
                 >
                     {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
@@ -489,7 +489,7 @@ function GameContent() {
                 {/* Theme Toggle */}
                 <button
                     onClick={toggleTheme}
-                    className="p-2 rounded-xl border border-secondary/30 hover:border-secondary/80 text-secondary transition-colors self-end mb-0.5"
+                    className="p-2 rounded-xl border border-[var(--glass-border)] hover:border-secondary/80 text-foreground/80 hover:text-foreground transition-colors self-end mb-0.5"
                     title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
                 >
                     {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -501,7 +501,7 @@ function GameContent() {
                       handleRestart();
                   }}
                   variant="glass"
-                  className="text-sm py-2 px-6 font-heading tracking-wider hover:text-secondary border-secondary/30 hover:border-secondary/80 h-full self-end mb-0.5"
+                  className="text-sm py-2 px-6 font-heading tracking-wider hover:text-secondary border-[var(--glass-border)] hover:border-secondary/80 h-full self-end mb-0.5"
                 >
                   Restart
                 </Button>
@@ -510,16 +510,16 @@ function GameContent() {
 
         {/* Online Status Bar */}
         {state.gameMode === 'ONLINE' && (
-          <GlassPanel className="w-full flex justify-between items-center px-6 py-3 border-secondary/20 bg-black/40">
+          <GlassPanel className="w-full flex justify-between items-center px-6 py-3">
              <div className="flex items-center gap-4">
                 <div className={`w-3 h-3 rounded-full ${connectionStatus === 'CONNECTED' ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-yellow-500 animate-pulse'}`} />
-                <span className="text-secondary/80 text-sm font-heading tracking-wider">
+                <span className="text-foreground/80 text-sm font-heading tracking-wider">
                   {connectionStatus === 'CONNECTED'
                     ? (myPlayer ? (myPlayer === 'SPECTATOR' ? 'WITNESSING HISTORY...' : `YOU ARE ${myPlayer === 'PLAYER1' ? 'PLAYER 1' : 'PLAYER 2'}`) : 'ENTERING THE FORUM...')
                     : 'SEEKING A WORTHY CHALLENGER...'}
                 </span>
                 {onlineUsersCount > 0 && (
-                  <span className="flex items-center gap-1 text-xs text-gray-500 ml-2">
+                  <span className="flex items-center gap-1 text-xs text-foreground/60 ml-2">
                     <Users size={14} /> {onlineUsersCount} Online
                   </span>
                 )}
@@ -531,7 +531,7 @@ function GameContent() {
                       playClick();
                       copyLink();
                   }}
-                  className="flex items-center gap-2 text-xs text-secondary hover:text-white transition-colors uppercase tracking-widest font-heading border border-secondary/30 rounded-lg px-3 py-1.5 hover:bg-secondary/10"
+                  className="flex items-center gap-2 text-xs text-foreground/80 hover:text-foreground transition-colors uppercase tracking-widest font-heading border border-[var(--glass-border)] rounded-lg px-3 py-1.5 hover:bg-[var(--glass-border)]/10"
                >
                  {copied ? 'COPIED' : 'COPY LINK'} <Copy size={14} />
                </button>
@@ -542,13 +542,13 @@ function GameContent() {
         {/* Game Board */}
         <div className="w-full flex justify-center relative">
             {/* Ambient Glow behind board */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--glass-border)] opacity-10 rounded-full blur-3xl pointer-events-none" />
             <Board gameState={state} onCellClick={handleCellClick} />
         </div>
 
         {/* Status Message */}
         <div className="text-center h-8">
-            <p className="text-secondary/80 font-body text-lg italic animate-pulse">
+            <p className="text-foreground/80 font-body text-lg italic animate-pulse">
               {state.phase === 'PLACEMENT' && "Place your pieces (3 each)"}
               {state.phase === 'MOVEMENT' && "Move a piece to an adjacent empty spot"}
             </p>
@@ -562,16 +562,16 @@ function GameContent() {
       <Modal isOpen={state.phase === 'GAME_OVER'}>
         <div className="flex flex-col gap-6 items-center p-4">
             <h2 className="text-5xl font-heading font-bold mb-2 tracking-widest text-center">
-                {state.winner === 'PLAYER1' && <span className="text-primary drop-shadow-[0_0_15px_rgba(102,2,60,0.8)]">
+                {state.winner === 'PLAYER1' && <span className="text-primary drop-shadow-[0_0_15px_var(--color-primary)]">
                   {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 1 WINS' : 'VICTORY'}
                 </span>}
-                {state.winner === 'PLAYER2' && <span className={state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? "text-secondary drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]" : "text-gray-500"}>
+                {state.winner === 'PLAYER2' && <span className={state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? "text-secondary drop-shadow-[0_0_15px_var(--color-secondary)]" : "text-foreground/50"}>
                   {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 2 WINS' : 'DEFEAT'}
                 </span>}
-                {state.winner === 'DRAW' && <span className="text-secondary">STALEMATE</span>}
+                {state.winner === 'DRAW' && <span className="text-foreground/80">STALEMATE</span>}
             </h2>
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-secondary/50 to-transparent" />
-            <p className="text-xl text-gray-300 font-body text-center max-w-md">
+            <div className="w-full h-px bg-gradient-to-r from-transparent via-[var(--glass-border)] to-transparent" />
+            <p className="text-xl text-foreground/80 font-body text-center max-w-md">
                 {state.winner === 'PLAYER1' ?
                   getWinMessage()
                   : ""
@@ -589,7 +589,7 @@ function GameContent() {
                     handleRestart();
                 }}
                 variant="primary"
-                className="mt-4 px-8 py-3 text-lg font-heading tracking-widest bg-primary hover:bg-primary/80 text-white shadow-[0_0_20px_rgba(102,2,60,0.4)]"
+                className="mt-4 px-8 py-3 text-lg font-heading tracking-widest bg-primary hover:bg-primary/80 text-white shadow-[0_0_20px_rgba(var(--color-primary),0.4)]"
               >
                 Play Again
               </Button>

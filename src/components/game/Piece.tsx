@@ -9,14 +9,13 @@ interface PieceProps {
 }
 
 export function Piece({ player, isSelected }: PieceProps) {
-  // Use CSS variables for colors
+  // Use CSS variables for colors (The Forum theme)
   const bgColor = player === 'PLAYER1' ? 'bg-primary' : 'bg-secondary';
 
-  // Dynamic shadow values based on theme variables (using CSS vars in style or Tailwind classes)
-  // PLAYER1 = Tyrian Purple, PLAYER2 = Imperial Gold
+  // Dynamic shadow values based on theme variables
   const shadowColor = player === 'PLAYER1'
-    ? 'rgba(102, 2, 60, 0.6)'
-    : 'rgba(212, 175, 55, 0.6)';
+    ? 'var(--color-primary)'
+    : 'var(--color-secondary)';
 
   return (
     <motion.div
@@ -24,11 +23,12 @@ export function Piece({ player, isSelected }: PieceProps) {
       animate={{
         scale: isSelected ? 1.2 : 1,
         boxShadow: isSelected
-          ? `0 0 30px ${shadowColor}`
-          : `0 0 15px ${shadowColor}`,
-        border: '1px solid rgba(255,255,255,0.2)'
+          ? `0 0 20px 4px ${shadowColor}`
+          : `0 0 10px 1px ${shadowColor}`,
+        // Use a subtle border based on foreground or glass border for contrast
+        border: '1px solid rgba(255,255,255,0.3)'
       }}
-      className={`w-8 h-8 md:w-10 md:h-10 rounded-full ${bgColor}`}
+      className={`w-8 h-8 md:w-10 md:h-10 rounded-full ${bgColor} opacity-90`}
     />
   );
 }

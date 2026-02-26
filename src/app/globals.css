@@ -15,35 +15,34 @@
 
 :root {
   /* THE FORUM (Warm Stone) - LIGHT MODE DEFAULT */
-  /* Matched from palette-mockup.html .theme-forum-light */
   --background: #F5F0E6; /* Warm Sand */
   --foreground: #333333; /* Dark Charcoal */
 
   --primary: #9C382F; /* Pompeii Red */
-  --primary-bright: #9C382F; /* Same as primary for now, or slight variation if needed */
+  --primary-bright: #B54238; /* Slightly brighter for active states */
   --secondary: #2C5D8F; /* Mediterranean Blue */
 
-  /* Accent from mockup used for borders/UI elements */
+  /* Accent color from mockup used for borders/UI elements */
   --glass-border: #5D5C43; /* Bronze / Olive */
+  --glass-bg: rgba(93, 92, 67, 0.05); /* Very subtle tint of the accent */
 
-  --glass-bg: rgba(0, 0, 0, 0.05);
+  --font-heading: 'Cormorant Garamond', serif;
+  --font-body: 'Merriweather', serif;
 }
 
 /* DARK MODE OVERRIDE */
 .dark {
   /* THE FORUM (Warm Stone) - DARK MODE */
-  /* Matched from palette-mockup.html .theme-forum-dark */
   --background: #2C241B; /* Dark Earth */
   --foreground: #E8DCC4; /* Light Sand text */
 
   --primary: #C24538; /* Bright Terracotta */
-  --primary-bright: #C24538;
+  --primary-bright: #D65A4C;
   --secondary: #4A8BC2; /* Bright Lapis */
 
   /* Accent */
   --glass-border: #8C8A6B; /* Light Olive */
-
-  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg: rgba(140, 138, 107, 0.1); /* Subtle tint of the accent */
 }
 
 body {
