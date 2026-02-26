@@ -512,7 +512,7 @@ function GameContent() {
         {state.gameMode === 'ONLINE' && (
           <GlassPanel className="w-full flex justify-between items-center px-6 py-3">
              <div className="flex items-center gap-4">
-                <div className={`w-3 h-3 rounded-full ${connectionStatus === 'CONNECTED' ? 'bg-green-500 shadow-[0_0_8px_#22c55e]' : 'bg-yellow-500 animate-pulse'}`} />
+                <div className={`w-3 h-3 rounded-full ${connectionStatus === 'CONNECTED' ? 'bg-[var(--glass-border)] shadow-[0_0_8px_var(--glass-border)]' : 'bg-[var(--primary)] animate-pulse'}`} />
                 <span className="text-foreground/80 text-sm font-heading tracking-wider">
                   {connectionStatus === 'CONNECTED'
                     ? (myPlayer ? (myPlayer === 'SPECTATOR' ? 'WITNESSING HISTORY...' : `YOU ARE ${myPlayer === 'PLAYER1' ? 'PLAYER 1' : 'PLAYER 2'}`) : 'ENTERING THE FORUM...')
@@ -540,15 +540,15 @@ function GameContent() {
         )}
 
         {/* Game Board */}
-        <div className="w-full flex justify-center relative">
+        <div className="w-full flex justify-center relative mb-0">
             {/* Ambient Glow behind board */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--glass-border)] opacity-10 rounded-full blur-3xl pointer-events-none" />
             <Board gameState={state} onCellClick={handleCellClick} />
         </div>
 
-        {/* Status Message */}
-        <div className="text-center h-8">
-            <p className="text-foreground/80 font-body text-lg italic animate-pulse">
+        {/* Status Message - Moved closer to board */}
+        <div className="text-center h-8 -mt-12 relative z-20 pointer-events-none">
+            <p className="text-foreground/90 font-heading text-xl tracking-wider animate-pulse drop-shadow-md bg-background/50 backdrop-blur-sm py-1 px-4 rounded-full inline-block">
               {state.phase === 'PLACEMENT' && "Place your pieces (3 each)"}
               {state.phase === 'MOVEMENT' && "Move a piece to an adjacent empty spot"}
             </p>

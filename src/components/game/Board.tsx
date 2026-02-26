@@ -40,7 +40,7 @@ export function Board({ gameState, onCellClick }: BoardProps) {
   const lineColor = "var(--glass-border)";
 
   return (
-    <div className="relative w-full max-w-[500px] aspect-square mx-auto my-8 flex-shrink-0">
+    <div className="relative w-full max-w-[500px] aspect-square mx-auto mt-8 mb-4 flex-shrink-0">
       {/* SVG Board Lines - preserveAspectRatio="none" ensures lines align with absolute positioned cells even if container is not perfectly square */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none transition-colors duration-500" viewBox="0 0 100 100" preserveAspectRatio="none">
         <circle cx="50" cy="50" r="35" fill="none" stroke={lineColor} strokeWidth="1" opacity="0.6" />

@@ -1,13 +1,14 @@
-import { ImageResponse } from 'next/og'
+import { ImageResponse } from 'next/og';
 
 // Route segment config
+export const runtime = 'nodejs'; // Use Node.js runtime to avoid Edge limitations
 
 // Image metadata
 export const size = {
   width: 32,
   height: 32,
-}
-export const contentType = 'image/png'
+};
+export const contentType = 'image/png';
 
 // Image generation
 export default function Icon() {
@@ -16,51 +17,40 @@ export default function Icon() {
       // ImageResponse JSX element
       <div
         style={{
-          background: '#1A1A2E',
+          fontSize: 24,
+          background: '#2C241B', // Dark Earth
           width: '100%',
           height: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          color: 'white',
           borderRadius: '50%',
-          border: '2px solid #D4AF37',
+          border: '2px solid #8C8A6B', // Light Olive
           position: 'relative',
         }}
       >
-        <div
-          style={{
+        {/* Wheel spokes */}
+        <div style={{ position: 'absolute', width: '2px', height: '100%', background: '#8C8A6B' }} />
+        <div style={{ position: 'absolute', width: '100%', height: '2px', background: '#8C8A6B' }} />
+        <div style={{ position: 'absolute', width: '2px', height: '100%', background: '#8C8A6B', transform: 'rotate(45deg)' }} />
+        <div style={{ position: 'absolute', width: '2px', height: '100%', background: '#8C8A6B', transform: 'rotate(-45deg)' }} />
+
+        {/* Center piece */}
+        <div style={{
             position: 'absolute',
-            width: '2px',
-            height: '100%',
-            background: '#D4AF37',
-            transform: 'rotate(45deg)',
-          }}
-        />
-         <div
-          style={{
-            position: 'absolute',
-            width: '2px',
-            height: '100%',
-            background: '#D4AF37',
-            transform: 'rotate(-45deg)',
-          }}
-        />
-        <div
-            style={{
-                width: '12px',
-                height: '12px',
-                background: '#66023C',
-                borderRadius: '50%',
-                border: '1.5px solid #D4AF37',
-                zIndex: 10,
-                position: 'absolute', // Center it explicitly
-            }}
-        />
+            width: '10px',
+            height: '10px',
+            borderRadius: '50%',
+            background: '#C24538', // Pompeii Red
+            border: '1.5px solid #8C8A6B',
+            zIndex: 10
+        }} />
       </div>
     ),
     // ImageResponse options
     {
       ...size,
     }
-  )
+  );
 }

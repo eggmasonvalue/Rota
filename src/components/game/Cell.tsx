@@ -32,12 +32,12 @@ export function Cell({ index, player, isValidMove, isSource, onClick, position }
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
-      {/* Hitbox/Background for the cell point - using Accent Color (The Forum theme) */}
+      {/* Hitbox/Background for the cell point */}
       <div className={cn(
         "w-4 h-4 rounded-full transition-all duration-300",
         isValidMove
           ? "bg-[var(--secondary)] shadow-[0_0_15px_var(--secondary)] scale-150 opacity-80"
-          : "bg-[var(--glass-border)] opacity-60 hover:opacity-100 hover:scale-125"
+          : "bg-[var(--background)] border-2 border-[var(--glass-border)] hover:scale-125 hover:border-[var(--foreground)]"
       )} />
 
       {/* Hint for valid move destination (pulsing ring) */}
