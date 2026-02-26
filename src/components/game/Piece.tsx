@@ -26,7 +26,7 @@ export function Piece({ player, isSelected }: PieceProps) {
           ? `0 0 20px 4px ${shadowColor}`
           : `0 0 10px 1px ${shadowColor}`,
         // Use a subtle border based on foreground or glass border for contrast
-        border: '1px solid rgba(255,255,255,0.3)'
+        border: '1px solid var(--glass-border)'
       }}
       className={`w-8 h-8 md:w-10 md:h-10 rounded-full ${bgColor} opacity-90`}
     />

@@ -548,7 +548,7 @@ function GameContent() {
 
         {/* Status Message - Moved closer to board */}
         <div className="text-center h-8 -mt-12 relative z-20 pointer-events-none">
-            <p className="text-foreground/90 font-heading text-xl tracking-wider animate-pulse drop-shadow-md bg-background/50 backdrop-blur-sm py-1 px-4 rounded-full inline-block">
+            <p className="text-foreground/90 font-heading text-xl tracking-wider animate-pulse drop-shadow-md">
               {state.phase === 'PLACEMENT' && "Place your pieces (3 each)"}
               {state.phase === 'MOVEMENT' && "Move a piece to an adjacent empty spot"}
             </p>

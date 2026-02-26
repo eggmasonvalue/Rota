@@ -32,18 +32,18 @@ export function Cell({ index, player, isValidMove, isSource, onClick, position }
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
-      {/* Hitbox/Background for the cell point */}
+      {/* Hitbox/Background for the cell point - ALWAYS consistent */}
       <div className={cn(
         "w-4 h-4 rounded-full transition-all duration-300",
-        isValidMove
-          ? "bg-[var(--secondary)] shadow-[0_0_15px_var(--secondary)] scale-150 opacity-80"
-          : "bg-[var(--background)] border-2 border-[var(--glass-border)] hover:scale-125 hover:border-[var(--foreground)]"
+        "bg-[var(--background)] border-2 border-[var(--glass-border)]",
+        // Only apply a subtle hover effect if not a valid move (valid moves have the ring)
+        !isValidMove && "hover:border-[var(--foreground)]"
       )} />
 
-      {/* Hint for valid move destination (pulsing ring) */}
+      {/* Hint for valid move destination (pulsing ring) - separated from node styling */}
       {isValidMove && !player && (
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-dashed border-[var(--secondary)] opacity-50"
+          className="absolute inset-0 rounded-full border-2 border-dashed border-[var(--glass-border)] opacity-60"
           animate={{ rotate: 360, scale: [1, 1.1, 1] }}
           transition={{
             rotate: { duration: 8, ease: "linear", repeat: Infinity },
