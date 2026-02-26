@@ -43,11 +43,11 @@ export function Cell({ index, player, isValidMove, isSource, onClick, position }
       {/* Hint for valid move destination (pulsing ring) - separated from node styling */}
       {isValidMove && !player && (
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-dashed border-[var(--glass-border)] opacity-60"
-          animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-dashed border-[var(--glass-border)] opacity-60"
+          animate={{ rotate: 360, scale: [1, 1.2, 1] }}
           transition={{
             rotate: { duration: 8, ease: "linear", repeat: Infinity },
-            scale: { duration: 2, repeat: Infinity }
+            scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
           }}
         />
       )}

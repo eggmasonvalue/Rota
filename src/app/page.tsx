@@ -378,7 +378,13 @@ function GameContent() {
   // Helper for game over messages
   const getWinMessage = () => {
       if (state.gameMode !== 'HvC') {
-         return state.winner === 'PLAYER1' ? 'PLAYER 1 WINS' : 'PLAYER 2 WINS';
+         // Rotating victory messages for PVP
+         const quotes = [
+            "The Senate acknowledges your triumph.",
+            "Rome salutes the victor.",
+            "Glory to the winner."
+         ];
+         return quotes[state.history.length % quotes.length];
       }
 
       // Solo Mode Custom Messages
@@ -394,7 +400,12 @@ function GameContent() {
 
   const getLossMessage = () => {
       if (state.gameMode !== 'HvC') {
-         return state.winner === 'PLAYER1' ? 'PLAYER 1 WINS' : 'PLAYER 2 WINS';
+         const quotes = [
+            "The Senate acknowledges the victor.",
+            "A hard-fought battle in the Forum.",
+            "Fate has favored the bold."
+         ];
+         return quotes[state.history.length % quotes.length];
       }
 
       // Solo Mode Custom Messages
@@ -561,13 +572,27 @@ function GameContent() {
       {/* Game Over Modal */}
       <Modal isOpen={state.phase === 'GAME_OVER'}>
         <div className="flex flex-col gap-6 items-center p-4">
-            <h2 className="text-5xl font-heading font-bold mb-2 tracking-widest text-center">
-                {state.winner === 'PLAYER1' && <span className="text-primary drop-shadow-[0_0_15px_var(--color-primary)]">
-                  {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 1 WINS' : 'VICTORY'}
-                </span>}
-                {state.winner === 'PLAYER2' && <span className={state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? "text-secondary drop-shadow-[0_0_15px_var(--color-secondary)]" : "text-foreground/50"}>
-                  {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 2 WINS' : 'DEFEAT'}
-                </span>}
+            <h2 className="text-5xl font-heading font-bold mb-2 tracking-widest text-center flex items-center justify-center gap-2">
+                {state.winner === 'PLAYER1' && (
+                  state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? (
+                     <span className="text-primary drop-shadow-[0_0_15px_var(--color-primary)]">
+                        PLAYER <span className="inline-block scale-110 drop-shadow-[0_0_25px_var(--color-primary)] font-black mx-1">1</span> WINS
+                     </span>
+                  ) : (
+                     <span className="text-primary drop-shadow-[0_0_15px_var(--color-primary)]">VICTORY</span>
+                  )
+                )}
+
+                {state.winner === 'PLAYER2' && (
+                   state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? (
+                     <span className="text-secondary drop-shadow-[0_0_15px_var(--color-secondary)]">
+                        PLAYER <span className="inline-block scale-110 drop-shadow-[0_0_25px_var(--color-secondary)] font-black mx-1">2</span> WINS
+                     </span>
+                   ) : (
+                     <span className="text-foreground/50">DEFEAT</span>
+                   )
+                )}
+
                 {state.winner === 'DRAW' && <span className="text-foreground/80">STALEMATE</span>}
             </h2>
             <div className="w-full h-px bg-gradient-to-r from-transparent via-[var(--glass-border)] to-transparent" />

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Merriweather } from "next/font/google";
+import { Marcellus, Merriweather } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { JsonLd } from "@/components/JsonLd";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
+const marcellus = Marcellus({
   variable: "--font-heading",
-  weight: ["400", "600", "700"],
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -69,7 +69,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${cormorant.variable} ${merriweather.variable} antialiased bg-[var(--background)] text-[var(--foreground)] font-[family-name:var(--font-body)]`}
+        className={`${marcellus.variable} ${merriweather.variable} antialiased bg-[var(--background)] text-[var(--foreground)] font-[family-name:var(--font-body)]`}
       >
         <JsonLd data={jsonLd} />
         <ServiceWorkerRegister />
