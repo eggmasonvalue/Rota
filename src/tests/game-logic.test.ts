@@ -6,7 +6,7 @@ import {
   getNextPlayer,
   GameState,
   INITIAL_STATE
-} from './game-logic';
+} from '../lib/game-logic';
 
 describe('Game Logic', () => {
   describe('checkWin', () => {

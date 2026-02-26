@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getBestMove } from './ai';
-import { GameState, INITIAL_STATE, Difficulty } from './game-logic';
+import { getBestMove } from '../lib/ai';
+import { GameState, INITIAL_STATE, Difficulty } from '../lib/game-logic';
 
 describe('AI Logic', () => {
   const difficulties: Difficulty[] = ['PLEBEIAN', 'MERCHANT', 'EQUES', 'SENATOR', 'CONSUL'];
