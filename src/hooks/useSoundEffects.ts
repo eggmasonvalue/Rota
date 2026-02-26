@@ -4,7 +4,13 @@ import { useState, useEffect, useCallback, useRef } from 'react';
  * A custom hook to synthesize game sounds using the Web Audio API.
  * No external audio files are required.
  *
- * Theme: "Imperial Senate" - Sounds should be heavy, resonant, and stone-like.
+ * Theme: "The Forum" (Warm Stone)
+ * Audio Profile:
+ * - Placement: Heavy Travertine stone thud (Low freq impact + short grit)
+ * - Movement: Gritty stone-on-stone slide (Filtered noise + rumble)
+ * - Victory: Roman Fanfare (Brass-like Sawtooth waves)
+ * - Defeat: Solemn Dissonance (Low frequency, minor/diminished intervals)
+ * - UI Click: Sharp pebble tap
  */
 export function useSoundEffects() {
   const [muted, setMuted] = useState(false);
@@ -36,7 +42,7 @@ export function useSoundEffects() {
     });
   }, []);
 
-  // Helper to create a simple oscillator-based sound
+  // Helper: Play a simple tone
   const playTone = useCallback((frequency: number, type: OscillatorType, duration: number, volume: number = 0.1, rampType: 'linear' | 'exponential' = 'exponential') => {
     if (muted) return;
     initAudio();
@@ -51,7 +57,7 @@ export function useSoundEffects() {
 
     // Envelope
     gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.02); // Fast attack
+    gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.01); // Fast attack
     if (rampType === 'exponential') {
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
     } else {
@@ -65,48 +71,74 @@ export function useSoundEffects() {
     osc.stop(ctx.currentTime + duration);
   }, [muted, initAudio]);
 
-  // Specific Game Sounds aligned with "Imperial Senate" theme
-
+  // ------------------------------------------------------------------
+  // 1. PLACEMENT: Heavy Stone Thud
+  // ------------------------------------------------------------------
   const playPlace = useCallback(() => {
-    // Heavy, dull thud - like placing a heavy stone piece on marble
-    // Low frequency sine wave with very short decay
     if (muted) return;
     initAudio();
     if (!audioContextRef.current) return;
 
     const ctx = audioContextRef.current;
+    const t = ctx.currentTime;
+
+    // A. The Thud (Low Triangle Wave)
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    // Use a mix of low sine and filtered noise if possible, but keeping it simple with oscillators
-    // A low triangle wave gives a bit more texture than sine
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(80, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1); // Pitch drop for weight
+    osc.frequency.setValueAtTime(60, t); // Start low
+    osc.frequency.exponentialRampToValueAtTime(30, t + 0.15); // Drop lower for weight impact
 
-    gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.01); // Sharp attack
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2); // Short decay
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.5, t + 0.02); // Sharp attack
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3); // Short decay
 
     osc.connect(gain);
     gain.connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.3);
 
-    osc.start();
-    osc.stop(ctx.currentTime + 0.2);
+    // B. The "Click" of contact (High pass noise burst)
+    // Simulates the stone surface hitting
+    const noiseBufferSize = ctx.sampleRate * 0.05; // 50ms
+    const buffer = ctx.createBuffer(1, noiseBufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < noiseBufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+    }
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'highpass';
+    noiseFilter.frequency.value = 1000; // Only high freqs for the "tick"
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.1, t);
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    noise.start(t);
+
   }, [muted, initAudio]);
 
+
+  // ------------------------------------------------------------------
+  // 2. MOVEMENT: Gritty Stone Slide
+  // ------------------------------------------------------------------
   const playMove = useCallback(() => {
-    // Stone sliding on stone: needs friction texture (filtered noise) + heavy base
-    // This sounds more like a "shhh-clunk" or a heavy drag
     if (muted) return;
     initAudio();
     if (!audioContextRef.current) return;
 
     const ctx = audioContextRef.current;
-    const duration = 0.25;
+    const t = ctx.currentTime;
+    const duration = 0.35; // Slightly longer drag
 
-    // 1. Friction Noise (The "Slide")
-    // Create a buffer with white noise
+    // A. Friction Noise (The "Grind")
     const bufferSize = ctx.sampleRate * duration;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -117,63 +149,79 @@ export function useSoundEffects() {
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
 
-    // Filter the noise to make it sound like stone (low-pass + band-pass characteristics)
+    // Bandpass filter to isolate "stone scraping" frequencies
     const noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.setValueAtTime(400, ctx.currentTime); // Center around 400Hz for "rough stone"
-    noiseFilter.Q.value = 1.0; // Moderate resonance
+    noiseFilter.frequency.setValueAtTime(350, t);
+    noiseFilter.Q.value = 2.0; // Sharper resonance for "grit"
 
     const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0, ctx.currentTime);
-    noiseGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05); // Fade in
-    noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration); // Fade out
+    noiseGain.gain.setValueAtTime(0, t);
+    noiseGain.gain.linearRampToValueAtTime(0.12, t + 0.05); // Fade in
+    noiseGain.gain.linearRampToValueAtTime(0, t + duration); // Fade out
 
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(ctx.destination);
+    noise.start(t);
 
-    // 2. Low Frequency Rumble (The Weight)
+    // B. Low Frequency Rumble (The Mass)
     const rumble = ctx.createOscillator();
     const rumbleGain = ctx.createGain();
 
-    rumble.type = 'sine';
-    rumble.frequency.setValueAtTime(60, ctx.currentTime); // Deep rumble
-    rumble.frequency.linearRampToValueAtTime(40, ctx.currentTime + duration); // Pitch down
+    rumble.type = 'sawtooth'; // Sawtooth has more harmonics/roughness than sine
+    rumble.frequency.setValueAtTime(45, t);
+    rumble.frequency.linearRampToValueAtTime(30, t + duration); // Pitch down as it settles
 
-    rumbleGain.gain.setValueAtTime(0, ctx.currentTime);
-    rumbleGain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.05);
-    rumbleGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+    // Lowpass filter to tame the sawtooth harshness, keeping only the rumble
+    const rumbleFilter = ctx.createBiquadFilter();
+    rumbleFilter.type = 'lowpass';
+    rumbleFilter.frequency.value = 120;
 
-    rumble.connect(rumbleGain);
+    rumbleGain.gain.setValueAtTime(0, t);
+    rumbleGain.gain.linearRampToValueAtTime(0.15, t + 0.05);
+    rumbleGain.gain.linearRampToValueAtTime(0, t + duration);
+
+    rumble.connect(rumbleFilter);
+    rumbleFilter.connect(rumbleGain);
     rumbleGain.connect(ctx.destination);
+    rumble.start(t);
+    rumble.stop(t + duration);
 
-    // Start everything
-    noise.start();
-    rumble.start();
-    rumble.stop(ctx.currentTime + duration);
   }, [muted, initAudio]);
 
+
+  // ------------------------------------------------------------------
+  // 3. VICTORY: Roman Fanfare (Brass Simulation)
+  // ------------------------------------------------------------------
   const playWin = useCallback(() => {
-    // Triumphant, resonant chord (Major) - but ancient/solemn
-    // C Major Chord: C4, E4, G4
-    // Using sine waves for a pure, bell-like quality (senate bells/fanfare)
     if (muted) return;
     initAudio();
 
-    const playNote = (freq: number, startTime: number, duration: number) => {
+    const playBrassNote = (freq: number, startTime: number, duration: number) => {
         if (!audioContextRef.current) return;
         const ctx = audioContextRef.current;
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
 
-        osc.type = 'sine';
+        osc.type = 'sawtooth'; // Rich in harmonics, like brass
         osc.frequency.setValueAtTime(freq, startTime);
 
+        // Filter envelope: "Wah" opening sound of brass
+        filter.type = 'lowpass';
+        filter.Q.value = 1;
+        filter.frequency.setValueAtTime(freq, startTime);
+        filter.frequency.exponentialRampToValueAtTime(freq * 3, startTime + 0.1); // Open up
+        filter.frequency.exponentialRampToValueAtTime(freq, startTime + duration); // Close down
+
+        // Amp envelope
         gain.gain.setValueAtTime(0, startTime);
-        gain.gain.linearRampToValueAtTime(0.2, startTime + 0.1);
+        gain.gain.linearRampToValueAtTime(0.15, startTime + 0.05);
         gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
-        osc.connect(gain);
+        osc.connect(filter);
+        filter.connect(gain);
         gain.connect(ctx.destination);
 
         osc.start(startTime);
@@ -182,29 +230,33 @@ export function useSoundEffects() {
 
     if (audioContextRef.current) {
         const now = audioContextRef.current.currentTime;
-        playNote(523.25, now, 1.5);       // C5
-        playNote(659.25, now + 0.1, 1.5); // E5
-        playNote(783.99, now + 0.2, 2.0); // G5 (sustained)
+        // C Major Fanfare
+        playBrassNote(523.25, now, 0.4);       // C5 (short)
+        playBrassNote(659.25, now + 0.2, 0.4); // E5 (short)
+        playBrassNote(783.99, now + 0.4, 0.6); // G5 (medium)
+        playBrassNote(1046.50, now + 0.6, 2.0); // C6 (long, triumphant)
     }
   }, [muted, initAudio]);
 
+
+  // ------------------------------------------------------------------
+  // 4. DEFEAT: Solemn Dissonance (Low Strings/Drones)
+  // ------------------------------------------------------------------
   const playLoss = useCallback(() => {
-    // Solemn, dissonant chord (Diminished or Minor)
-    // C Minor: C4, Eb4, G4 - slow and low
     if (muted) return;
     initAudio();
 
-    const playNote = (freq: number, startTime: number, duration: number) => {
+    const playDroneNote = (freq: number, startTime: number, duration: number) => {
         if (!audioContextRef.current) return;
         const ctx = audioContextRef.current;
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
-        osc.type = 'triangle'; // Mellower, sadder tone
+        osc.type = 'triangle'; // Mellow, solemn
         osc.frequency.setValueAtTime(freq, startTime);
 
         gain.gain.setValueAtTime(0, startTime);
-        gain.gain.linearRampToValueAtTime(0.15, startTime + 0.2); // Slower attack
+        gain.gain.linearRampToValueAtTime(0.15, startTime + 0.5); // Slow swell
         gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
         osc.connect(gain);
@@ -216,23 +268,26 @@ export function useSoundEffects() {
 
     if (audioContextRef.current) {
         const now = audioContextRef.current.currentTime;
-        playNote(261.63, now, 2.0);       // C4
-        playNote(311.13, now + 0.1, 2.0); // Eb4
-        playNote(392.00, now + 0.2, 2.0); // G4
-        // Add a dissonant tritone for defeat? Maybe too harsh. Stick to minor.
+        // C Minor / Diminished feel - Low and ominous
+        playDroneNote(130.81, now, 2.5); // C3
+        playDroneNote(155.56, now + 0.1, 2.5); // Eb3
+        playDroneNote(185.00, now + 0.2, 2.5); // Gb3 (Diminished 5th - tension)
     }
   }, [muted, initAudio]);
 
+
+  // ------------------------------------------------------------------
+  // 5. MISC
+  // ------------------------------------------------------------------
   const playDraw = useCallback(() => {
-      // Neutral, unresolved sound
-      // Two notes a whole tone apart
-      playTone(300, 'sine', 0.5, 0.15, 'linear');
-      setTimeout(() => playTone(300, 'sine', 0.5, 0.15, 'linear'), 200);
+      // Neutral un-resolving tone
+      playTone(330, 'sine', 0.6, 0.1, 'linear'); // E4
+      setTimeout(() => playTone(330, 'sine', 0.6, 0.1, 'linear'), 150);
   }, [playTone]);
 
   const playClick = useCallback(() => {
-    // A clean, sharp click for UI - like a light stone tap
-    playTone(1200, 'sine', 0.05, 0.03, 'exponential');
+    // Sharp "Pebble" click - high pitch sine with instant decay
+    playTone(1800, 'sine', 0.04, 0.03, 'exponential');
   }, [playTone]);
 
   return {
