@@ -4,35 +4,56 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
-  --color-primary-bright: var(--primary-bright); /* Added this */
+  --color-primary-bright: var(--primary-bright);
   --color-secondary: var(--secondary);
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
 
-  --font-marcellus: var(--font-marcellus);
-  --font-lora: var(--font-lora);
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
 
 :root {
-  --background: #1A1A2E; /* Deep Marble / Slate */
-  --foreground: #E0E0E0; /* Marble White */
+  /* THE FORUM (Warm Stone) - LIGHT MODE DEFAULT */
+  --background: #F5F0E6; /* Warm Sand */
+  --foreground: #333333; /* Dark Charcoal */
 
-  --primary: #66023C; /* Tyrian Purple - Good for pieces */
-  --primary-bright: #D02090; /* Violet Red - Good for text highlights */
-  --secondary: #D4AF37; /* Imperial Gold */
+  --primary: #9C382F; /* Pompeii Red */
+  --primary-bright: #B54238; /* Slightly brighter for active states */
+  --secondary: #2C5D8F; /* Mediterranean Blue */
 
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(212, 175, 55, 0.2);
+  /* Accent color from mockup used for borders/UI elements */
+  --glass-border: #5D5C43; /* Bronze / Olive */
+  --glass-bg: rgba(93, 92, 67, 0.05); /* Very subtle tint of the accent */
+
+  --font-heading: 'Marcellus', serif;
+  --font-body: 'Merriweather', serif;
+}
+
+/* DARK MODE OVERRIDE */
+.dark {
+  /* THE FORUM (Warm Stone) - DARK MODE */
+  --background: #2C241B; /* Dark Earth */
+  --foreground: #E8DCC4; /* Light Sand text */
+
+  --primary: #C24538; /* Bright Terracotta */
+  --primary-bright: #D65A4C;
+  --secondary: #4A8BC2; /* Bright Lapis */
+
+  /* Accent */
+  --glass-border: #8C8A6B; /* Light Olive */
+  --glass-bg: rgba(140, 138, 107, 0.1); /* Subtle tint of the accent */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-lora);
+  font-family: var(--font-body);
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-marcellus);
+  font-family: var(--font-heading);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

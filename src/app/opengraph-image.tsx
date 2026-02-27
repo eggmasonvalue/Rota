@@ -1,165 +1,98 @@
-import { ImageResponse } from 'next/og'
+import { ImageResponse } from 'next/og';
 
+// Route segment config
+export const runtime = 'nodejs';
 
-export const alt = 'Rota - The Ancient Roman Game of Strategy'
+// Image metadata
+export const alt = 'Rota: The Roman Game';
 export const size = {
   width: 1200,
   height: 630,
-}
+};
 
-export const contentType = 'image/png'
+export const contentType = 'image/png';
 
-export default async function Image() {
-  let fonts: { name: string; data: ArrayBuffer; style: 'normal' | 'italic'; weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 }[] = [];
-
-  try {
-    const marcellusFont = await fetch(
-      new URL('https://fonts.gstatic.com/s/marcellus/v14/wEO_EBrOk8hQLDvIAF8FUQ.ttf', import.meta.url)
-    ).then((res) => {
-        if (!res.ok) throw new Error(`Failed to fetch Marcellus: ${res.statusText}`);
-        return res.arrayBuffer();
-    });
-
-    const loraFont = await fetch(
-      new URL('https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787weuyJG.ttf', import.meta.url)
-    ).then((res) => {
-        if (!res.ok) throw new Error(`Failed to fetch Lora: ${res.statusText}`);
-        return res.arrayBuffer();
-    });
-
-    fonts = [
-      {
-        name: 'Marcellus',
-        data: marcellusFont,
-        style: 'normal',
-        weight: 400,
-      },
-      {
-        name: 'Lora',
-        data: loraFont,
-        style: 'normal',
-        weight: 400,
-      },
-    ];
-  } catch (e) {
-    console.error('Font loading failed:', e);
-    // Fallback fonts will be used if this array remains empty or partial
-  }
-
-  const iconSize = 400; // Smaller than height to fit
-  const strokeWidth = iconSize * 0.02;
-  const hubSize = iconSize * 0.22;
-  const rimSize = iconSize * 0.88;
-  const dotSize = iconSize * 0.06;
+export default function Image() {
+  const strokeWidth = 6;
+  const dotSize = 24;
 
   return new ImageResponse(
     (
       <div
         style={{
-          background: '#1A1A2E',
+          background: '#2C241B', // Dark Earth
           width: '100%',
           height: '100%',
           display: 'flex',
-          flexDirection: 'row',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '40px',
+          fontFamily: 'serif',
         }}
       >
-        {/* Imperial Wheel Icon */}
-        <div
-            style={{
-                width: iconSize,
-                height: iconSize,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}
-        >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
+            {/* Game Board Graphic */}
             <div
                 style={{
-                    width: rimSize,
-                    height: rimSize,
+                    width: '300px',
+                    height: '300px',
                     borderRadius: '50%',
-                    border: `${strokeWidth * 2}px solid #D4AF37`,
+                    border: `${strokeWidth * 2}px solid #8C8A6B`, // Light Olive
+                    position: 'relative',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    position: 'relative',
                 }}
             >
                 {/* Spokes */}
-                <div style={{ position: 'absolute', width: strokeWidth, height: '100%', background: '#D4AF37' }} />
-                <div style={{ position: 'absolute', width: '100%', height: strokeWidth, background: '#D4AF37' }} />
-                <div style={{ position: 'absolute', width: strokeWidth, height: '100%', background: '#D4AF37', transform: 'rotate(45deg)' }} />
-                <div style={{ position: 'absolute', width: strokeWidth, height: '100%', background: '#D4AF37', transform: 'rotate(-45deg)' }} />
+                <div style={{ position: 'absolute', width: strokeWidth, height: '100%', background: '#8C8A6B' }} />
+                <div style={{ position: 'absolute', width: '100%', height: strokeWidth, background: '#8C8A6B' }} />
+                <div style={{ position: 'absolute', width: strokeWidth, height: '100%', background: '#8C8A6B', transform: 'rotate(45deg)' }} />
+                <div style={{ position: 'absolute', width: strokeWidth, height: '100%', background: '#8C8A6B', transform: 'rotate(-45deg)' }} />
 
-                {/* Center Hub */}
-                <div
-                    style={{
-                        width: hubSize,
-                        height: hubSize,
+                {/* Center Piece */}
+                <div style={{
+                        position: 'absolute',
+                        width: '60px', height: '60px',
                         borderRadius: '50%',
-                        background: '#66023C',
-                        border: `${strokeWidth}px solid #D4AF37`,
-                        zIndex: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                     <div style={{
-                         width: '70%',
-                         height: '70%',
-                         borderRadius: '50%',
-                         background: 'rgba(255,255,255,0.1)',
-                     }} />
-                </div>
+                        background: '#C24538', // Pompeii Red
+                        border: `${strokeWidth}px solid #8C8A6B`,
+                        zIndex: 10
+                }} />
 
-                {/* Decorative Dots */}
-                <div style={{ position: 'absolute', top: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#D4AF37' }} />
-                <div style={{ position: 'absolute', bottom: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#D4AF37' }} />
-                <div style={{ position: 'absolute', left: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#D4AF37' }} />
-                <div style={{ position: 'absolute', right: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#D4AF37' }} />
+                {/* Decorative Dots on rim */}
+                <div style={{ position: 'absolute', top: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
+                <div style={{ position: 'absolute', bottom: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
+                <div style={{ position: 'absolute', left: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
+                <div style={{ position: 'absolute', right: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
             </div>
-        </div>
 
-        {/* Text */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-          }}
-        >
-          <div
-            style={{
-              fontSize: 120,
-              fontFamily: fonts.length > 0 ? 'Marcellus' : 'serif',
-              color: '#D4AF37',
-              lineHeight: 1,
-            }}
-          >
-            ROTA
-          </div>
-          <div
-            style={{
-              fontSize: 48,
-              fontFamily: fonts.length > 0 ? 'Lora' : 'serif',
-              color: '#D4AF37',
-              marginTop: 10,
-              opacity: 0.9,
-            }}
-          >
-            Imperial Senate
-          </div>
+            {/* Text Content */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <div style={{
+                    fontSize: 120,
+                    color: '#8C8A6B', // Light Olive
+                    fontWeight: 'bold',
+                    letterSpacing: '0.1em',
+                    lineHeight: 1,
+                    marginBottom: 20
+                }}>
+                    ROTA
+                </div>
+                <div style={{
+                    fontSize: 40,
+                    color: '#8C8A6B',
+                    letterSpacing: '0.05em',
+                    opacity: 0.8
+                }}>
+                    THE ROMAN GAME
+                </div>
+            </div>
         </div>
       </div>
     ),
     {
       ...size,
-      fonts: fonts.length > 0 ? fonts : undefined,
     }
-  )
+  );
 }

@@ -1,7 +1,7 @@
 # Rota Web App - Overview
 
 ## Project Vision
-To deliver a high-fidelity, interactive implementation of **Rota**, an ancient Roman strategy game, optimized for the 2026 web ecosystem. The project emphasizes a "Modern Antiquity" aesthetic—blending classical Roman visual cues (Marcellus typography, Tyrian Purple/Imperial Gold palette) with advanced web technologies (Next.js 16, Tailwind v4, Framer Motion 12).
+To deliver a high-fidelity, interactive implementation of **Rota**, an ancient Roman strategy game, optimized for the 2026 web ecosystem. The project emphasizes a "Modern Antiquity" aesthetic—blending classical Roman visual cues (Marcellus typography, Warm Stone palette) with advanced web technologies (Next.js 16, Tailwind v4, Framer Motion 12).
 
 ## Core Gameplay Mechanics
 Rota is a simplified relative of Nine Men's Morris, played on a circular board with 8 outer points and 1 central point (9 total).
@@ -13,7 +13,7 @@ Rota is a simplified relative of Nine Men's Morris, played on a circular board w
 
 ## Game Modes
 - **Local (HvH):** Pass-and-play on a single device.
-- **Vs CPU (HvC):** Single-player against a Minimax-driven AI with selectable difficulty.
+- **Vs CPU (HvC):** Single-player against a Minimax-driven AI with 5 selectable difficulty levels (`PLEBEIAN` to `CONSUL`).
 - **Online (BETA):** Real-time multiplayer using Supabase Channels.
 
 ## Technical Philosophy
@@ -21,6 +21,7 @@ Rota is a simplified relative of Nine Men's Morris, played on a circular board w
 - **Synchronized State:** Multiplayer relies on a "Broadcast and Sync" pattern via Supabase Realtime, with role determination based on presence-joining timestamps.
 - **Declarative Aesthetics:** All UI states and transitions are driven by React and Framer Motion, avoiding imperative DOM manipulation for a more maintainable codebase.
 - **Synthesized Audio:** Game sound effects are procedurally generated using the Web Audio API, avoiding external asset dependencies and ensuring instant load times while maintaining the "Imperial Senate" theme.
+- **Testable Architecture:** Unit tests for game logic and AI are strictly separated in `src/tests/` to maintain clean separation of concerns.
 
 ## Future Considerations
 - **Haptics:** Deferred until iOS WebKit provides robust support for the Vibration API.

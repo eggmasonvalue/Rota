@@ -1,15 +1,21 @@
 # Rota Web App
 
-A modern, visually stunning implementation of the ancient Roman game **Rota**, built with Next.js 16, Tailwind CSS v4, and Framer Motion. The design features an **"Imperial Senate"** aesthetic, blending classical Roman elements with modern glassmorphism.
+A modern, visually stunning implementation of the ancient Roman game **Rota**, built with Next.js 16, Tailwind CSS v4, and Framer Motion. The design features a **"The Forum"** aesthetic, blending classical Roman elements (Marcellus typography, Warm Stone palette) with modern glassmorphism.
 
 ## Features
 
-- **Imperial Senate Theme:** A rich visual experience using Tyrian Purple (#66023C) and Imperial Gold (#D4AF37) on a Deep Marble background.
+- **The Forum Theme:** A rich visual experience using Pompeii Red (#9C382F) and Mediterranean Blue (#2C5D8F) on a Warm Stone background.
 - **Game Modes:**
-  - **Human vs CPU:** Challenge a Minimax-powered AI with three difficulty levels (Novice, Legionary, Senator). AI calculations run in a Web Worker for non-blocking performance.
+  - **Human vs CPU:** Challenge a Minimax-powered AI with five distinct difficulty levels:
+    - **Plebeian:** Basic moves, prone to error.
+    - **Merchant:** Simple strategy.
+    - **Eques:** Balanced challenge.
+    - **Senator:** Strong tactical play.
+    - **Consul:** Master-level foresight (Depth 4).
   - **Human vs Human:** Play against a friend on the same device.
-- **Fluid Animations:** Smooth, 60fps transitions for piece placement and movement using Framer Motion.
-- **Responsive Design:** Optimized for both desktop and mobile play.
+  - **Online Multiplayer (Beta):** Play remotely via shareable links (Supabase Realtime).
+- **Fluid Animations:** Smooth, 120fps transitions for piece placement and movement using Framer Motion.
+- **Responsive Design:** Optimized for both desktop and mobile play with PWA support.
 
 ## Tech Stack
 
@@ -18,7 +24,7 @@ A modern, visually stunning implementation of the ancient Roman game **Rota**, b
 - **Styling:** Tailwind CSS v4 (Native CSS variables)
 - **Animation:** Framer Motion 12
 - **State Management:** React `useReducer`
-- **Testing:** Vitest
+- **Testing:** Vitest (Unit tests in `src/tests/`)
 - **Performance:** Web Workers for AI computation
 
 ## Getting Started

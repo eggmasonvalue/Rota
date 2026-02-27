@@ -1,32 +1,32 @@
 import type { Metadata } from "next";
-import { Marcellus, Lora } from "next/font/google";
+import { Marcellus, Merriweather } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { JsonLd } from "@/components/JsonLd";
 import "./globals.css";
 
 const marcellus = Marcellus({
-  variable: "--font-marcellus",
+  variable: "--font-heading",
   weight: "400",
   subsets: ["latin"],
 });
 
-const lora = Lora({
-  variable: "--font-lora",
+const merriweather = Merriweather({
+  variable: "--font-body",
+  weight: ["300", "400", "700"],
   subsets: ["latin"],
-  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://rota-roman-game.netlify.app"),
-  title: "Rota - Imperial Senate | Ancient Roman Strategy Game",
-  description: "Play Rota, the classic Roman strategy game of 'Terni Lapilli'. Challenge the CPU or a friend in this atmospheric, Imperial-themed board game.",
+  title: "Rota - The Game of Rome | Ancient Strategy Game",
+  description: "Play Rota, the classic Roman strategy game. Rise from Plebeian to Consul in this atmospheric board game.",
   keywords: ["Rota", "Roman Game", "Terni Lapilli", "Strategy Game", "Abstract Board Game", "Ancient Roman Games", "Tic Tac Toe", "Three Mens Morris"],
   alternates: {
     canonical: 'https://rota-roman-game.netlify.app',
   },
   openGraph: {
-    title: "Rota - Imperial Senate",
+    title: "Rota - The Game of Rome",
     description: "Outsmart your opponent in this classic game of strategy from the Roman Empire.",
     url: "https://rota-roman-game.netlify.app",
     siteName: "Rota Roman Game",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Rota - Imperial Senate",
+    title: "Rota - The Game of Rome",
     description: "Experience the ancient Roman game of Rota. Simple rules, deep strategy.",
   },
   verification: {
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Game",
-  "name": "Rota - Imperial Senate",
+  "name": "Rota - The Game of Rome",
   "description": "An online version of the ancient Roman board game Rota (Terni Lapilli).",
   "genre": ["Board Game", "Strategy", "Abstract"],
   "url": "https://rota-roman-game.netlify.app",
@@ -69,7 +69,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${marcellus.variable} ${lora.variable} antialiased bg-[var(--background)] text-[var(--foreground)] font-[family-name:var(--font-lora)]`}
+        className={`${marcellus.variable} ${merriweather.variable} antialiased bg-[var(--background)] text-[var(--foreground)] font-[family-name:var(--font-body)]`}
       >
         <JsonLd data={jsonLd} />
         <ServiceWorkerRegister />

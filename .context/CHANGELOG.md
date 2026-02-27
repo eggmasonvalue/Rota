@@ -1,13 +1,22 @@
 # Changelog
 
 ## [Unreleased]
-- **Soundscape:** Implemented procedural audio synthesis for game actions (Placement, Movement, Win/Loss/Draw) and UI interactions. Sounds are designed to fit the "Imperial Senate" theme (stone thuds, sliding clacks).
+- **Theme Overhaul:** Replaced "Imperial Senate" (Tyrian Purple) with "The Forum" (Warm Stone / Pompeii Red) theme. Implemented light/dark mode support with semantic CSS variables.
+- **Typography:** Updated to `Marcellus` for headings and `Merriweather` for body text.
+- **AI Upgrade:** Expanded AI to 5 distinct difficulty levels (`PLEBEIAN`, `MERCHANT`, `EQUES`, `SENATOR`, `CONSUL`) with varying depth and strategic weighting.
+- **UI Polish:**
+    - Resized breathing circle indicators to match piece dimensions.
+    - Implemented rotating victory quotes for PvP modes.
+    - Added "smudge" highlight effect to victory numbers.
+    - Removed obstructive glass containers from instruction text.
+- **Code Quality:**
+    - Moved unit tests to a dedicated `src/tests/` directory.
+    - Fixed hardcoded colors in generated assets (`icon.tsx`, `manifest.ts`, etc.).
+- **Soundscape:** Implemented procedural audio synthesis for game actions (Placement, Movement, Win/Loss/Draw) and UI interactions. Sounds are designed to fit the theme (stone thuds, sliding clacks).
 - **Haptics:** Deferred implementation until iOS WebKit provides robust support for the Vibration API.
 - Integrated Supabase Realtime for Online Multiplayer (BETA).
 - Added `useOnlineGame` hook to manage synchronized game state.
-- Refined UI theme to "Imperial Senate" (Tyrian Purple & Gold) from generic Glassmorphism.
 - Implemented "Human vs Human" (HvH) game mode for local multiplayer.
-- Updated typography to Marcellus (headings) and Lora (body).
 - Optimized animation performance with Framer Motion.
 
 ## [0.1.1] - 2026-02-18

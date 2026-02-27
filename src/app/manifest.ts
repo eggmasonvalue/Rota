@@ -1,31 +1,30 @@
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Rota - Imperial Senate',
+    name: 'Rota: The Roman Game',
     short_name: 'Rota',
-    description: 'A classic Roman game strategy game with an Imperial aesthetic.',
+    description: 'Play the ancient Roman game of Rota against AI or friends.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#1A1A2E',
-    theme_color: '#66023C',
+    background_color: '#2C241B', // Dark Earth (Warm Stone Theme)
+    theme_color: '#C24538', // Pompeii Red (Warm Stone Theme)
     icons: [
       {
-        src: '/pwa-icon?size=192&v=2',
+        src: '/favicon.ico',
+        sizes: 'any',
+        type: 'image/x-icon',
+      },
+      {
+        src: '/pwa-icon?size=192',
         sizes: '192x192',
         type: 'image/png',
       },
       {
-        src: '/pwa-icon?size=512&v=2',
+        src: '/pwa-icon?size=512',
         sizes: '512x512',
         type: 'image/png',
-      },
-      {
-        src: '/pwa-icon?size=512&v=2',
-        sizes: '512x512',
-        type: 'image/png',
-        purpose: 'maskable',
       },
     ],
-  }
+  };
 }
