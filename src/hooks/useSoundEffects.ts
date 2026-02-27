@@ -72,76 +72,51 @@ export function useSoundEffects() {
   }, [muted, initAudio]);
 
   // ------------------------------------------------------------------
-  // 1. PLACEMENT: Wood Clack (High & Dry)
+  // 1. PLACEMENT: Original Stone Thud
   // ------------------------------------------------------------------
   const playPlace = useCallback(() => {
+    // Heavy, dull thud - like placing a heavy stone piece on marble
+    // Low frequency sine wave with very short decay
     if (muted) return;
     initAudio();
     if (!audioContextRef.current) return;
 
     const ctx = audioContextRef.current;
-    const t = ctx.currentTime;
-
-    // A. The "Knock" (Wood Resonance)
-    // Triangle wave for harmonic content, starting high and staying mid-range
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
+    // Use a mix of low sine and filtered noise if possible, but keeping it simple with oscillators
+    // A low triangle wave gives a bit more texture than sine
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(2500, t); // Start very high (snap)
-    osc.frequency.exponentialRampToValueAtTime(800, t + 0.03); // Quick drop to body resonance
+    osc.frequency.setValueAtTime(80, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1); // Pitch drop for weight
 
-    gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(0.25, t + 0.002); // Instant attack
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06); // Extremely short decay (dry wood)
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.01); // Sharp attack
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2); // Short decay
 
     osc.connect(gain);
     gain.connect(ctx.destination);
-    osc.start(t);
-    osc.stop(t + 0.08);
 
-    // B. The "Click" (High-frequency Texture)
-    // Filtered noise to simulate surface impact
-    const noiseBufferSize = ctx.sampleRate * 0.05;
-    const buffer = ctx.createBuffer(1, noiseBufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < noiseBufferSize; i++) {
-        data[i] = Math.random() * 2 - 1;
-    }
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    // Bandpass focused on high-mids (wood snap)
-    const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.value = 2200;
-    noiseFilter.Q.value = 0.8;
-
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.5, t);
-    noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
-
-    noise.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
-    noiseGain.connect(ctx.destination);
-    noise.start(t);
-
+    osc.start();
+    osc.stop(ctx.currentTime + 0.2);
   }, [muted, initAudio]);
 
-
   // ------------------------------------------------------------------
-  // 2. MOVEMENT: Gritty Wood Drag
+  // 2. MOVEMENT: Original Stone Slide
   // ------------------------------------------------------------------
   const playMove = useCallback(() => {
+    // Stone sliding on stone: needs friction texture (filtered noise) + heavy base
+    // This sounds more like a "shhh-clunk" or a heavy drag
     if (muted) return;
     initAudio();
     if (!audioContextRef.current) return;
 
     const ctx = audioContextRef.current;
-    const t = ctx.currentTime;
-    const duration = 0.3; // Short drag
+    const duration = 0.25;
 
-    // Friction Noise
+    // 1. Friction Noise (The "Slide")
+    // Create a buffer with white noise
     const bufferSize = ctx.sampleRate * duration;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -152,25 +127,40 @@ export function useSoundEffects() {
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
 
-    // Filter focused on wood grain texture (mid-highs)
+    // Filter the noise to make it sound like stone (low-pass + band-pass characteristics)
     const noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.setValueAtTime(1400, t); // "Wood grain" frequency
-    noiseFilter.Q.value = 3.0; // Resonance to give it pitch
-
-    // Slight frequency modulation for uneven texture
-    noiseFilter.frequency.linearRampToValueAtTime(1200, t + duration);
+    noiseFilter.frequency.setValueAtTime(400, ctx.currentTime); // Center around 400Hz for "rough stone"
+    noiseFilter.Q.value = 1.0; // Moderate resonance
 
     const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0, t);
-    noiseGain.gain.linearRampToValueAtTime(0.2, t + 0.05); // Quick fade in
-    noiseGain.gain.linearRampToValueAtTime(0, t + duration); // Quick fade out
+    noiseGain.gain.setValueAtTime(0, ctx.currentTime);
+    noiseGain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05); // Fade in
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration); // Fade out
 
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(ctx.destination);
-    noise.start(t);
 
+    // 2. Low Frequency Rumble (The Weight)
+    const rumble = ctx.createOscillator();
+    const rumbleGain = ctx.createGain();
+
+    rumble.type = 'sine';
+    rumble.frequency.setValueAtTime(60, ctx.currentTime); // Deep rumble
+    rumble.frequency.linearRampToValueAtTime(40, ctx.currentTime + duration); // Pitch down
+
+    rumbleGain.gain.setValueAtTime(0, ctx.currentTime);
+    rumbleGain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.05);
+    rumbleGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+
+    rumble.connect(rumbleGain);
+    rumbleGain.connect(ctx.destination);
+
+    // Start everything
+    noise.start();
+    rumble.start();
+    rumble.stop(ctx.currentTime + duration);
   }, [muted, initAudio]);
 
 
