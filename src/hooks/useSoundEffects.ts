@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
  *
  * Theme: "The Forum" (Warm Stone)
  * Audio Profile:
- * - Placement: Heavy Travertine stone thud (Low freq impact + short grit)
+ * - Placement: Heavy Travertine stone impact (Matched timbre to movement, shorter duration)
  * - Movement: Gritty stone-on-stone slide (Filtered noise + rumble)
  * - Victory: Roman Fanfare (Brass-like Sawtooth waves)
  * - Defeat: Solemn Dissonance (Low frequency, minor/diminished intervals)
@@ -72,35 +72,66 @@ export function useSoundEffects() {
   }, [muted, initAudio]);
 
   // ------------------------------------------------------------------
-  // 1. PLACEMENT: Original Stone Thud
+  // 1. PLACEMENT: Stone Impact (Matched to Movement)
   // ------------------------------------------------------------------
   const playPlace = useCallback(() => {
-    // Heavy, dull thud - like placing a heavy stone piece on marble
-    // Low frequency sine wave with very short decay
     if (muted) return;
     initAudio();
     if (!audioContextRef.current) return;
 
     const ctx = audioContextRef.current;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+    const t = ctx.currentTime;
 
-    // Use a mix of low sine and filtered noise if possible, but keeping it simple with oscillators
-    // A low triangle wave gives a bit more texture than sine
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(80, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1); // Pitch drop for weight
+    // Duration: Very short, impact only (50ms)
+    const duration = 0.08;
 
-    gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.01); // Sharp attack
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2); // Short decay
+    // A. Friction Noise (Short burst, same timbre as movement)
+    const bufferSize = ctx.sampleRate * duration;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+    }
 
-    osc.connect(gain);
-    gain.connect(ctx.destination);
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
 
-    osc.start();
-    osc.stop(ctx.currentTime + 0.2);
+    // Same filter setup as 'playMove' (Bandpass 400Hz)
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.setValueAtTime(400, t);
+    noiseFilter.Q.value = 1.0;
+
+    const noiseGain = ctx.createGain();
+    // Louder initial hit for impact
+    noiseGain.gain.setValueAtTime(0, t);
+    noiseGain.gain.linearRampToValueAtTime(0.6, t + 0.005); // Instant attack
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, t + duration); // Sharp decay
+
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    noise.start(t);
+
+    // B. Low Frequency Rumble (Short "Thud", same timbre as movement)
+    const rumble = ctx.createOscillator();
+    const rumbleGain = ctx.createGain();
+
+    rumble.type = 'sine'; // Same as movement
+    rumble.frequency.setValueAtTime(60, t); // Same base freq
+    rumble.frequency.exponentialRampToValueAtTime(30, t + duration); // Pitch drop
+
+    rumbleGain.gain.setValueAtTime(0, t);
+    rumbleGain.gain.linearRampToValueAtTime(0.5, t + 0.005); // Instant attack
+    rumbleGain.gain.exponentialRampToValueAtTime(0.01, t + duration); // Sharp decay
+
+    rumble.connect(rumbleGain);
+    rumbleGain.connect(ctx.destination);
+    rumble.start(t);
+    rumble.stop(t + duration);
+
   }, [muted, initAudio]);
+
 
   // ------------------------------------------------------------------
   // 2. MOVEMENT: Original Stone Slide
