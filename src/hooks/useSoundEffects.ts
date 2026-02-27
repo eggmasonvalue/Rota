@@ -72,7 +72,7 @@ export function useSoundEffects() {
   }, [muted, initAudio]);
 
   // ------------------------------------------------------------------
-  // 1. PLACEMENT: Heavy Stone Thud
+  // 1. PLACEMENT: Sharp Stone Clack
   // ------------------------------------------------------------------
   const playPlace = useCallback(() => {
     if (muted) return;
@@ -82,26 +82,26 @@ export function useSoundEffects() {
     const ctx = audioContextRef.current;
     const t = ctx.currentTime;
 
-    // A. The Thud (Low Triangle Wave)
+    // A. The "Ping" (Higher impact resonance)
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(60, t); // Start low
-    osc.frequency.exponentialRampToValueAtTime(30, t + 0.15); // Drop lower for weight impact
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, t); // Start high for "ping"
+    osc.frequency.exponentialRampToValueAtTime(200, t + 0.05); // Rapid drop
 
     gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(0.5, t + 0.02); // Sharp attack
-    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3); // Short decay
+    gain.gain.linearRampToValueAtTime(0.3, t + 0.005); // Instant attack
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08); // Very short decay
 
     osc.connect(gain);
     gain.connect(ctx.destination);
     osc.start(t);
-    osc.stop(t + 0.3);
+    osc.stop(t + 0.1);
 
-    // B. The "Click" of contact (High pass noise burst)
+    // B. The "Clack" (Broadband burst)
     // Simulates the stone surface hitting
-    const noiseBufferSize = ctx.sampleRate * 0.05; // 50ms
+    const noiseBufferSize = ctx.sampleRate * 0.08;
     const buffer = ctx.createBuffer(1, noiseBufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < noiseBufferSize; i++) {
@@ -110,13 +110,15 @@ export function useSoundEffects() {
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
 
+    // Bandpass to focus on the "clack" range (wood/stone mid-highs)
     const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = 'highpass';
-    noiseFilter.frequency.value = 1000; // Only high freqs for the "tick"
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.value = 1200;
+    noiseFilter.Q.value = 1.0;
 
     const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.1, t);
-    noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+    noiseGain.gain.setValueAtTime(0.6, t); // Louder initial hit
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
 
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
@@ -127,7 +129,7 @@ export function useSoundEffects() {
 
 
   // ------------------------------------------------------------------
-  // 2. MOVEMENT: Gritty Stone Slide
+  // 2. MOVEMENT: Gritty Drag
   // ------------------------------------------------------------------
   const playMove = useCallback(() => {
     if (muted) return;
@@ -138,7 +140,7 @@ export function useSoundEffects() {
     const t = ctx.currentTime;
     const duration = 0.35; // Slightly longer drag
 
-    // A. Friction Noise (The "Grind")
+    // Friction Noise (The "Grind")
     const bufferSize = ctx.sampleRate * duration;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -149,44 +151,22 @@ export function useSoundEffects() {
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
 
-    // Bandpass filter to isolate "stone scraping" frequencies
+    // Filter focus on the same range as the "clack" but sustained
     const noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.setValueAtTime(350, t);
-    noiseFilter.Q.value = 2.0; // Sharper resonance for "grit"
+    noiseFilter.frequency.setValueAtTime(800, t); // Lower than the clack initial hit, but in the same "material" range
+    noiseFilter.Q.value = 4.0; // Resonant "stone" pitch
 
     const noiseGain = ctx.createGain();
     noiseGain.gain.setValueAtTime(0, t);
-    noiseGain.gain.linearRampToValueAtTime(0.12, t + 0.05); // Fade in
+    noiseGain.gain.linearRampToValueAtTime(0.25, t + 0.05); // Fade in
     noiseGain.gain.linearRampToValueAtTime(0, t + duration); // Fade out
 
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(ctx.destination);
     noise.start(t);
-
-    // B. Low Frequency Rumble (The Mass)
-    const rumble = ctx.createOscillator();
-    const rumbleGain = ctx.createGain();
-
-    rumble.type = 'sawtooth'; // Sawtooth has more harmonics/roughness than sine
-    rumble.frequency.setValueAtTime(45, t);
-    rumble.frequency.linearRampToValueAtTime(30, t + duration); // Pitch down as it settles
-
-    // Lowpass filter to tame the sawtooth harshness, keeping only the rumble
-    const rumbleFilter = ctx.createBiquadFilter();
-    rumbleFilter.type = 'lowpass';
-    rumbleFilter.frequency.value = 120;
-
-    rumbleGain.gain.setValueAtTime(0, t);
-    rumbleGain.gain.linearRampToValueAtTime(0.15, t + 0.05);
-    rumbleGain.gain.linearRampToValueAtTime(0, t + duration);
-
-    rumble.connect(rumbleFilter);
-    rumbleFilter.connect(rumbleGain);
-    rumbleGain.connect(ctx.destination);
-    rumble.start(t);
-    rumble.stop(t + duration);
+    // Removed low frequency rumble to reduce bass
 
   }, [muted, initAudio]);
 
