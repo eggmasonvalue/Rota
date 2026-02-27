@@ -72,7 +72,7 @@ export function useSoundEffects() {
   }, [muted, initAudio]);
 
   // ------------------------------------------------------------------
-  // 1. PLACEMENT: Sharp Stone Clack
+  // 1. PLACEMENT: Wood Clack (High & Dry)
   // ------------------------------------------------------------------
   const playPlace = useCallback(() => {
     if (muted) return;
@@ -82,26 +82,27 @@ export function useSoundEffects() {
     const ctx = audioContextRef.current;
     const t = ctx.currentTime;
 
-    // A. The "Ping" (Higher impact resonance)
+    // A. The "Knock" (Wood Resonance)
+    // Triangle wave for harmonic content, starting high and staying mid-range
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(800, t); // Start high for "ping"
-    osc.frequency.exponentialRampToValueAtTime(200, t + 0.05); // Rapid drop
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(2500, t); // Start very high (snap)
+    osc.frequency.exponentialRampToValueAtTime(800, t + 0.03); // Quick drop to body resonance
 
     gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(0.3, t + 0.005); // Instant attack
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08); // Very short decay
+    gain.gain.linearRampToValueAtTime(0.25, t + 0.002); // Instant attack
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06); // Extremely short decay (dry wood)
 
     osc.connect(gain);
     gain.connect(ctx.destination);
     osc.start(t);
-    osc.stop(t + 0.1);
+    osc.stop(t + 0.08);
 
-    // B. The "Clack" (Broadband burst)
-    // Simulates the stone surface hitting
-    const noiseBufferSize = ctx.sampleRate * 0.08;
+    // B. The "Click" (High-frequency Texture)
+    // Filtered noise to simulate surface impact
+    const noiseBufferSize = ctx.sampleRate * 0.05;
     const buffer = ctx.createBuffer(1, noiseBufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < noiseBufferSize; i++) {
@@ -110,15 +111,15 @@ export function useSoundEffects() {
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
 
-    // Bandpass to focus on the "clack" range (wood/stone mid-highs)
+    // Bandpass focused on high-mids (wood snap)
     const noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.value = 1200;
-    noiseFilter.Q.value = 1.0;
+    noiseFilter.frequency.value = 2200;
+    noiseFilter.Q.value = 0.8;
 
     const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.6, t); // Louder initial hit
-    noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
+    noiseGain.gain.setValueAtTime(0.5, t);
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
 
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
@@ -129,7 +130,7 @@ export function useSoundEffects() {
 
 
   // ------------------------------------------------------------------
-  // 2. MOVEMENT: Gritty Drag
+  // 2. MOVEMENT: Gritty Wood Drag
   // ------------------------------------------------------------------
   const playMove = useCallback(() => {
     if (muted) return;
@@ -138,9 +139,9 @@ export function useSoundEffects() {
 
     const ctx = audioContextRef.current;
     const t = ctx.currentTime;
-    const duration = 0.35; // Slightly longer drag
+    const duration = 0.3; // Short drag
 
-    // Friction Noise (The "Grind")
+    // Friction Noise
     const bufferSize = ctx.sampleRate * duration;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -151,22 +152,24 @@ export function useSoundEffects() {
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
 
-    // Filter focus on the same range as the "clack" but sustained
+    // Filter focused on wood grain texture (mid-highs)
     const noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.setValueAtTime(800, t); // Lower than the clack initial hit, but in the same "material" range
-    noiseFilter.Q.value = 4.0; // Resonant "stone" pitch
+    noiseFilter.frequency.setValueAtTime(1400, t); // "Wood grain" frequency
+    noiseFilter.Q.value = 3.0; // Resonance to give it pitch
+
+    // Slight frequency modulation for uneven texture
+    noiseFilter.frequency.linearRampToValueAtTime(1200, t + duration);
 
     const noiseGain = ctx.createGain();
     noiseGain.gain.setValueAtTime(0, t);
-    noiseGain.gain.linearRampToValueAtTime(0.25, t + 0.05); // Fade in
-    noiseGain.gain.linearRampToValueAtTime(0, t + duration); // Fade out
+    noiseGain.gain.linearRampToValueAtTime(0.2, t + 0.05); // Quick fade in
+    noiseGain.gain.linearRampToValueAtTime(0, t + duration); // Quick fade out
 
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(ctx.destination);
     noise.start(t);
-    // Removed low frequency rumble to reduce bass
 
   }, [muted, initAudio]);
 
