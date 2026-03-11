@@ -15,11 +15,22 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 export function useSoundEffects() {
   const [muted, setMuted] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const noiseBufferRef = useRef<AudioBuffer | null>(null);
 
   // Initialize AudioContext lazily (browsers require user interaction first)
   const initAudio = useCallback(() => {
     if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      audioContextRef.current = ctx;
+
+      // Pre-generate white noise buffer (1 second)
+      const bufferSize = ctx.sampleRate;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+      noiseBufferRef.current = buffer;
     }
     if (audioContextRef.current.state === 'suspended') {
       audioContextRef.current.resume();
@@ -86,15 +97,8 @@ export function useSoundEffects() {
     const duration = 0.08;
 
     // A. Friction Noise (Short burst, same timbre as movement)
-    const bufferSize = ctx.sampleRate * duration;
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.random() * 2 - 1;
-    }
-
     const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
+    noise.buffer = noiseBufferRef.current;
 
     // Same filter setup as 'playMove' (Bandpass 400Hz)
     const noiseFilter = ctx.createBiquadFilter();
@@ -147,16 +151,8 @@ export function useSoundEffects() {
     const duration = 0.25;
 
     // 1. Friction Noise (The "Slide")
-    // Create a buffer with white noise
-    const bufferSize = ctx.sampleRate * duration;
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.random() * 2 - 1;
-    }
-
     const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
+    noise.buffer = noiseBufferRef.current;
 
     // Filter the noise to make it sound like stone (low-pass + band-pass characteristics)
     const noiseFilter = ctx.createBiquadFilter();
