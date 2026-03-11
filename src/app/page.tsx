@@ -10,6 +10,7 @@ import { Modal } from '@/components/ui/Modal';
 import { HowToPlay } from '@/components/game/HowToPlay';
 import { useOnlineGame } from '@/hooks/useOnlineGame';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
+import { generateUUID } from '@/lib/utils';
 import { Copy, Users, Volume2, VolumeX, Sun, Moon } from 'lucide-react';
 
 function gameReducer(state: GameState, action: Action): GameState {
@@ -312,7 +313,7 @@ function GameContent() {
   const handleModeChange = (mode: GameMode) => {
     console.log(`Switching mode to: ${mode}`);
     if (mode === 'ONLINE') {
-      const newRoomId = crypto.randomUUID();
+      const newRoomId = generateUUID();
       setRoomId(newRoomId);
       router.push(`/?room=${newRoomId}`);
       dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
