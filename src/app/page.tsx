@@ -162,7 +162,6 @@ function GameContent() {
       if (/^[a-zA-Z0-9-]+$/.test(room)) {
         setRoomId(room);
         if (state.gameMode !== 'ONLINE') {
-           console.log('Detected room in URL, switching to ONLINE mode');
            dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
         }
       } else {
@@ -310,7 +309,6 @@ function GameContent() {
   }, [state, myPlayer, sendAction]);
 
   const handleModeChange = (mode: GameMode) => {
-    console.log(`Switching mode to: ${mode}`);
     if (mode === 'ONLINE') {
       const newRoomId = crypto.randomUUID();
       setRoomId(newRoomId);
@@ -319,7 +317,6 @@ function GameContent() {
     } else if (state.gameMode === 'ONLINE') {
       // If we are currently in ONLINE mode, we must force a hard reload to clear Supabase subscriptions cleanly
       setRoomId(null);
-      console.log(`Leaving ONLINE mode, forcing navigation to /?mode=${mode}`);
       window.location.href = `/?mode=${mode}`;
     } else {
       // Switching between local modes (HvC <-> HvH) - no reload needed
