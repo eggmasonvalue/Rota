@@ -4,6 +4,7 @@ import {
   checkRepetition,
   isBlocked,
   getNextPlayer,
+  getPossibleMoves,
   GameState,
   INITIAL_STATE
 } from '../lib/game-logic';
@@ -144,6 +145,80 @@ describe('Game Logic', () => {
     it('should toggle player', () => {
       expect(getNextPlayer('PLAYER1')).toBe('PLAYER2');
       expect(getNextPlayer('PLAYER2')).toBe('PLAYER1');
+    });
+  });
+
+  describe('getPossibleMoves', () => {
+    it('should return all cells during PLACEMENT on empty board', () => {
+      const state: GameState = { ...INITIAL_STATE, phase: 'PLACEMENT' };
+      const moves = getPossibleMoves(state);
+      expect(moves).toHaveLength(9);
+      moves.forEach(m => expect(m.from).toBeNull());
+    });
+
+    it('should return only empty cells during PLACEMENT', () => {
+      const board = Array(9).fill(null);
+      board[0] = 'PLAYER1';
+      board[4] = 'PLAYER2';
+      const state: GameState = { ...INITIAL_STATE, board, phase: 'PLACEMENT' };
+      const moves = getPossibleMoves(state);
+      expect(moves).toHaveLength(7);
+      expect(moves.find(m => m.to === 0)).toBeUndefined();
+      expect(moves.find(m => m.to === 4)).toBeUndefined();
+    });
+
+    it('should return valid adjacent moves during MOVEMENT', () => {
+      const board = Array(9).fill(null);
+      board[0] = 'PLAYER1'; // Adj: 1, 7, 8
+      const state: GameState = {
+        ...INITIAL_STATE,
+        board,
+        currentPlayer: 'PLAYER1',
+        phase: 'MOVEMENT'
+      };
+      const moves = getPossibleMoves(state);
+      expect(moves).toHaveLength(3);
+      expect(moves).toContainEqual({ from: 0, to: 1 });
+      expect(moves).toContainEqual({ from: 0, to: 7 });
+      expect(moves).toContainEqual({ from: 0, to: 8 });
+    });
+
+    it('should only return moves for the current player', () => {
+      const board = Array(9).fill(null);
+      board[0] = 'PLAYER1';
+      board[1] = 'PLAYER2';
+      const state: GameState = {
+        ...INITIAL_STATE,
+        board,
+        currentPlayer: 'PLAYER2',
+        phase: 'MOVEMENT'
+      };
+      const moves = getPossibleMoves(state);
+      // P2 at 1. Adj: 0, 2, 8. 0 is occupied by P1.
+      // So moves from 1 to 2 and 8.
+      expect(moves).toHaveLength(2);
+      expect(moves).toContainEqual({ from: 1, to: 2 });
+      expect(moves).toContainEqual({ from: 1, to: 8 });
+      expect(moves.every(m => m.from === 1)).toBe(true);
+    });
+
+    it('should return empty array if player is blocked', () => {
+      const board = Array(9).fill('PLAYER2');
+      board[0] = 'PLAYER1';
+      const state: GameState = {
+        ...INITIAL_STATE,
+        board,
+        currentPlayer: 'PLAYER1',
+        phase: 'MOVEMENT'
+      };
+      const moves = getPossibleMoves(state);
+      expect(moves).toHaveLength(0);
+    });
+
+    it('should return empty array during GAME_OVER', () => {
+      const state: GameState = { ...INITIAL_STATE, phase: 'GAME_OVER' };
+      const moves = getPossibleMoves(state);
+      expect(moves).toHaveLength(0);
     });
   });
 });
