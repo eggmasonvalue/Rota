@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { generateUUID } from '@/lib/utils';
 import { Action, Player } from '@/lib/game-logic';
 import { RealtimeChannel } from '@supabase/supabase-js';
 
@@ -27,7 +28,7 @@ export function useOnlineGame(
   // Initialize session ID once
   useEffect(() => {
     if (!sessionIdRef.current) {
-      sessionIdRef.current = crypto.randomUUID();
+      sessionIdRef.current = generateUUID();
       joinedAtRef.current = new Date().toISOString();
     }
   }, []);
