@@ -13,6 +13,7 @@
     - Moved unit tests to a dedicated `src/tests/` directory.
     - Fixed hardcoded colors in generated assets (`icon.tsx`, `manifest.ts`, etc.).
 - **Soundscape:** Implemented procedural audio synthesis for game actions (Placement, Movement, Win/Loss/Draw) and UI interactions. Sounds are designed to fit the theme (stone thuds, sliding clacks).
+- **Performance Optimization:** Optimized audio engine by caching noise buffers, reducing main-thread overhead during gameplay.
 - **Haptics:** Deferred implementation until iOS WebKit provides robust support for the Vibration API.
 - Integrated Supabase Realtime for Online Multiplayer (BETA).
 - Added `useOnlineGame` hook to manage synchronized game state.
