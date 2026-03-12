@@ -6,6 +6,7 @@ import {
   getNextPlayer,
   getPossibleMoves,
   isValidMovement,
+  isValidPlacement,
   GameState,
   INITIAL_STATE
 } from '../lib/game-logic';
@@ -40,6 +41,33 @@ describe('Game Logic', () => {
       board[0] = 'PLAYER1';
       // Based on ADJACENCY logic: 0 is NOT adjacent to 2
       expect(isValidMovement(board, 0, 2)).toBe(false);
+    });
+  });
+
+  describe('isValidPlacement', () => {
+    it('should return true if the cell is empty (null)', () => {
+      const board = Array(9).fill(null);
+      expect(isValidPlacement(board, 0)).toBe(true);
+      expect(isValidPlacement(board, 4)).toBe(true);
+      expect(isValidPlacement(board, 8)).toBe(true);
+    });
+
+    it('should return false if the cell is occupied by PLAYER1', () => {
+      const board = Array(9).fill(null);
+      board[0] = 'PLAYER1';
+      expect(isValidPlacement(board, 0)).toBe(false);
+    });
+
+    it('should return false if the cell is occupied by PLAYER2', () => {
+      const board = Array(9).fill(null);
+      board[8] = 'PLAYER2';
+      expect(isValidPlacement(board, 8)).toBe(false);
+    });
+
+    it('should return false for out of bounds indices', () => {
+      const board = Array(9).fill(null);
+      expect(isValidPlacement(board, -1)).toBe(false);
+      expect(isValidPlacement(board, 9)).toBe(false);
     });
   });
 

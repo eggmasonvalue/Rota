@@ -1,5 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
+declare global {
+  interface Window {
+    webkitAudioContext: typeof AudioContext;
+  }
+}
+
 /**
  * A custom hook to synthesize game sounds using the Web Audio API.
  * No external audio files are required.
@@ -20,7 +26,7 @@ export function useSoundEffects() {
   // Initialize AudioContext lazily (browsers require user interaction first)
   const initAudio = useCallback(() => {
     if (!audioContextRef.current) {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
       audioContextRef.current = ctx;
 
       // Pre-generate white noise buffer (1 second)

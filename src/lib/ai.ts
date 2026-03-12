@@ -59,13 +59,23 @@ function evaluate(state: GameState, player: Player): number {
 
   // 2-in-a-row threats
   for (const line of WINNING_LINES) {
-    const pieces = line.map(i => state.board[i]);
-    const playerCount = pieces.filter(p => p === player).length;
-    const opponentCount = pieces.filter(p => p && p !== player).length;
-    const emptyCount = pieces.filter(p => p === null).length;
+    let playerCount = 0;
+    let opponentCount = 0;
+    let emptyCount = 0;
+
+    for (let i = 0; i < line.length; i++) {
+      const p = state.board[line[i]];
+      if (p === player) {
+        playerCount++;
+      } else if (p === null) {
+        emptyCount++;
+      } else {
+        opponentCount++;
+      }
+    }
 
     if (playerCount === 2 && emptyCount === 1) score += 50; // Winning opportunity
-    if (opponentCount === 2 && emptyCount === 1) score -= 60; // Defensive priority
+    else if (opponentCount === 2 && emptyCount === 1) score -= 60; // Defensive priority
   }
 
   return score;
