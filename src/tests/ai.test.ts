@@ -64,4 +64,32 @@ describe('AI Logic', () => {
     const move = getBestMove(state, 'CONSUL');
     expect(move?.to).toBe(2); // Should block 0-1-2
   });
+  it('should optimize evaluation to score threats properly', () => {
+    // Setup a board that requires counting
+    // Let's create an exact scenario with 2 player pieces + 1 empty
+    // And another with 2 opponent pieces + 1 empty
+    const board = Array(9).fill(null);
+    // P1 pieces (current player)
+    board[0] = 'PLAYER1';
+    board[1] = 'PLAYER1';
+    // Threat for P1 is at 2 or 7 (completes 0-1-2 or 7-0-1)
+
+    // P2 pieces
+    board[3] = 'PLAYER2';
+    board[4] = 'PLAYER2';
+    // Threat for P2 is at 2 or 5 (completes 2-3-4 or 3-4-5)
+
+    const state: GameState = {
+      ...INITIAL_STATE,
+      board,
+      currentPlayer: 'PLAYER1',
+      phase: 'PLACEMENT',
+      piecesCount: { PLAYER1: 2, PLAYER2: 2 }
+    };
+
+    // P1 to move. P1 can win by moving to 2 or 7.
+    // Moving to 2 also blocks P2's 2-3-4 threat.
+    const move = getBestMove(state, 'CONSUL');
+    expect([2, 7]).toContain(move?.to); // Should find winning move
+  });
 });
