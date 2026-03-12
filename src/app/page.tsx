@@ -11,7 +11,7 @@ import { HowToPlay } from '@/components/game/HowToPlay';
 import { useOnlineGame } from '@/hooks/useOnlineGame';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { generateUUID } from '@/lib/utils';
-import { Copy, Users, Volume2, VolumeX, Sun, Moon } from 'lucide-react';
+import { Copy, Users, Volume2, Volume1, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
 
 function gameReducer(state: GameState, action: Action): GameState {
   // Game logic helper
@@ -212,7 +212,7 @@ function GameContent() {
   const { myPlayer, connectionStatus, onlineUsersCount, sendAction } = useOnlineGame(roomId, onActionReceived);
 
   // Sound Effects
-  const { playPlace, playMove, playWin, playLoss, playDraw, playClick, muted, toggleMute } = useSoundEffects();
+  const { playPlace, playMove, playWin, playLoss, playDraw, playClick, feedbackMode, cycleFeedbackMode } = useSoundEffects();
   const prevHistoryLength = useRef(state.history.length);
   const prevPhaseRef = useRef<Phase>(state.phase);
 
@@ -483,16 +483,24 @@ function GameContent() {
                   </div>
                 )}
 
-                {/* Sound Toggle */}
+                {/* Feedback Toggle */}
                 <button
                     onClick={() => {
-                        toggleMute();
+                        cycleFeedbackMode();
                         playClick();
                     }}
                     className="p-2 rounded-xl border border-[var(--glass-border)] hover:border-secondary/80 text-foreground/80 hover:text-foreground transition-colors self-end mb-0.5"
-                    title={muted ? "Unmute" : "Mute"}
+                    title={
+                        feedbackMode === 'SOUND_AND_HAPTICS' ? "Sound & Haptics On" :
+                        feedbackMode === 'SOUND_ONLY' ? "Sound Only" :
+                        feedbackMode === 'HAPTICS_ONLY' ? "Haptics Only" :
+                        "Feedback Off"
+                    }
                 >
-                    {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                    {feedbackMode === 'SOUND_AND_HAPTICS' ? <Volume2 size={20} /> :
+                     feedbackMode === 'SOUND_ONLY' ? <Volume1 size={20} /> :
+                     feedbackMode === 'HAPTICS_ONLY' ? <Vibrate size={20} /> :
+                     <VolumeX size={20} />}
                 </button>
 
                 {/* Theme Toggle */}
