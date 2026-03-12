@@ -22,6 +22,7 @@ export type FeedbackMode = 'SOUND_AND_HAPTICS' | 'SOUND_ONLY' | 'HAPTICS_ONLY' |
 
 export function useSoundEffects() {
   const [feedbackMode, setFeedbackMode] = useState<FeedbackMode>('SOUND_AND_HAPTICS');
+  const [isMounted, setIsMounted] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const noiseBufferRef = useRef<AudioBuffer | null>(null);
 
@@ -73,6 +74,7 @@ export function useSoundEffects() {
     // Defer state update to avoid synchronous state changes during initial render
     setTimeout(() => {
       setFeedbackMode(initialMode);
+      setIsMounted(true);
     }, 0);
   }, []);
 
@@ -350,6 +352,7 @@ export function useSoundEffects() {
   return {
     feedbackMode,
     cycleFeedbackMode,
+    isMounted,
     playPlace,
     playMove,
     playWin,
