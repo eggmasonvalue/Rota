@@ -5,11 +5,39 @@ import {
   isBlocked,
   getNextPlayer,
   getPossibleMoves,
+  isValidPlacement,
   GameState,
   INITIAL_STATE
 } from '../lib/game-logic';
 
 describe('Game Logic', () => {
+  describe('isValidPlacement', () => {
+    it('should return true if the cell is empty (null)', () => {
+      const board = Array(9).fill(null);
+      expect(isValidPlacement(board, 0)).toBe(true);
+      expect(isValidPlacement(board, 4)).toBe(true);
+      expect(isValidPlacement(board, 8)).toBe(true);
+    });
+
+    it('should return false if the cell is occupied by PLAYER1', () => {
+      const board = Array(9).fill(null);
+      board[0] = 'PLAYER1';
+      expect(isValidPlacement(board, 0)).toBe(false);
+    });
+
+    it('should return false if the cell is occupied by PLAYER2', () => {
+      const board = Array(9).fill(null);
+      board[8] = 'PLAYER2';
+      expect(isValidPlacement(board, 8)).toBe(false);
+    });
+
+    it('should return false for out of bounds indices', () => {
+      const board = Array(9).fill(null);
+      expect(isValidPlacement(board, -1)).toBe(false);
+      expect(isValidPlacement(board, 9)).toBe(false);
+    });
+  });
+
   describe('checkWin', () => {
     it('should detect a winning line on the edge', () => {
       // 0-1-2 is a winning line
