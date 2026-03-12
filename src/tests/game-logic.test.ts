@@ -5,11 +5,44 @@ import {
   isBlocked,
   getNextPlayer,
   getPossibleMoves,
+  isValidMovement,
   GameState,
   INITIAL_STATE
 } from '../lib/game-logic';
 
 describe('Game Logic', () => {
+  describe('isValidMovement', () => {
+    it('should return true for a valid move to an adjacent empty cell', () => {
+      const board = Array(9).fill(null);
+      board[0] = 'PLAYER1';
+      // Based on ADJACENCY logic: 0 is adjacent to 1, 7, and 8 (center)
+      expect(isValidMovement(board, 0, 1)).toBe(true);
+      expect(isValidMovement(board, 0, 7)).toBe(true);
+      expect(isValidMovement(board, 0, 8)).toBe(true);
+    });
+
+    it('should return false if the source cell is empty', () => {
+      const board = Array(9).fill(null);
+      // Empty cell 0 trying to move to an adjacent empty cell 1
+      expect(isValidMovement(board, 0, 1)).toBe(false);
+    });
+
+    it('should return false if the target cell is occupied', () => {
+      const board = Array(9).fill(null);
+      board[0] = 'PLAYER1';
+      board[1] = 'PLAYER2';
+      // 0 is adjacent to 1, but 1 is occupied
+      expect(isValidMovement(board, 0, 1)).toBe(false);
+    });
+
+    it('should return false if the target cell is not adjacent', () => {
+      const board = Array(9).fill(null);
+      board[0] = 'PLAYER1';
+      // Based on ADJACENCY logic: 0 is NOT adjacent to 2
+      expect(isValidMovement(board, 0, 2)).toBe(false);
+    });
+  });
+
   describe('checkWin', () => {
     it('should detect a winning line on the edge', () => {
       // 0-1-2 is a winning line

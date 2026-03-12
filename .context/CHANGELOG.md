@@ -10,6 +10,7 @@
     - Added "smudge" highlight effect to victory numbers.
     - Removed obstructive glass containers from instruction text.
 - **Code Quality:**
+    - Improved test coverage for `isValidMovement` in `src/tests/game-logic.test.ts`.
     - Moved unit tests to a dedicated `src/tests/` directory.
     - Fixed hardcoded colors in generated assets (`icon.tsx`, `manifest.ts`, etc.).
     - Removed leftover debug `console.log` statements from the main game component.
