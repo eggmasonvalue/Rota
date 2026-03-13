@@ -11,7 +11,7 @@ import { HowToPlay } from '@/components/game/HowToPlay';
 import { useOnlineGame } from '@/hooks/useOnlineGame';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { generateUUID } from '@/lib/utils';
-import { Copy, Users, Volume2, Volume1, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
+import { Copy, Users, Volume2, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
 
 function gameReducer(state: GameState, action: Action): GameState {
   // Game logic helper
@@ -498,8 +498,13 @@ function GameContent() {
                         "Feedback Off"
                     }
                 >
-                    {feedbackMode === 'SOUND_AND_HAPTICS' ? <Volume2 size={20} /> :
-                     feedbackMode === 'SOUND_ONLY' ? <Volume1 size={20} /> :
+                    {feedbackMode === 'SOUND_AND_HAPTICS' ? (
+                        <div className="flex items-center -space-x-1">
+                            <Volume2 size={18} />
+                            <Vibrate size={14} className="opacity-80" />
+                        </div>
+                    ) :
+                     feedbackMode === 'SOUND_ONLY' ? <Volume2 size={20} /> :
                      feedbackMode === 'HAPTICS_ONLY' ? <Vibrate size={20} /> :
                      <VolumeX size={20} />}
                 </button>
