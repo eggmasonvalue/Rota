@@ -212,7 +212,7 @@ function GameContent() {
   const { myPlayer, connectionStatus, onlineUsersCount, sendAction } = useOnlineGame(roomId, onActionReceived);
 
   // Sound Effects
-  const { playPlace, playMove, playWin, playLoss, playDraw, playClick, feedbackMode, cycleFeedbackMode, isMounted } = useSoundEffects();
+  const { playPlace, playMove, playWin, playLoss, playDraw, playClick, feedbackMode, cycleFeedbackMode } = useSoundEffects();
   const prevHistoryLength = useRef(state.history.length);
   const prevPhaseRef = useRef<Phase>(state.phase);
 
@@ -485,21 +485,20 @@ function GameContent() {
 
                 {/* Feedback Toggle */}
                 <button
+                    suppressHydrationWarning
                     onClick={() => {
                         cycleFeedbackMode();
                         playClick();
                     }}
                     className="p-2 rounded-xl border border-[var(--glass-border)] hover:border-secondary/80 text-foreground/80 hover:text-foreground transition-colors self-end mb-0.5"
                     title={
-                        !isMounted ? "Feedback Settings" :
                         feedbackMode === 'SOUND_AND_HAPTICS' ? "Sound & Haptics On" :
                         feedbackMode === 'SOUND_ONLY' ? "Sound Only" :
                         feedbackMode === 'HAPTICS_ONLY' ? "Haptics Only" :
                         "Feedback Off"
                     }
                 >
-                    {!isMounted ? <Volume2 size={20} /> :
-                     feedbackMode === 'SOUND_AND_HAPTICS' ? <Volume2 size={20} /> :
+                    {feedbackMode === 'SOUND_AND_HAPTICS' ? <Volume2 size={20} /> :
                      feedbackMode === 'SOUND_ONLY' ? <Volume1 size={20} /> :
                      feedbackMode === 'HAPTICS_ONLY' ? <Vibrate size={20} /> :
                      <VolumeX size={20} />}
