@@ -11,6 +11,7 @@ import { HowToPlay } from '@/components/game/HowToPlay';
 import { useOnlineGame } from '@/hooks/useOnlineGame';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
 import { generateUUID } from '@/lib/utils';
+// Force Turbopack clean update for Lucide-React imports
 import { Copy, Users, Volume2, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
 
 function gameReducer(state: GameState, action: Action): GameState {
