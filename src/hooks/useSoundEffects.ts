@@ -18,10 +18,22 @@ declare global {
  * - Defeat: Solemn Dissonance (Low frequency, minor/diminished intervals)
  * - UI Click: Sharp pebble tap
  */
+export type FeedbackMode = 'SOUND_AND_HAPTICS' | 'SOUND_ONLY' | 'HAPTICS_ONLY' | 'OFF';
+
 export function useSoundEffects() {
-  const [muted, setMuted] = useState(false);
+  const [feedbackMode, setFeedbackMode] = useState<FeedbackMode>('SOUND_AND_HAPTICS');
+  const [isMounted, setIsMounted] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const noiseBufferRef = useRef<AudioBuffer | null>(null);
+
+  const isSoundEnabled = feedbackMode === 'SOUND_AND_HAPTICS' || feedbackMode === 'SOUND_ONLY';
+  const isHapticsEnabled = feedbackMode === 'SOUND_AND_HAPTICS' || feedbackMode === 'HAPTICS_ONLY';
+
+  const triggerHaptic = useCallback((pattern: number | number[]) => {
+    if (isHapticsEnabled && typeof window !== 'undefined' && window.navigator && window.navigator.vibrate) {
+      window.navigator.vibrate(pattern);
+    }
+  }, [isHapticsEnabled]);
 
   // Initialize AudioContext lazily (browsers require user interaction first)
   const initAudio = useCallback(() => {
@@ -43,25 +55,54 @@ export function useSoundEffects() {
     }
   }, []);
 
-  // Persist mute state
+  // Persist feedback mode state
   useEffect(() => {
-    const saved = localStorage.getItem('rota_muted');
-    if (saved) {
-      setMuted(JSON.parse(saved));
+    const savedMode = localStorage.getItem('rota_feedback_mode') as FeedbackMode | null;
+    const legacyMuted = localStorage.getItem('rota_muted');
+
+    let initialMode: FeedbackMode = 'SOUND_AND_HAPTICS';
+    if (savedMode) {
+      initialMode = savedMode;
+    } else if (legacyMuted !== null) {
+      // Migrate legacy boolean
+      const isMuted = JSON.parse(legacyMuted);
+      initialMode = isMuted ? 'OFF' : 'SOUND_AND_HAPTICS';
+      localStorage.removeItem('rota_muted');
+      localStorage.setItem('rota_feedback_mode', initialMode);
     }
+
+    // Defer state update to avoid synchronous state changes during initial render
+    setTimeout(() => {
+      setFeedbackMode(initialMode);
+      setIsMounted(true);
+    }, 0);
   }, []);
 
-  const toggleMute = useCallback(() => {
-    setMuted(prev => {
-      const next = !prev;
-      localStorage.setItem('rota_muted', JSON.stringify(next));
+  const cycleFeedbackMode = useCallback(() => {
+    setFeedbackMode(prev => {
+      let next: FeedbackMode;
+      switch (prev) {
+        case 'SOUND_AND_HAPTICS':
+          next = 'SOUND_ONLY';
+          break;
+        case 'SOUND_ONLY':
+          next = 'HAPTICS_ONLY';
+          break;
+        case 'HAPTICS_ONLY':
+          next = 'OFF';
+          break;
+        case 'OFF':
+          next = 'SOUND_AND_HAPTICS';
+          break;
+      }
+      localStorage.setItem('rota_feedback_mode', next);
       return next;
     });
   }, []);
 
   // Helper: Play a simple tone
   const playTone = useCallback((frequency: number, type: OscillatorType, duration: number, volume: number = 0.1, rampType: 'linear' | 'exponential' = 'exponential') => {
-    if (muted) return;
+    if (!isSoundEnabled) return;
     initAudio();
     if (!audioContextRef.current) return;
 
@@ -86,13 +127,14 @@ export function useSoundEffects() {
 
     osc.start();
     osc.stop(ctx.currentTime + duration);
-  }, [muted, initAudio]);
+  }, [isSoundEnabled, initAudio]);
 
   // ------------------------------------------------------------------
   // 1. PLACEMENT: Stone Impact (Matched to Movement)
   // ------------------------------------------------------------------
   const playPlace = useCallback(() => {
-    if (muted) return;
+    triggerHaptic(40); // Short, sharp bump
+    if (!isSoundEnabled) return;
     initAudio();
     if (!audioContextRef.current) return;
 
@@ -140,16 +182,19 @@ export function useSoundEffects() {
     rumble.start(t);
     rumble.stop(t + duration);
 
-  }, [muted, initAudio]);
+  }, [isSoundEnabled, initAudio, triggerHaptic]);
 
 
   // ------------------------------------------------------------------
   // 2. MOVEMENT: Original Stone Slide
   // ------------------------------------------------------------------
   const playMove = useCallback(() => {
+    // Gritty, scraping rumble
+    triggerHaptic([20, 30, 20, 30, 30]);
+
     // Stone sliding on stone: needs friction texture (filtered noise) + heavy base
     // This sounds more like a "shhh-clunk" or a heavy drag
-    if (muted) return;
+    if (!isSoundEnabled) return;
     initAudio();
     if (!audioContextRef.current) return;
 
@@ -194,14 +239,17 @@ export function useSoundEffects() {
     noise.start();
     rumble.start();
     rumble.stop(ctx.currentTime + duration);
-  }, [muted, initAudio]);
+  }, [isSoundEnabled, initAudio, triggerHaptic]);
 
 
   // ------------------------------------------------------------------
   // 3. VICTORY: Roman Fanfare (Brass Simulation)
   // ------------------------------------------------------------------
   const playWin = useCallback(() => {
-    if (muted) return;
+    // Celebratory rhythmic pulse
+    triggerHaptic([100, 50, 100, 50, 150, 100, 300]);
+
+    if (!isSoundEnabled) return;
     initAudio();
 
     const playBrassNote = (freq: number, startTime: number, duration: number) => {
@@ -242,14 +290,17 @@ export function useSoundEffects() {
         playBrassNote(783.99, now + 0.4, 0.6); // G5 (medium)
         playBrassNote(1046.50, now + 0.6, 2.0); // C6 (long, triumphant)
     }
-  }, [muted, initAudio]);
+  }, [isSoundEnabled, initAudio, triggerHaptic]);
 
 
   // ------------------------------------------------------------------
   // 4. DEFEAT: Solemn Dissonance (Low Strings/Drones)
   // ------------------------------------------------------------------
   const playLoss = useCallback(() => {
-    if (muted) return;
+    // Longer, solemn pulses
+    triggerHaptic([300, 100, 300, 100, 400]);
+
+    if (!isSoundEnabled) return;
     initAudio();
 
     const playDroneNote = (freq: number, startTime: number, duration: number) => {
@@ -279,26 +330,29 @@ export function useSoundEffects() {
         playDroneNote(155.56, now + 0.1, 2.5); // Eb3
         playDroneNote(185.00, now + 0.2, 2.5); // Gb3 (Diminished 5th - tension)
     }
-  }, [muted, initAudio]);
+  }, [isSoundEnabled, initAudio, triggerHaptic]);
 
 
   // ------------------------------------------------------------------
   // 5. MISC
   // ------------------------------------------------------------------
   const playDraw = useCallback(() => {
+      triggerHaptic([100, 100, 100]); // Neutral double/triple pulse
       // Neutral un-resolving tone
       playTone(330, 'sine', 0.6, 0.1, 'linear'); // E4
       setTimeout(() => playTone(330, 'sine', 0.6, 0.1, 'linear'), 150);
-  }, [playTone]);
+  }, [playTone, triggerHaptic]);
 
   const playClick = useCallback(() => {
+    triggerHaptic(15); // Very light pebble tap
     // Sharp "Pebble" click - high pitch sine with instant decay
     playTone(1800, 'sine', 0.04, 0.03, 'exponential');
-  }, [playTone]);
+  }, [playTone, triggerHaptic]);
 
   return {
-    muted,
-    toggleMute,
+    feedbackMode,
+    cycleFeedbackMode,
+    isMounted,
     playPlace,
     playMove,
     playWin,
