@@ -132,8 +132,9 @@ export function checkRepetition(history: string[], currentBoard: (Player | null)
   for (let i = history.length - 1; i >= 0; i--) {
     if (history[i] === currentStateString) {
       count++;
-      // If the current state has occurred 2 times before (total 3), it's a draw
-      if (count >= 2) return true;
+      // Threefold repetition: the same board+player state appears 3 times in history → draw.
+      // history already includes the current state (appended before this call).
+      if (count >= 3) return true;
     }
   }
   return false;

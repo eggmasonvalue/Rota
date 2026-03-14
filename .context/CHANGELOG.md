@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+- **Fix: First-load double-sound on solo mode first placement:** `initAudio()` was calling `AudioContext.resume()` fire-and-forget (no `await`). On the very first user interaction Chrome's autoplay policy leaves the context `suspended`, so `ctx.currentTime` was still `0` when nodes were scheduled — they would replay/flush later when the AI move triggered a second `resume()`, causing two sounds in quick succession. Fixed by making `initAudio` `async`, properly `await`ing `resume()`, and returning a `boolean` guard. All `playX` functions now `await initAudio()` before scheduling any nodes.
+- **Fix: Draw detection (threefold repetition off-by-one):** `checkRepetition` was being called with the *pre-append* history (`newState.history`) instead of the fully-updated `newHistory`, causing draws to trigger one move too late (4th occurrence instead of 3rd). Fixed by passing `newHistory` to `checkRepetition` and raising the internal threshold from `>= 2` to `>= 3` to match the new invariant. Updated unit tests accordingly.
+- **Fix: Flash of Incorrect Theme on Reload:** Moved theme initialisation from a React `useEffect` (post-hydration) to a blocking inline `<script>` in `<head>` that runs synchronously before the first paint. Removed the always-on body `transition` and replaced it with a `.theme-ready` class added after mount, so smooth transitions still fire on user-triggered toggles only.
 - **Theme Overhaul:** Replaced "Imperial Senate" (Tyrian Purple) with "The Forum" (Warm Stone / Pompeii Red) theme. Implemented light/dark mode support with semantic CSS variables.
 - **Typography:** Updated to `Marcellus` for headings and `Merriweather` for body text.
 - **AI Upgrade:** Expanded AI to 5 distinct difficulty levels (`PLEBEIAN`, `MERCHANT`, `EQUES`, `SENATOR`, `CONSUL`) with varying depth and strategic weighting.
@@ -14,7 +17,13 @@
     - Moved unit tests to a dedicated `src/tests/` directory.
     - Fixed hardcoded colors in generated assets (`icon.tsx`, `manifest.ts`, etc.).
     - Removed leftover debug `console.log` statements from the main game component.
-- **Soundscape:** Implemented procedural audio synthesis for game actions (Placement, Movement, Win/Loss/Draw) and UI interactions. Sounds are designed to fit the theme (stone thuds, sliding clacks).
+- **Soundscape Overhaul:** Complete redesign of all procedural audio. Introduced physical-world sound modelling with shared helpers (`playStoneResonance`, `playImpactCrack`). All sounds now based on stone/marble material palette:
+    - *Placement:* Stone-on-marble with inharmonic resonance (×1.47 ratio) + grit + board thump.
+    - *Movement:* Scraping texture sweep → settle crack + mineral resonance.
+    - *Victory:* Triumphant ascending brass fanfare — C major filtered sawtooth + power chord sustain. Mirrors defeat (same horn family, opposite mood).
+    - *Defeat:* Descending minor lament — muted horn (filtered sawtooth) + low drone. Breaks stone palette for clear end-game signal.
+    - *Draw:* Suspended unresolved tritone pair (filtered triangle waves with vibrato).
+    - *UI Click:* Pebble tap using same stone palette.
 - **Performance Optimization:** Optimized audio engine by caching noise buffers, reducing main-thread overhead during gameplay.
 - **Haptics:** Deferred implementation until iOS WebKit provides robust support for the Vibration API.
 - Integrated Supabase Realtime for Online Multiplayer (BETA).

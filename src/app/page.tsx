@@ -25,7 +25,7 @@ function gameReducer(state: GameState, action: Action): GameState {
         return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: 'GAME_OVER', winner, currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
      }
 
-     if (nextPhase === 'MOVEMENT' && checkRepetition(newState.history, newBoard, newState.currentPlayer)) {
+     if (nextPhase === 'MOVEMENT' && checkRepetition(newHistory, newBoard, newState.currentPlayer)) {
         return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: 'GAME_OVER', winner: 'DRAW', currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
      }
 
@@ -127,17 +127,14 @@ function GameContent() {
 
   // Theme Toggle Logic
   useEffect(() => {
-    // Check local storage or system preference on mount
-    const storedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // The blocking script in layout.tsx already applied .dark before first paint.
+    // Here we just sync React state with whatever the DOM already has.
+    const isDark = document.documentElement.classList.contains('dark');
+    setIsDarkMode(isDark);
 
-    if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
-      setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else {
-      setIsDarkMode(false);
-      document.documentElement.classList.remove('dark');
-    }
+    // Enable smooth transitions NOW (after mount), so they only fire on
+    // user-triggered toggles — not on the initial page load.
+    document.body.classList.add('theme-ready');
   }, []);
 
   const toggleTheme = () => {

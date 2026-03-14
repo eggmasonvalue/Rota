@@ -105,7 +105,7 @@ describe('Game Logic', () => {
       const player = 'PLAYER1';
       const stateStr = JSON.stringify({ board, player });
 
-      const history = [stateStr, stateStr]; // Occurred twice before
+      const history = [stateStr, stateStr, stateStr]; // State appears 3 times in full history → draw
 
       expect(checkRepetition(history, board, player)).toBe(true);
     });
@@ -115,7 +115,7 @@ describe('Game Logic', () => {
       const player = 'PLAYER1';
       const stateStr = JSON.stringify({ board, player });
 
-      const history = [stateStr]; // Occurred once before
+      const history = [stateStr, stateStr]; // Only twice — not yet a draw
 
       expect(checkRepetition(history, board, player)).toBe(false);
     });

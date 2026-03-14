@@ -49,6 +49,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
+}
+
+/* Only animate theme changes AFTER the page has mounted (class added by toggleTheme).
+   Prevents the slow fade-in of dark mode on initial page load. */
+body.theme-ready {
   transition: background-color 0.5s ease, color 0.5s ease;
 }
 
