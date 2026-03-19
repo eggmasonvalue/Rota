@@ -163,8 +163,6 @@ function GameContent() {
         if (state.gameMode !== 'ONLINE') {
            dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
         }
-      } else {
-        console.warn('Invalid Room ID in URL');
       }
     } else {
        // Check for explicit mode parameter (e.g. returning from Online)
