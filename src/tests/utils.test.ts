@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { cn, generateUUID } from '../lib/utils';
+import { cn, generateUUID, safeJsonStringify } from '../lib/utils';
 
 describe('utils', () => {
   describe('cn', () => {
@@ -102,6 +102,35 @@ describe('utils', () => {
       expect(uuid).toMatch(uuidV4Regex);
 
       mockMathRandom.mockRestore();
+    });
+  });
+
+  describe('safeJsonStringify', () => {
+    it('should correctly stringify simple objects', () => {
+      const data = { key: 'value', num: 123 };
+      expect(safeJsonStringify(data)).toBe(JSON.stringify(data));
+    });
+
+    it('should escape < and > characters', () => {
+      const data = { script: '</script><script>alert(1)</script>' };
+      const stringified = safeJsonStringify(data);
+      expect(stringified).not.toContain('<');
+      expect(stringified).not.toContain('>');
+      expect(stringified).toContain('\\u003c/script\\u003e\\u003cscript\\u003ealert(1)\\u003c/script\\u003e');
+    });
+
+    it('should escape Unicode separators', () => {
+      const data = { content: '\u2028 and \u2029' };
+      const stringified = safeJsonStringify(data);
+      expect(stringified).toContain('\\u2028');
+      expect(stringified).toContain('\\u2029');
+    });
+
+    it('should produce valid JSON that can be parsed back', () => {
+      const data = { key: '<b>Value</b>', list: [1, 2, 3] };
+      const stringified = safeJsonStringify(data);
+      // JSON.parse will interpret the Unicode escapes back into characters
+      expect(JSON.parse(stringified)).toEqual(data);
     });
   });
 });
