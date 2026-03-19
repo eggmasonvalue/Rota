@@ -14,6 +14,7 @@
     - Removed obstructive glass containers from instruction text.
 - **Code Quality:**
     - Improved test coverage for `isValidMovement` in `src/tests/game-logic.test.ts`.
+    - Added comprehensive unit tests for `src/worker/ai.worker.ts` covering success and error handling scenarios.
     - Moved unit tests to a dedicated `src/tests/` directory.
     - Fixed hardcoded colors in generated assets (`icon.tsx`, `manifest.ts`, etc.).
     - Removed leftover debug `console.log` statements from the main game component.
