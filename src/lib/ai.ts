@@ -31,7 +31,7 @@ function applyMove(state: GameState, move: { from: number | null, to: number }):
     phase: winner ? 'GAME_OVER' : newPhase,
     winner: winner,
     piecesCount: newPiecesCount,
-    history: [...state.history, JSON.stringify(newBoard)]
+    history: state.history
   };
 }
 
