@@ -14,7 +14,8 @@ import { generateUUID } from '@/lib/utils';
 // Force Turbopack clean update for Lucide-React imports
 import { Copy, Users, Volume2, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
 
-function gameReducer(state: GameState, action: Action): GameState {
+// Exported for testing purposes to verify core game logic state transitions
+export function gameReducer(state: GameState, action: Action): GameState {
   // Game logic helper
   const endTurn = (newState: GameState, newBoard: (Player | null)[], newPiecesCount: { [key in Player]: number }, nextPhase: Phase): GameState => {
      const winner = checkWin(newBoard);
