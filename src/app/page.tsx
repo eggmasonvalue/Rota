@@ -14,7 +14,8 @@ import { generateUUID } from '@/lib/utils';
 // Force Turbopack clean update for Lucide-React imports
 import { Copy, Users, Volume2, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
 
-function gameReducer(state: GameState, action: Action): GameState {
+// Exported for testing purposes to verify core game logic state transitions
+export function gameReducer(state: GameState, action: Action): GameState {
   // Game logic helper
   const endTurn = (newState: GameState, newBoard: (Player | null)[], newPiecesCount: { [key in Player]: number }, nextPhase: Phase): GameState => {
      const winner = checkWin(newBoard);
@@ -163,8 +164,6 @@ function GameContent() {
         if (state.gameMode !== 'ONLINE') {
            dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
         }
-      } else {
-        console.warn('Invalid Room ID in URL');
       }
     } else {
        // Check for explicit mode parameter (e.g. returning from Online)
@@ -194,16 +193,12 @@ function GameContent() {
         // Only allow reset if the game is over to prevent griefing
         if (currentState.phase === 'GAME_OVER') {
            dispatch(action);
-        } else {
-           console.warn('Blocked premature RESET_GAME action');
         }
         return;
      }
 
      if (fromPlayer === currentState.currentPlayer) {
         dispatch(action);
-     } else {
-        console.warn(`Blocked action from ${fromPlayer} during ${currentState.currentPlayer}'s turn`);
      }
   }, []);
 
@@ -348,8 +343,8 @@ function GameContent() {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy', err);
+    } catch {
+      // Silently ignore copy errors
     }
   };
 
