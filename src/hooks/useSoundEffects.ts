@@ -32,7 +32,7 @@ declare global {
  *   - Draw:      Two matched stone taps — a stalemate knock (neither wins)
  *   - UI Click:  Small pebble tap on marble — sharp, bright, minimal
  */
-export type FeedbackMode = 'SOUND_AND_HAPTICS' | 'SOUND_ONLY' | 'HAPTICS_ONLY' | 'OFF';
+type FeedbackMode = 'SOUND_AND_HAPTICS' | 'SOUND_ONLY' | 'HAPTICS_ONLY' | 'OFF';
 
 export function useSoundEffects() {
   const [feedbackMode, setFeedbackMode] = useState<FeedbackMode>('SOUND_AND_HAPTICS');
