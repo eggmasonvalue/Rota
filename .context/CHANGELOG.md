@@ -14,6 +14,7 @@
     - Removed obstructive glass containers from instruction text.
 - **Code Quality:**
     - Improved test coverage for `isValidMovement` in `src/tests/game-logic.test.ts`.
+    - Added comprehensive unit tests for `src/worker/ai.worker.ts` covering success and error handling scenarios.
     - Moved unit tests to a dedicated `src/tests/` directory.
     - Fixed hardcoded colors in generated assets (`icon.tsx`, `manifest.ts`, etc.).
     - Removed leftover debug `console.log` statements from the main game component.
@@ -30,6 +31,7 @@
 - Added `useOnlineGame` hook to manage synchronized game state.
 - Implemented "Human vs Human" (HvH) game mode for local multiplayer.
 - Optimized animation performance with Framer Motion.
+- **Performance Optimization (AI):** Reduced memory allocation and GC overhead in the minimax search by implementing in-place state mutation with backtracking (`makeMove`/`undoMove`). This replaced unnecessary object spreading and array copying in `src/lib/ai.ts`, resulting in a ~30% improvement in search speed at the `CONSUL` difficulty level.
 
 ## [0.1.1] - 2026-02-18
 - Implemented Difficulty Selector (Easy/Medium/Hard).

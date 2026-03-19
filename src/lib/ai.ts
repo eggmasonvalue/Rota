@@ -1,38 +1,57 @@
-import { GameState, Player, getPossibleMoves, checkWin, getNextPlayer, WINNING_LINES, Difficulty } from './game-logic';
+import { GameState, Player, Phase, Winner, getPossibleMoves, checkWin, getNextPlayer, WINNING_LINES, Difficulty } from './game-logic';
 
-// Helper to simulate a move without mutating the original state
-function applyMove(state: GameState, move: { from: number | null, to: number }): GameState {
-  const newBoard = [...state.board];
-  const newPiecesCount = { ...state.piecesCount };
-  let newPhase = state.phase;
+/**
+ * Mutates the game state in place to apply a move.
+ * Returns the previous phase and winner to allow for undoing the move.
+ */
+function makeMove(state: GameState, move: { from: number | null, to: number }): { prevPhase: Phase, prevWinner: Winner } {
+  const prevPhase = state.phase;
+  const prevWinner = state.winner;
 
   if (move.from === null) {
     // Placement
-    newBoard[move.to] = state.currentPlayer;
-    newPiecesCount[state.currentPlayer]++;
+    state.board[move.to] = state.currentPlayer;
+    state.piecesCount[state.currentPlayer]++;
 
     // Check if placement phase ends
-    // If both players have placed 3 pieces, switch to MOVEMENT
-    if (newPiecesCount.PLAYER1 === 3 && newPiecesCount.PLAYER2 === 3) {
-      newPhase = 'MOVEMENT';
+    if (state.piecesCount.PLAYER1 === 3 && state.piecesCount.PLAYER2 === 3) {
+      state.phase = 'MOVEMENT';
     }
   } else {
     // Movement
-    newBoard[move.from] = null;
-    newBoard[move.to] = state.currentPlayer;
+    state.board[move.from] = null;
+    state.board[move.to] = state.currentPlayer;
   }
 
-  const winner = checkWin(newBoard);
+  const winner = checkWin(state.board);
+  if (winner) {
+    state.phase = 'GAME_OVER';
+    state.winner = winner;
+  }
 
-  return {
-    ...state,
-    board: newBoard,
-    currentPlayer: getNextPlayer(state.currentPlayer),
-    phase: winner ? 'GAME_OVER' : newPhase,
-    winner: winner,
-    piecesCount: newPiecesCount,
-    history: [...state.history, JSON.stringify(newBoard)]
-  };
+  state.currentPlayer = getNextPlayer(state.currentPlayer);
+  return { prevPhase, prevWinner };
+}
+
+/**
+ * Reverts a move on the game state in place.
+ */
+function undoMove(state: GameState, move: { from: number | null, to: number }, prevPhase: Phase, prevWinner: Winner): void {
+  // Revert currentPlayer back to the one who made the move
+  state.currentPlayer = getNextPlayer(state.currentPlayer);
+
+  if (move.from === null) {
+    // Revert Placement
+    state.piecesCount[state.currentPlayer]--;
+    state.board[move.to] = null;
+  } else {
+    // Revert Movement
+    state.board[move.to] = null;
+    state.board[move.from] = state.currentPlayer;
+  }
+
+  state.phase = prevPhase;
+  state.winner = prevWinner;
 }
 
 /**
@@ -114,9 +133,17 @@ export function getBestMove(state: GameState, difficulty: Difficulty): { from: n
   // Randomize moves to avoid deterministic behavior on same scores
   possibleMoves.sort(() => Math.random() - 0.5);
 
+  // Use a mutable copy for the minimax search to avoid mutating the original state
+  const mutableState: GameState = {
+    ...state,
+    board: [...state.board],
+    piecesCount: { ...state.piecesCount },
+  };
+
   for (const move of possibleMoves) {
-    const nextState = applyMove(state, move);
-    const evalValue = minimax(nextState, depth - 1, -Infinity, Infinity, false, state.currentPlayer);
+    const { prevPhase, prevWinner } = makeMove(mutableState, move);
+    const evalValue = minimax(mutableState, depth - 1, -Infinity, Infinity, false, state.currentPlayer);
+    undoMove(mutableState, move, prevPhase, prevWinner);
 
     if (evalValue > maxEval) {
       maxEval = evalValue;
@@ -146,8 +173,9 @@ function minimax(state: GameState, depth: number, alpha: number, beta: number, i
   if (isMaximizing) {
     let maxEval = -Infinity;
     for (const move of possibleMoves) {
-      const nextState = applyMove(state, move);
-      const evalValue = minimax(nextState, depth - 1, alpha, beta, false, aiPlayer);
+      const { prevPhase, prevWinner } = makeMove(state, move);
+      const evalValue = minimax(state, depth - 1, alpha, beta, false, aiPlayer);
+      undoMove(state, move, prevPhase, prevWinner);
       maxEval = Math.max(maxEval, evalValue);
       alpha = Math.max(alpha, evalValue);
       if (beta <= alpha) break;
@@ -156,8 +184,9 @@ function minimax(state: GameState, depth: number, alpha: number, beta: number, i
   } else {
     let minEval = Infinity;
     for (const move of possibleMoves) {
-      const nextState = applyMove(state, move);
-      const evalValue = minimax(nextState, depth - 1, alpha, beta, true, aiPlayer);
+      const { prevPhase, prevWinner } = makeMove(state, move);
+      const evalValue = minimax(state, depth - 1, alpha, beta, true, aiPlayer);
+      undoMove(state, move, prevPhase, prevWinner);
       minEval = Math.min(minEval, evalValue);
       beta = Math.min(beta, evalValue);
       if (beta <= alpha) break;

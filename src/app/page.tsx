@@ -14,7 +14,8 @@ import { generateUUID } from '@/lib/utils';
 // Force Turbopack clean update for Lucide-React imports
 import { Copy, Users, Volume2, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
 
-function gameReducer(state: GameState, action: Action): GameState {
+// Exported for testing purposes to verify core game logic state transitions
+export function gameReducer(state: GameState, action: Action): GameState {
   // Game logic helper
   const endTurn = (newState: GameState, newBoard: (Player | null)[], newPiecesCount: { [key in Player]: number }, nextPhase: Phase): GameState => {
      const winner = checkWin(newBoard);
@@ -130,6 +131,7 @@ function GameContent() {
     // The blocking script in layout.tsx already applied .dark before first paint.
     // Here we just sync React state with whatever the DOM already has.
     const isDark = document.documentElement.classList.contains('dark');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDarkMode(isDark);
 
     // Enable smooth transitions NOW (after mount), so they only fire on
@@ -159,12 +161,11 @@ function GameContent() {
     if (room) {
       // Basic sanitization: alphanumeric and hyphens only
       if (/^[a-zA-Z0-9-]+$/.test(room)) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setRoomId(room);
         if (state.gameMode !== 'ONLINE') {
            dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
         }
-      } else {
-        console.warn('Invalid Room ID in URL');
       }
     } else {
        // Check for explicit mode parameter (e.g. returning from Online)
@@ -179,7 +180,7 @@ function GameContent() {
          }
        }
     }
-  }, [searchParams]);
+  }, [searchParams, state.gameMode]);
 
   // Stable reference to state for callback
   const stateRef = useRef(state);
@@ -194,16 +195,12 @@ function GameContent() {
         // Only allow reset if the game is over to prevent griefing
         if (currentState.phase === 'GAME_OVER') {
            dispatch(action);
-        } else {
-           console.warn('Blocked premature RESET_GAME action');
         }
         return;
      }
 
      if (fromPlayer === currentState.currentPlayer) {
         dispatch(action);
-     } else {
-        console.warn(`Blocked action from ${fromPlayer} during ${currentState.currentPlayer}'s turn`);
      }
   }, []);
 
@@ -348,8 +345,8 @@ function GameContent() {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy', err);
+    } catch {
+      // Silently ignore copy errors
     }
   };
 

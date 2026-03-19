@@ -17,9 +17,12 @@ export function generateUUID(): string {
 
   // 2. Fallback to crypto.getRandomValues()
   if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
-    return (([1e7] as any) + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c: any) =>
-      (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
-    );
+    // We use unknown cast before string cast to avoid linter complaints and then replace.
+    const uuidTemplate = "10000000-1000-4000-8000-100000000000";
+    return uuidTemplate.replace(/[018]/g, (cStr: string) => {
+      const c = Number(cStr);
+      return (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16);
+    });
   }
 
   // 3. Last resort: Math.random() (non-cryptographically secure)
@@ -29,4 +32,16 @@ export function generateUUID(): string {
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+}
+
+/**
+ * Safely stringifies data for inclusion in a <script> tag.
+ * Escapes <, >, \u2028, and \u2029 to prevent XSS and script breakout.
+ */
+export function safeJsonStringify(data: unknown): string {
+  return JSON.stringify(data)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
 }
