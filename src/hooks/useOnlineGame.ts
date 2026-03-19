@@ -45,6 +45,7 @@ export function useOnlineGame(
 
   useEffect(() => {
     if (!roomId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setConnectionStatus('DISCONNECTED');
       setMyPlayer(null);
       setOnlineUsersCount(0);

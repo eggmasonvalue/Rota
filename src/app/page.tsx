@@ -131,6 +131,7 @@ function GameContent() {
     // The blocking script in layout.tsx already applied .dark before first paint.
     // Here we just sync React state with whatever the DOM already has.
     const isDark = document.documentElement.classList.contains('dark');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDarkMode(isDark);
 
     // Enable smooth transitions NOW (after mount), so they only fire on
@@ -160,6 +161,7 @@ function GameContent() {
     if (room) {
       // Basic sanitization: alphanumeric and hyphens only
       if (/^[a-zA-Z0-9-]+$/.test(room)) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setRoomId(room);
         if (state.gameMode !== 'ONLINE') {
            dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
@@ -178,7 +180,7 @@ function GameContent() {
          }
        }
     }
-  }, [searchParams]);
+  }, [searchParams, state.gameMode]);
 
   // Stable reference to state for callback
   const stateRef = useRef(state);
