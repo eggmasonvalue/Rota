@@ -192,16 +192,12 @@ function GameContent() {
         // Only allow reset if the game is over to prevent griefing
         if (currentState.phase === 'GAME_OVER') {
            dispatch(action);
-        } else {
-           console.warn('Blocked premature RESET_GAME action');
         }
         return;
      }
 
      if (fromPlayer === currentState.currentPlayer) {
         dispatch(action);
-     } else {
-        console.warn(`Blocked action from ${fromPlayer} during ${currentState.currentPlayer}'s turn`);
      }
   }, []);
 
@@ -346,8 +342,8 @@ function GameContent() {
       await navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy', err);
+    } catch {
+      // Silently ignore copy errors
     }
   };
 
