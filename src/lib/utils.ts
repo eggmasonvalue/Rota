@@ -30,3 +30,15 @@ export function generateUUID(): string {
     return v.toString(16);
   });
 }
+
+/**
+ * Safely stringifies data for inclusion in a <script> tag.
+ * Escapes <, >, \u2028, and \u2029 to prevent XSS and script breakout.
+ */
+export function safeJsonStringify(data: unknown): string {
+  return JSON.stringify(data)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
