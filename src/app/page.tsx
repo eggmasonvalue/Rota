@@ -479,8 +479,7 @@ function GameContent() {
                 )}
 
                 {/* Feedback Toggle */}
-                <button
-                    suppressHydrationWarning
+                <button                    suppressHydrationWarning
                     onClick={() => {
                         cycleFeedbackMode();
                         playClick();

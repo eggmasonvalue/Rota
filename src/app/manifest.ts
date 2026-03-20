@@ -11,19 +11,51 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#C24538', // Pompeii Red (Warm Stone Theme)
     icons: [
       {
-        src: '/favicon.ico',
-        sizes: 'any',
-        type: 'image/x-icon',
+        src: '/icon',
+        sizes: '32x32',
+        type: 'image/png',
       },
       {
         src: '/pwa-icon/192',
         sizes: '192x192',
         type: 'image/png',
+        purpose: 'any maskable',
       },
       {
         src: '/pwa-icon/512',
         sizes: '512x512',
         type: 'image/png',
+        purpose: 'any maskable',
+      },
+    ],
+    screenshots: [
+      {
+        src: '/screenshot-mobile-dark.png',
+        sizes: '1076x1983',
+        type: 'image/png',
+        form_factor: 'narrow',
+        label: 'Rota Board - Dark Mode',
+      },
+      {
+        src: '/screenshot-mobile-light.png',
+        sizes: '1079x1982',
+        type: 'image/png',
+        form_factor: 'narrow',
+        label: 'Rota Board - Light Mode',
+      },
+      {
+        src: '/screenshot-desktop-dark.png',
+        sizes: '932x775',
+        type: 'image/png',
+        form_factor: 'wide',
+        label: 'Rota Board - Desktop Dark',
+      },
+      {
+        src: '/screenshot-desktop-light.png',
+        sizes: '923x769',
+        type: 'image/png',
+        form_factor: 'wide',
+        label: 'Rota Board - Desktop Light',
       },
     ],
   };

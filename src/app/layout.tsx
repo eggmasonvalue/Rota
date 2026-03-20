@@ -25,6 +25,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://rota-roman-game.netlify.app',
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Rota",
+    // startupImage is also possible but requires many sizes, keeping it simple for now
+  },
   openGraph: {
     title: "Rota - The Game of Rome",
     description: "Outsmart your opponent in this classic game of strategy from the Roman Empire.",
@@ -92,6 +98,7 @@ export default function RootLayout({
         />
       </head>
       <body
+        suppressHydrationWarning
         className={`${marcellus.variable} ${merriweather.variable} antialiased bg-[var(--background)] text-[var(--foreground)] font-[family-name:var(--font-body)]`}
       >
         <JsonLd data={jsonLd} />
