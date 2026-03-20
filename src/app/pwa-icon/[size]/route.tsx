@@ -3,10 +3,20 @@ import { NextRequest } from 'next/server';
 
 export const runtime = 'nodejs';
 
-export async function GET(request: NextRequest) {
-    const { searchParams } = new URL(request.url);
-    const sizeParam = searchParams.get('size');
-    const size = sizeParam ? parseInt(sizeParam) : 512;
+/**
+ * Pre-render PWA icons at build time for better performance and reliability.
+ * Next.js will generate static image files for these specified sizes.
+ */
+export async function generateStaticParams() {
+  return [{ size: '192' }, { size: '512' }];
+}
+
+export async function GET(
+    request: NextRequest,
+    { params }: { params: Promise<{ size: string }> }
+) {
+    const { size: sizeParam } = await params;
+    const size = parseInt(sizeParam) || 512;
 
     const strokeWidth = Math.max(2, size / 40);
     const dotSize = Math.max(4, size / 15);
