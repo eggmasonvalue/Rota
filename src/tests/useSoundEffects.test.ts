@@ -1,6 +1,6 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { useSoundEffects, FeedbackMode } from '../hooks/useSoundEffects';
+import { useSoundEffects } from '../hooks/useSoundEffects';
 
 // --- Mocks ---
 class MockAudioNode {
@@ -42,7 +42,7 @@ class MockAudioContext {
   createBiquadFilter = vi.fn(() => new MockAudioNode());
   createBufferSource = vi.fn(() => new MockAudioNode());
 
-  createBuffer = vi.fn((channels, size, rate) => ({
+  createBuffer = vi.fn((_channels: number, size: number) => ({
     getChannelData: vi.fn(() => new Float32Array(size))
   }));
 }
@@ -63,9 +63,9 @@ const mockLocalStorage = {
 };
 
 describe('useSoundEffects', () => {
-  let originalVibrate: any;
-  let originalAudioContext: any;
-  let vibrateMock: any;
+  let originalVibrate: (pattern: number | number[]) => boolean;
+  let originalAudioContext: typeof AudioContext;
+  let vibrateMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     // Reset mocks
@@ -113,7 +113,7 @@ describe('useSoundEffects', () => {
       writable: true,
       configurable: true
     });
-    if ((window as any).webkitAudioContext) {
+    if ('webkitAudioContext' in window) {
       Object.defineProperty(window, 'webkitAudioContext', {
         value: undefined,
         writable: true,
@@ -359,7 +359,7 @@ describe('useSoundEffects', () => {
       if (!audioCtxInstance) return; // For TypeScript
 
       // Suspend it manually to simulate backgrounding
-      (audioCtxInstance as any).state = 'suspended';
+      (audioCtxInstance as unknown as { state: string }).state = 'suspended';
       const resumeSpy = vi.spyOn(audioCtxInstance, 'resume');
 
       // Trigger visibilitychange

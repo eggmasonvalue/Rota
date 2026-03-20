@@ -3,7 +3,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useOnlineGame } from '../hooks/useOnlineGame';
 import { supabase } from '../lib/supabase';
 import { generateUUID } from '../lib/utils';
-import { Action } from '../lib/game-logic';
+import { Action, Player } from '../lib/game-logic';
+import { MockInstance } from 'vitest';
 
 // Mock dependencies
 vi.mock('../lib/supabase', () => ({
@@ -19,18 +20,24 @@ vi.mock('../lib/utils', () => ({
 }));
 
 describe('useOnlineGame', () => {
-  let mockChannel: any;
-  let mockOnActionReceived: any;
+  let mockChannel: {
+    on: MockInstance;
+    subscribe: MockInstance;
+    send: MockInstance;
+    track: MockInstance;
+    presenceState: MockInstance;
+  };
+  let mockOnActionReceived: MockInstance;
 
   beforeEach(() => {
     // Reset mocks
     vi.clearAllMocks();
 
     // Setup mock for generateUUID
-    (generateUUID as any).mockReturnValue('test-session-id');
+    (generateUUID as unknown as MockInstance).mockReturnValue('test-session-id');
 
     // Setup mock for onActionReceived
-    mockOnActionReceived = vi.fn();
+    mockOnActionReceived = vi.fn() as unknown as MockInstance;
 
     // Create a mock channel object with chainable methods
     mockChannel = {
@@ -41,7 +48,7 @@ describe('useOnlineGame', () => {
       presenceState: vi.fn().mockReturnValue({}),
     };
 
-    (supabase.channel as any).mockReturnValue(mockChannel);
+    (supabase.channel as unknown as MockInstance).mockReturnValue(mockChannel);
   });
 
   afterEach(() => {
@@ -108,8 +115,8 @@ describe('useOnlineGame', () => {
 
   it('should determine myPlayer as PLAYER1 if first to join', async () => {
     let presenceSyncCallback: () => void = () => {};
-    mockChannel.on.mockImplementation((event: string, opts: any, cb: any) => {
-      if (event === 'presence' && opts.event === 'sync') {
+    mockChannel.on.mockImplementation((event: string, opts: unknown, cb: () => void) => {
+      if (event === 'presence' && (opts as { event: string }).event === 'sync') {
         presenceSyncCallback = cb;
       }
       return mockChannel;
@@ -135,8 +142,8 @@ describe('useOnlineGame', () => {
 
   it('should determine myPlayer as PLAYER2 if second to join', async () => {
     let presenceSyncCallback: () => void = () => {};
-    mockChannel.on.mockImplementation((event: string, opts: any, cb: any) => {
-      if (event === 'presence' && opts.event === 'sync') {
+    mockChannel.on.mockImplementation((event: string, opts: unknown, cb: () => void) => {
+      if (event === 'presence' && (opts as { event: string }).event === 'sync') {
         presenceSyncCallback = cb;
       }
       return mockChannel;
@@ -163,8 +170,8 @@ describe('useOnlineGame', () => {
 
   it('should determine myPlayer as SPECTATOR if third or later to join', async () => {
     let presenceSyncCallback: () => void = () => {};
-    mockChannel.on.mockImplementation((event: string, opts: any, cb: any) => {
-      if (event === 'presence' && opts.event === 'sync') {
+    mockChannel.on.mockImplementation((event: string, opts: unknown, cb: () => void) => {
+      if (event === 'presence' && (opts as { event: string }).event === 'sync') {
         presenceSyncCallback = cb;
       }
       return mockChannel;
@@ -191,12 +198,12 @@ describe('useOnlineGame', () => {
 
   it('should trigger onActionReceived on broadcast game_action', async () => {
     let presenceSyncCallback: () => void = () => {};
-    let broadcastCallback: (payload: any) => void = () => {};
+    let broadcastCallback: (payload: { payload: { action: Action, sessionId: string } }) => void = () => {};
 
-    mockChannel.on.mockImplementation((event: string, opts: any, cb: any) => {
-      if (event === 'presence' && opts.event === 'sync') {
+    mockChannel.on.mockImplementation((event: string, opts: unknown, cb: () => void) => {
+      if (event === 'presence' && (opts as { event: string }).event === 'sync') {
         presenceSyncCallback = cb;
-      } else if (event === 'broadcast' && opts.event === 'game_action') {
+      } else if (event === 'broadcast' && (opts as { event: string }).event === 'game_action') {
         broadcastCallback = cb;
       }
       return mockChannel;
@@ -234,12 +241,12 @@ describe('useOnlineGame', () => {
 
   it('should ignore broadcasts from unknown sessions or spectators', async () => {
     let presenceSyncCallback: () => void = () => {};
-    let broadcastCallback: (payload: any) => void = () => {};
+    let broadcastCallback: (payload: { payload: { action: Action, sessionId: string } }) => void = () => {};
 
-    mockChannel.on.mockImplementation((event: string, opts: any, cb: any) => {
-      if (event === 'presence' && opts.event === 'sync') {
+    mockChannel.on.mockImplementation((event: string, opts: unknown, cb: () => void) => {
+      if (event === 'presence' && (opts as { event: string }).event === 'sync') {
         presenceSyncCallback = cb;
-      } else if (event === 'broadcast' && opts.event === 'game_action') {
+      } else if (event === 'broadcast' && (opts as { event: string }).event === 'game_action') {
         broadcastCallback = cb;
       }
       return mockChannel;

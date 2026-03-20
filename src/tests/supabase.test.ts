@@ -28,7 +28,7 @@ describe('Supabase Client Initialization', () => {
     if (originalWindow !== undefined) {
       global.window = originalWindow;
     } else {
-      delete (global as any).window;
+      delete (global as unknown as Record<string, unknown>).window;
     }
 
     // Restore mocks
@@ -40,7 +40,7 @@ describe('Supabase Client Initialization', () => {
     process.env = { ...originalEnv };
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
     delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    global.window = {} as any; // Simulate browser environment
+    global.window = {} as unknown as Window & typeof globalThis; // Simulate browser environment
 
     // Reset modules to ensure fresh evaluation
     vi.resetModules();
@@ -65,7 +65,7 @@ describe('Supabase Client Initialization', () => {
     process.env = { ...originalEnv };
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
     delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    delete (global as any).window; // Simulate server environment
+    delete (global as unknown as Record<string, unknown>).window; // Simulate server environment
 
     // Reset modules to ensure fresh evaluation
     vi.resetModules();
@@ -87,7 +87,7 @@ describe('Supabase Client Initialization', () => {
     process.env = { ...originalEnv };
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://valid-url.supabase.co';
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'valid-key';
-    global.window = {} as any;
+    global.window = {} as unknown as Window & typeof globalThis;
 
     // Reset modules to ensure fresh evaluation
     vi.resetModules();
@@ -109,7 +109,7 @@ describe('Supabase Client Initialization', () => {
     process.env = { ...originalEnv };
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'invalid-url';
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'valid-key';
-    global.window = {} as any;
+    global.window = {} as unknown as Window & typeof globalThis;
 
     // Reset modules to ensure fresh evaluation
     vi.resetModules();
