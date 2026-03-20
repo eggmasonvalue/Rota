@@ -107,6 +107,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
       return endTurn(state, newBoard, newPiecesCount, newPhase);
     }
     case 'SET_GAME_MODE':
+      if (state.gameMode === action.mode) return state;
       return { ...INITIAL_STATE, gameMode: action.mode };
     case 'RESET_GAME':
       return { ...INITIAL_STATE, gameMode: state.gameMode };
@@ -163,24 +164,18 @@ function GameContent() {
       if (/^[a-zA-Z0-9-]+$/.test(room)) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setRoomId(room);
-        if (state.gameMode !== 'ONLINE') {
-           dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
-        }
+        dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
       }
     } else {
        // Check for explicit mode parameter (e.g. returning from Online)
        if (modeParam === 'HvH' || modeParam === 'HvC') {
-         if (state.gameMode !== modeParam) {
-            dispatch({ type: 'SET_GAME_MODE', mode: modeParam as GameMode });
-         }
+         dispatch({ type: 'SET_GAME_MODE', mode: modeParam as GameMode });
        } else {
-         // If no room in URL and no mode param, ensure we are not stuck in ONLINE mode.
-         if (state.gameMode === 'ONLINE') {
-           dispatch({ type: 'SET_GAME_MODE', mode: 'HvC' });
-         }
+         // If no room in URL and no mode param, default to HvC
+         dispatch({ type: 'SET_GAME_MODE', mode: 'HvC' });
        }
     }
-  }, [searchParams, state.gameMode]);
+  }, [searchParams]);
 
   // Stable reference to state for callback
   const stateRef = useRef(state);
@@ -215,20 +210,21 @@ function GameContent() {
   useEffect(() => {
     // Check if a move was just made (history grew)
     if (state.history.length > prevHistoryLength.current) {
-        // Use the *previous* phase to determine the sound.
-        // If we were in PLACEMENT and history grew, a piece was placed.
-        // If we were in MOVEMENT and history grew, a piece was moved.
-        if (prevPhaseRef.current === 'PLACEMENT') {
-            playPlace();
-        } else if (prevPhaseRef.current === 'MOVEMENT') {
-            playMove();
+        // Only play move/place sound if the game isn't over, otherwise Game Over sounds will overlap
+        if (!state.winner && state.phase !== 'GAME_OVER') {
+            // Use the *previous* phase to determine the sound.
+            if (prevPhaseRef.current === 'PLACEMENT') {
+                playPlace();
+            } else if (prevPhaseRef.current === 'MOVEMENT') {
+                playMove();
+            }
         }
     }
 
     // Update refs for next render
     prevHistoryLength.current = state.history.length;
     prevPhaseRef.current = state.phase;
-  }, [state.history.length, state.phase, playPlace, playMove]);
+  }, [state.history.length, state.phase, state.winner, playPlace, playMove]);
 
   // Trigger game over sounds
   useEffect(() => {
@@ -310,12 +306,7 @@ function GameContent() {
       setRoomId(newRoomId);
       router.push(`/?room=${newRoomId}`);
       dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
-    } else if (state.gameMode === 'ONLINE') {
-      // If we are currently in ONLINE mode, we must force a hard reload to clear Supabase subscriptions cleanly
-      setRoomId(null);
-      window.location.href = `/?mode=${mode}`;
     } else {
-      // Switching between local modes (HvC <-> HvH) - no reload needed
       setRoomId(null);
       dispatch({ type: 'SET_GAME_MODE', mode });
       // Update URL so refresh works

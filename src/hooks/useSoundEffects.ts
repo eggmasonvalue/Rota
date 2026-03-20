@@ -45,9 +45,14 @@ export function useSoundEffects() {
   const isSoundEnabled = feedbackMode === 'SOUND_AND_HAPTICS' || feedbackMode === 'SOUND_ONLY';
   const isHapticsEnabled = feedbackMode === 'SOUND_AND_HAPTICS' || feedbackMode === 'HAPTICS_ONLY';
 
-  const triggerHaptic = useCallback((pattern: number | number[] | 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error') => {
+  const triggerHaptic = useCallback((iosPreset: 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error' | 'selection', androidPattern: number | number[]) => {
     if (isHapticsEnabled) {
-      triggerHapticCore(pattern);
+      // Use native vibrate for Android/supported browsers, fallback to web-haptics for iOS
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+        navigator.vibrate(androidPattern);
+      } else {
+        triggerHapticCore(iosPreset);
+      }
     }
   }, [isHapticsEnabled, triggerHapticCore]);
 
@@ -270,7 +275,7 @@ export function useSoundEffects() {
   //   C. Board Thump       – low-freq surface absorption (the weight)
   // ====================================================================
   const playPlace = useCallback(async () => {
-    triggerHaptic(10);
+    triggerHaptic('medium', 10);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -313,7 +318,7 @@ export function useSoundEffects() {
   //   D. Settle Resonance  – delayed inharmonic pair (piece resting)
   // ====================================================================
   const playMove = useCallback(async () => {
-    triggerHaptic([50, 110, 40]); // Start slide (50ms), wait (110ms), settle click (40ms)
+    triggerHaptic('light', [20, 30, 20, 30, 30]); // A subtle tick for sliding on iOS, gritty texture on Android
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -384,8 +389,8 @@ export function useSoundEffects() {
   // Total:   ~3.5s
   // ====================================================================
   const playWin = useCallback(async () => {
-    // Sync with notes: 0.0s, 0.35s, 0.65s, 1.0s
-    triggerHaptic([100, 250, 100, 200, 100, 250, 200]);
+    // Triumphant system preset (iOS) / Dense pulses (Android)
+    triggerHaptic('success', [100, 50, 100, 50, 150, 100, 300]);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -480,8 +485,8 @@ export function useSoundEffects() {
   // Total:   ~3.5s
   // ====================================================================
   const playLoss = useCallback(async () => {
-    // Sync with notes: 0.0s, 0.5s, 1.1s, 1.8s
-    triggerHaptic([150, 350, 150, 450, 150, 550, 300]);
+    // Heavy lament system preset (iOS) / Dragging pulses (Android)
+    triggerHaptic('error', [300, 100, 300, 100, 400]);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -563,8 +568,8 @@ export function useSoundEffects() {
   // Total duration: ~2.5s
   // ====================================================================
   const playDraw = useCallback(async () => {
-    // Slow swell -> sustain, 0s, 0.6s, 1.2s
-    triggerHaptic([200, 400, 200, 400, 200]);
+    // Unresolved system preset (iOS) / Oscillating pulses (Android)
+    triggerHaptic('warning', [80, 120, 80, 120, 200]);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -640,7 +645,7 @@ export function useSoundEffects() {
   // and high pitch so it feels like a light touch.
   // ====================================================================
   const playClick = useCallback(async () => {
-    triggerHaptic(15);
+    triggerHaptic('selection', 15);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
