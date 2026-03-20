@@ -313,7 +313,7 @@ export function useSoundEffects() {
   //   D. Settle Resonance  – delayed inharmonic pair (piece resting)
   // ====================================================================
   const playMove = useCallback(async () => {
-    triggerHaptic([20, 30, 20, 30, 30]);
+    triggerHaptic([50, 110, 40]); // Start slide (50ms), wait (110ms), settle click (40ms)
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -384,7 +384,8 @@ export function useSoundEffects() {
   // Total:   ~3.5s
   // ====================================================================
   const playWin = useCallback(async () => {
-    triggerHaptic([100, 50, 100, 50, 150, 100, 300]);
+    // Sync with notes: 0.0s, 0.35s, 0.65s, 1.0s
+    triggerHaptic([100, 250, 100, 200, 100, 250, 200]);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -479,7 +480,8 @@ export function useSoundEffects() {
   // Total:   ~3.5s
   // ====================================================================
   const playLoss = useCallback(async () => {
-    triggerHaptic([300, 100, 300, 100, 400]);
+    // Sync with notes: 0.0s, 0.5s, 1.1s, 1.8s
+    triggerHaptic([150, 350, 150, 450, 150, 550, 300]);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -561,7 +563,8 @@ export function useSoundEffects() {
   // Total duration: ~2.5s
   // ====================================================================
   const playDraw = useCallback(async () => {
-    triggerHaptic([80, 120, 80, 120, 200]);
+    // Slow swell -> sustain, 0s, 0.6s, 1.2s
+    triggerHaptic([200, 400, 200, 400, 200]);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;

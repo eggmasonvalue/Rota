@@ -31,28 +31,28 @@ export default function manifest(): MetadataRoute.Manifest {
     screenshots: [
       {
         src: '/screenshot-mobile-dark.png',
-        sizes: '1078x1983',
+        sizes: '1080x1921',
         type: 'image/png',
         form_factor: 'narrow',
         label: 'Rota Board - Dark Mode',
       },
       {
         src: '/screenshot-mobile-light.png',
-        sizes: '1078x1983',
+        sizes: '1080x1921',
         type: 'image/png',
         form_factor: 'narrow',
         label: 'Rota Board - Light Mode',
       },
       {
         src: '/screenshot-desktop-dark.png',
-        sizes: '928x772',
+        sizes: '932x775',
         type: 'image/png',
         form_factor: 'wide',
         label: 'Rota Board - Dark Mode',
       },
       {
         src: '/screenshot-desktop-light.png',
-        sizes: '928x772',
+        sizes: '923x769',
         type: 'image/png',
         form_factor: 'wide',
         label: 'Rota Board - Light Mode',
