@@ -204,7 +204,7 @@ describe('useSoundEffects', () => {
         await result.current.playPlace();
       });
 
-      expect(vibrateMock).toHaveBeenCalledWith(40);
+      expect(vibrateMock).toHaveBeenCalledWith(15);
 
       // Since it creates AudioContext and calls methods
       // Let's verify some AudioContext mocks were called by spying on the MockAudioContext prototype indirectly

@@ -268,7 +268,7 @@ export function useSoundEffects() {
   //   C. Board Thump       – low-freq surface absorption (the weight)
   // ====================================================================
   const playPlace = useCallback(async () => {
-    triggerHaptic(40);
+    triggerHaptic(15);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
