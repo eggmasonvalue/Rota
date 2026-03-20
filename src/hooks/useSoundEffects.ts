@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useWebHaptics } from 'web-haptics/react';
 
 declare global {
   interface Window {
@@ -39,15 +40,16 @@ export function useSoundEffects() {
   const [isMounted, setIsMounted] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const noiseBufferRef = useRef<AudioBuffer | null>(null);
+  const { trigger: triggerHapticCore } = useWebHaptics();
 
   const isSoundEnabled = feedbackMode === 'SOUND_AND_HAPTICS' || feedbackMode === 'SOUND_ONLY';
   const isHapticsEnabled = feedbackMode === 'SOUND_AND_HAPTICS' || feedbackMode === 'HAPTICS_ONLY';
 
-  const triggerHaptic = useCallback((pattern: number | number[]) => {
-    if (isHapticsEnabled && typeof window !== 'undefined' && window.navigator && window.navigator.vibrate) {
-      window.navigator.vibrate(pattern);
+  const triggerHaptic = useCallback((pattern: number | number[] | 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error') => {
+    if (isHapticsEnabled) {
+      triggerHapticCore(pattern);
     }
-  }, [isHapticsEnabled]);
+  }, [isHapticsEnabled, triggerHapticCore]);
 
   // Initialize AudioContext lazily (browsers require user interaction first).
   // Returns a Promise that resolves to `true` only once the context is running.
@@ -382,7 +384,7 @@ export function useSoundEffects() {
   // Total:   ~3.5s
   // ====================================================================
   const playWin = useCallback(async () => {
-    triggerHaptic([100, 50, 100, 50, 150, 100, 300]);
+    triggerHaptic('success');
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -477,7 +479,7 @@ export function useSoundEffects() {
   // Total:   ~3.5s
   // ====================================================================
   const playLoss = useCallback(async () => {
-    triggerHaptic([300, 100, 300, 100, 400]);
+    triggerHaptic('error');
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -559,7 +561,7 @@ export function useSoundEffects() {
   // Total duration: ~2.5s
   // ====================================================================
   const playDraw = useCallback(async () => {
-    triggerHaptic([80, 120, 80, 120, 200]);
+    triggerHaptic('warning');
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;

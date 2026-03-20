@@ -2,6 +2,14 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useSoundEffects } from '../hooks/useSoundEffects';
 
+// Mock web-haptics
+const mockTrigger = vi.fn();
+vi.mock('web-haptics/react', () => ({
+  useWebHaptics: () => ({
+    trigger: mockTrigger
+  })
+}));
+
 // --- Mocks ---
 class MockAudioNode {
   connect = vi.fn();
@@ -63,26 +71,17 @@ const mockLocalStorage = {
 };
 
 describe('useSoundEffects', () => {
-  let originalVibrate: (pattern: number | number[]) => boolean;
   let originalAudioContext: typeof AudioContext;
-  let vibrateMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     // Reset mocks
     vi.clearAllMocks();
+    mockTrigger.mockClear();
     mockLocalStorage.clear();
 
     // Mock localStorage
     Object.defineProperty(window, 'localStorage', {
       value: mockLocalStorage,
-      writable: true
-    });
-
-    // Mock window.navigator.vibrate
-    originalVibrate = window.navigator.vibrate;
-    vibrateMock = vi.fn();
-    Object.defineProperty(window.navigator, 'vibrate', {
-      value: vibrateMock,
       writable: true
     });
 
@@ -104,10 +103,6 @@ describe('useSoundEffects', () => {
 
   afterEach(() => {
     // Restore mocks
-    Object.defineProperty(window.navigator, 'vibrate', {
-      value: originalVibrate,
-      writable: true
-    });
     Object.defineProperty(window, 'AudioContext', {
       value: originalAudioContext,
       writable: true,
@@ -204,7 +199,7 @@ describe('useSoundEffects', () => {
         await result.current.playPlace();
       });
 
-      expect(vibrateMock).toHaveBeenCalledWith(15);
+      expect(mockTrigger).toHaveBeenCalledWith(15);
 
       // Since it creates AudioContext and calls methods
       // Let's verify some AudioContext mocks were called by spying on the MockAudioContext prototype indirectly
@@ -220,7 +215,7 @@ describe('useSoundEffects', () => {
         await result.current.playMove();
       });
 
-      expect(vibrateMock).toHaveBeenCalledWith([20, 30, 20, 30, 30]);
+      expect(mockTrigger).toHaveBeenCalledWith([20, 30, 20, 30, 30]);
     });
 
     it('plays sound and haptic for victory', async () => {
@@ -231,7 +226,7 @@ describe('useSoundEffects', () => {
         await result.current.playWin();
       });
 
-      expect(vibrateMock).toHaveBeenCalledWith([100, 50, 100, 50, 150, 100, 300]);
+      expect(mockTrigger).toHaveBeenCalledWith('success');
     });
 
     it('plays sound and haptic for defeat', async () => {
@@ -242,7 +237,7 @@ describe('useSoundEffects', () => {
         await result.current.playLoss();
       });
 
-      expect(vibrateMock).toHaveBeenCalledWith([300, 100, 300, 100, 400]);
+      expect(mockTrigger).toHaveBeenCalledWith('error');
     });
 
     it('plays sound and haptic for draw', async () => {
@@ -253,7 +248,7 @@ describe('useSoundEffects', () => {
         await result.current.playDraw();
       });
 
-      expect(vibrateMock).toHaveBeenCalledWith([80, 120, 80, 120, 200]);
+      expect(mockTrigger).toHaveBeenCalledWith('warning');
     });
 
     it('plays sound and haptic for click', async () => {
@@ -264,7 +259,7 @@ describe('useSoundEffects', () => {
         await result.current.playClick();
       });
 
-      expect(vibrateMock).toHaveBeenCalledWith(15);
+      expect(mockTrigger).toHaveBeenCalledWith(15);
     });
 
     it('suppresses haptics in SOUND_ONLY mode', async () => {
@@ -276,7 +271,7 @@ describe('useSoundEffects', () => {
         await result.current.playClick();
       });
 
-      expect(vibrateMock).not.toHaveBeenCalled();
+      expect(mockTrigger).not.toHaveBeenCalled();
     });
 
     it('suppresses sound in HAPTICS_ONLY mode', async () => {
@@ -294,7 +289,7 @@ describe('useSoundEffects', () => {
       });
 
       // Haptics still happen
-      expect(vibrateMock).toHaveBeenCalledWith([100, 50, 100, 50, 150, 100, 300]);
+      expect(mockTrigger).toHaveBeenCalledWith('success');
 
       // But AudioContext is never initialized/used because sound is disabled
       expect(audioContextConstructorSpy).not.toHaveBeenCalled();
@@ -313,7 +308,7 @@ describe('useSoundEffects', () => {
         await result.current.playDraw();
       });
 
-      expect(vibrateMock).not.toHaveBeenCalled();
+      expect(mockTrigger).not.toHaveBeenCalled();
       expect(audioContextConstructorSpy).not.toHaveBeenCalled();
     });
   });
