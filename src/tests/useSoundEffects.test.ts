@@ -199,7 +199,7 @@ describe('useSoundEffects', () => {
         await result.current.playPlace();
       });
 
-      expect(mockTrigger).toHaveBeenCalledWith(15);
+      expect(mockTrigger).toHaveBeenCalledWith(10);
 
       // Since it creates AudioContext and calls methods
       // Let's verify some AudioContext mocks were called by spying on the MockAudioContext prototype indirectly
@@ -226,7 +226,7 @@ describe('useSoundEffects', () => {
         await result.current.playWin();
       });
 
-      expect(mockTrigger).toHaveBeenCalledWith('success');
+      expect(mockTrigger).toHaveBeenCalledWith([100, 50, 100, 50, 150, 100, 300]);
     });
 
     it('plays sound and haptic for defeat', async () => {
@@ -237,7 +237,7 @@ describe('useSoundEffects', () => {
         await result.current.playLoss();
       });
 
-      expect(mockTrigger).toHaveBeenCalledWith('error');
+      expect(mockTrigger).toHaveBeenCalledWith([300, 100, 300, 100, 400]);
     });
 
     it('plays sound and haptic for draw', async () => {
@@ -248,7 +248,7 @@ describe('useSoundEffects', () => {
         await result.current.playDraw();
       });
 
-      expect(mockTrigger).toHaveBeenCalledWith('warning');
+      expect(mockTrigger).toHaveBeenCalledWith([80, 120, 80, 120, 200]);
     });
 
     it('plays sound and haptic for click', async () => {
@@ -289,7 +289,7 @@ describe('useSoundEffects', () => {
       });
 
       // Haptics still happen
-      expect(mockTrigger).toHaveBeenCalledWith('success');
+      expect(mockTrigger).toHaveBeenCalledWith([100, 50, 100, 50, 150, 100, 300]);
 
       // But AudioContext is never initialized/used because sound is disabled
       expect(audioContextConstructorSpy).not.toHaveBeenCalled();

@@ -270,7 +270,7 @@ export function useSoundEffects() {
   //   C. Board Thump       – low-freq surface absorption (the weight)
   // ====================================================================
   const playPlace = useCallback(async () => {
-    triggerHaptic(15);
+    triggerHaptic(10);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -384,7 +384,7 @@ export function useSoundEffects() {
   // Total:   ~3.5s
   // ====================================================================
   const playWin = useCallback(async () => {
-    triggerHaptic('success');
+    triggerHaptic([100, 50, 100, 50, 150, 100, 300]);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -479,7 +479,7 @@ export function useSoundEffects() {
   // Total:   ~3.5s
   // ====================================================================
   const playLoss = useCallback(async () => {
-    triggerHaptic('error');
+    triggerHaptic([300, 100, 300, 100, 400]);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
@@ -561,7 +561,7 @@ export function useSoundEffects() {
   // Total duration: ~2.5s
   // ====================================================================
   const playDraw = useCallback(async () => {
-    triggerHaptic('warning');
+    triggerHaptic([80, 120, 80, 120, 200]);
     if (!isSoundEnabled) return;
     const ready = await initAudio();
     if (!ready || !audioContextRef.current) return;
