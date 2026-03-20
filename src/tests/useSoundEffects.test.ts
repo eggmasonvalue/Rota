@@ -359,7 +359,7 @@ describe('useSoundEffects', () => {
       if (!audioCtxInstance) return; // For TypeScript
 
       // Suspend it manually to simulate backgrounding
-      audioCtxInstance.state = 'suspended';
+      (audioCtxInstance as any).state = 'suspended';
       const resumeSpy = vi.spyOn(audioCtxInstance, 'resume');
 
       // Trigger visibilitychange

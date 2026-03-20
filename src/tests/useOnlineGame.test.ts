@@ -20,7 +20,7 @@ vi.mock('../lib/utils', () => ({
 
 describe('useOnlineGame', () => {
   let mockChannel: any;
-  let mockOnActionReceived: ReturnType<typeof vi.fn>;
+  let mockOnActionReceived: any;
 
   beforeEach(() => {
     // Reset mocks
@@ -49,7 +49,8 @@ describe('useOnlineGame', () => {
   });
 
   it('should initialize with disconnected state when roomId is null', () => {
-    const { result } = renderHook(() => useOnlineGame(null, mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    const { result } = renderHook(() => useOnlineGame(null, onAction));
 
     expect(result.current.connectionStatus).toBe('DISCONNECTED');
     expect(result.current.myPlayer).toBeNull();
@@ -58,7 +59,8 @@ describe('useOnlineGame', () => {
   });
 
   it('should attempt to connect when roomId is provided', () => {
-    const { result } = renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    const { result } = renderHook(() => useOnlineGame('room-123', onAction));
 
     expect(result.current.connectionStatus).toBe('CONNECTING');
     expect(supabase.channel).toHaveBeenCalledWith('room:room-123', expect.any(Object));
@@ -74,7 +76,8 @@ describe('useOnlineGame', () => {
       subscribeCallback = cb;
     });
 
-    const { result } = renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    const { result } = renderHook(() => useOnlineGame('room-123', onAction));
 
     await act(async () => {
       subscribeCallback('SUBSCRIBED');
@@ -93,7 +96,8 @@ describe('useOnlineGame', () => {
       subscribeCallback = cb;
     });
 
-    const { result } = renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    const { result } = renderHook(() => useOnlineGame('room-123', onAction));
 
     await act(async () => {
       subscribeCallback('CLOSED');
@@ -111,7 +115,8 @@ describe('useOnlineGame', () => {
       return mockChannel;
     });
 
-    const { result } = renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    const { result } = renderHook(() => useOnlineGame('room-123', onAction));
 
     // Simulate presence state with only me
     mockChannel.presenceState.mockReturnValue({
@@ -137,7 +142,8 @@ describe('useOnlineGame', () => {
       return mockChannel;
     });
 
-    const { result } = renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    const { result } = renderHook(() => useOnlineGame('room-123', onAction));
 
     // Simulate presence state with someone else first, then me
     mockChannel.presenceState.mockReturnValue({
@@ -164,7 +170,8 @@ describe('useOnlineGame', () => {
       return mockChannel;
     });
 
-    const { result } = renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    const { result } = renderHook(() => useOnlineGame('room-123', onAction));
 
     mockChannel.presenceState.mockReturnValue({
       'room-123': [
@@ -195,7 +202,8 @@ describe('useOnlineGame', () => {
       return mockChannel;
     });
 
-    renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    renderHook(() => useOnlineGame('room-123', onAction));
 
     // First setup presence so the hook knows who is PLAYER1 and PLAYER2
     mockChannel.presenceState.mockReturnValue({
@@ -210,7 +218,7 @@ describe('useOnlineGame', () => {
     });
 
     // Now simulate an incoming broadcast from PLAYER1
-    const mockAction: Action = { type: 'PLACE', target: 0 };
+    const mockAction: Action = { type: 'PLACE_PIECE', index: 0 };
 
     act(() => {
       broadcastCallback({
@@ -237,7 +245,8 @@ describe('useOnlineGame', () => {
       return mockChannel;
     });
 
-    renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    renderHook(() => useOnlineGame('room-123', onAction));
 
     mockChannel.presenceState.mockReturnValue({
       'room-123': [
@@ -255,7 +264,7 @@ describe('useOnlineGame', () => {
     act(() => {
       broadcastCallback({
         payload: {
-          action: { type: 'PLACE', target: 0 },
+          action: { type: 'PLACE_PIECE', index: 0 },
           sessionId: 'spectator-session'
         }
       });
@@ -267,7 +276,7 @@ describe('useOnlineGame', () => {
     act(() => {
       broadcastCallback({
         payload: {
-          action: { type: 'PLACE', target: 0 },
+          action: { type: 'PLACE_PIECE', index: 0 },
           sessionId: 'unknown-session'
         }
       });
@@ -282,14 +291,15 @@ describe('useOnlineGame', () => {
       subscribeCallback = cb;
     });
 
-    const { result } = renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    const { result } = renderHook(() => useOnlineGame('room-123', onAction));
 
     // Call subscribe to set status to CONNECTED
     await act(async () => {
       subscribeCallback('SUBSCRIBED');
     });
 
-    const action: Action = { type: 'PLACE', target: 4 };
+    const action: Action = { type: 'PLACE_PIECE', index: 4 };
 
     act(() => {
       result.current.sendAction(action);
@@ -303,18 +313,20 @@ describe('useOnlineGame', () => {
   });
 
   it('should not send action if not connected', () => {
-    const { result } = renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    const { result } = renderHook(() => useOnlineGame('room-123', onAction));
 
     // Status is currently CONNECTING
     act(() => {
-      result.current.sendAction({ type: 'PLACE', target: 4 });
+      result.current.sendAction({ type: 'PLACE_PIECE', index: 4 });
     });
 
     expect(mockChannel.send).not.toHaveBeenCalled();
   });
 
   it('should clean up the channel on unmount', () => {
-    const { unmount } = renderHook(() => useOnlineGame('room-123', mockOnActionReceived));
+    const onAction = (a: Action, p: Player) => mockOnActionReceived(a, p);
+    const { unmount } = renderHook(() => useOnlineGame('room-123', onAction));
 
     unmount();
 

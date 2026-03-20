@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach, mock, afterEach } from 'bun:test';
-import { getBestMove } from '@/lib/ai';
-import { INITIAL_STATE } from '@/lib/game-logic';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { getBestMove } from '../lib/ai';
+import { INITIAL_STATE } from '../lib/game-logic';
 
 // Mock getBestMove
-mock.module('@/lib/ai', () => ({
+vi.mock('../lib/ai', () => ({
   getBestMove: vi.fn(),
 }));
 
