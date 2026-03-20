@@ -46,6 +46,12 @@ export default function Icon() {
 
         {/* Pieces (Decorative) */}
         <div style={{ position: 'absolute', width: '140px', height: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {/* Cardinal Points */}
+            <div style={{ position: 'absolute', top: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#8C8A6B' }} />
+            <div style={{ position: 'absolute', bottom: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#8C8A6B' }} />
+            <div style={{ position: 'absolute', left: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#8C8A6B' }} />
+            <div style={{ position: 'absolute', right: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#8C8A6B' }} />
+
              {/* Center */}
             <div style={{
                 position: 'absolute',
@@ -55,14 +61,7 @@ export default function Icon() {
                 borderRadius: '50%',
                 background: '#C24538', // Pompeii Red
                 border: '4px solid #8C8A6B',
-                zIndex: 10
             }} />
-
-            {/* Cardinal Points */}
-            <div style={{ position: 'absolute', top: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#8C8A6B' }} />
-            <div style={{ position: 'absolute', bottom: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#8C8A6B' }} />
-            <div style={{ position: 'absolute', left: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#8C8A6B' }} />
-            <div style={{ position: 'absolute', right: '-6px', width: '12px', height: '12px', borderRadius: '50%', background: '#8C8A6B' }} />
         </div>
       </div>
     ),

@@ -42,6 +42,12 @@ export async function GET(request: NextRequest) {
                 <div style={{ position: 'absolute', width: strokeWidth, height: '100%', background: '#8C8A6B', transform: 'rotate(45deg)' }} />
                 <div style={{ position: 'absolute', width: strokeWidth, height: '100%', background: '#8C8A6B', transform: 'rotate(-45deg)' }} />
 
+                {/* Decorative Dots on rim */}
+                <div style={{ position: 'absolute', top: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
+                <div style={{ position: 'absolute', bottom: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
+                <div style={{ position: 'absolute', left: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
+                <div style={{ position: 'absolute', right: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
+
                 {/* Center Piece */}
                 <div style={{
                         position: 'absolute',
@@ -49,14 +55,7 @@ export async function GET(request: NextRequest) {
                         borderRadius: '50%',
                         background: '#C24538', // Pompeii Red
                         border: `${strokeWidth}px solid #8C8A6B`,
-                        zIndex: 10
                 }} />
-
-                {/* Decorative Dots on rim */}
-                <div style={{ position: 'absolute', top: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
-                <div style={{ position: 'absolute', bottom: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
-                <div style={{ position: 'absolute', left: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
-                <div style={{ position: 'absolute', right: -strokeWidth, width: dotSize, height: dotSize, borderRadius: '50%', background: '#8C8A6B' }} />
                 </div>
             </div>
         ),
