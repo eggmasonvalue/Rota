@@ -44,7 +44,6 @@ export default function Icon() {
             borderRadius: '50%',
             background: '#C24538', // Pompeii Red
             border: '1.5px solid #8C8A6B',
-            zIndex: 10
         }} />
       </div>
     ),
