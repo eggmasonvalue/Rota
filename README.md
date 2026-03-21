@@ -5,6 +5,7 @@ A modern, visually stunning implementation of the ancient Roman game **Rota**, b
 ## Features
 
 - **The Forum Theme:** A rich visual experience using Pompeii Red (#9C382F) and Mediterranean Blue (#2C5D8F) on a Warm Stone background.
+- **Sensory Feedback:** Procedural audio synthesis via the Web Audio API (stone/marble materials) paired with synchronized physical vibrations via the Web Vibration API (`web-haptics`), seamlessly unified under a 4-state toggle control.
 - **Game Modes:**
   - **Human vs CPU:** Challenge a Minimax-powered AI with five distinct difficulty levels:
     - **Plebeian:** Basic moves, prone to error.
@@ -23,29 +24,24 @@ A modern, visually stunning implementation of the ancient Roman game **Rota**, b
 - **Language:** TypeScript 5.x
 - **Styling:** Tailwind CSS v4 (Native CSS variables)
 - **Animation:** Framer Motion 12
+- **Sensory:** Web Audio API & Web Vibration API (`web-haptics`)
 - **State Management:** React `useReducer`
 - **Testing:** Vitest (Unit tests in `src/tests/`)
-- **Performance:** Web Workers for AI computation
+- **Performance:** Web Workers for AI computation utilizing in-place state mutation for reduced GC overhead.
 
 ## Getting Started
 
 1.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
+    `npm install`
 
 2.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
+    `npm run dev &`
 
 3.  **Open the app:**
-    Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+    Navigate to http://localhost:3000 in your browser.
 
 4.  **Run tests:**
-    ```bash
-    npm test
-    ```
+    `npm test`
 
 ## How to Play
 
