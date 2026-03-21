@@ -132,7 +132,7 @@ export function useOnlineGame(
       supabase.removeChannel(channel);
       channelRef.current = null;
     };
-  }, [roomId, onActionReceived]);
+  }, [roomId, onActionReceived, myElo]);
 
   return { myPlayer, connectionStatus, onlineUsersCount, sendAction, player1Elo, player2Elo };
 }
