@@ -438,11 +438,7 @@ function GameContent() {
 
   // Prevent flash of defaults before hydration from localStorage
   if (!mounted || !isStatsLoaded || !isSoundMounted) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden font-body transition-colors duration-500">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_70%)] opacity-5 pointer-events-none" />
-      </main>
-    );
+    return null;
   }
 
   return (
