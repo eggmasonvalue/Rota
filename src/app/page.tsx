@@ -8,9 +8,13 @@ import { Button } from '@/components/ui/Button';
 import { GlassPanel } from '@/components/ui/GlassPanel';
 import { Modal } from '@/components/ui/Modal';
 import { HowToPlay } from '@/components/game/HowToPlay';
+import { PlayerStatsModal } from '@/components/game/PlayerStatsModal';
+import { RankIcon } from '@/components/game/RankIcon';
 import { useOnlineGame } from '@/hooks/useOnlineGame';
 import { useSoundEffects } from '@/hooks/useSoundEffects';
+import { usePlayerStats } from '@/hooks/usePlayerStats';
 import { generateUUID } from '@/lib/utils';
+import { getRankForElo } from '@/lib/scoring';
 // Force Turbopack clean update for Lucide-React imports
 import { Copy, Users, Volume2, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
 
@@ -122,6 +126,9 @@ function GameContent() {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
+
+  const { stats, recordGameResult, resetStats } = usePlayerStats();
 
   const workerRef = useRef<Worker | null>(null);
   const searchParams = useSearchParams();
@@ -226,9 +233,18 @@ function GameContent() {
     prevPhaseRef.current = state.phase;
   }, [state.history.length, state.phase, state.winner, playPlace, playMove]);
 
-  // Trigger game over sounds
+  const lastRecordedGame = useRef<{historyLength: number, mode: GameMode} | null>(null);
+
+  // Clear recorded game tracking when a new game starts
   useEffect(() => {
-    if (state.winner) {
+    if (state.phase !== 'GAME_OVER') {
+      lastRecordedGame.current = null;
+    }
+  }, [state.phase]);
+
+  // Trigger game over sounds and record stats
+  useEffect(() => {
+    if (state.winner && state.phase === 'GAME_OVER') {
         if (state.winner === 'DRAW') {
             playDraw();
         } else if (state.gameMode === 'HvC') {
@@ -241,8 +257,19 @@ function GameContent() {
         } else {
             playWin(); // HvH
         }
+
+        // Record stats only in Solo (HvC) mode exactly once per game
+        if (state.gameMode === 'HvC') {
+            const currentGameId = `${state.history.length}-${state.gameMode}`;
+            const lastGameId = lastRecordedGame.current ? `${lastRecordedGame.current.historyLength}-${lastRecordedGame.current.mode}` : null;
+
+            if (currentGameId !== lastGameId) {
+                recordGameResult(difficulty, state.winner, 'PLAYER1');
+                lastRecordedGame.current = { historyLength: state.history.length, mode: state.gameMode };
+            }
+        }
     }
-  }, [state.winner, state.gameMode, myPlayer, playWin, playLoss, playDraw]);
+  }, [state.winner, state.phase, state.gameMode, myPlayer, playWin, playLoss, playDraw, difficulty, recordGameResult, state.history.length]);
 
   // Initialize Web Worker
   useEffect(() => {
@@ -411,10 +438,29 @@ function GameContent() {
 
       <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-8">
         <GlassPanel className="w-full flex justify-between items-center flex-wrap gap-4 px-8 py-6">
-            {/* Title */}
-            <h1 className="text-4xl font-heading font-bold text-foreground tracking-widest drop-shadow-sm">
-              ROTA
-            </h1>
+            {/* Title & Stats Badge */}
+            <div className="flex items-center gap-6 flex-wrap">
+              <h1 className="text-4xl font-heading font-bold text-foreground tracking-widest drop-shadow-sm">
+                ROTA
+              </h1>
+
+              {/* Player Stats Badge */}
+              <button
+                  onClick={() => setIsStatsModalOpen(true)}
+                  className="group flex items-center gap-3 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-full pl-2 pr-4 py-1 hover:bg-[var(--glass-border)]/10 hover:border-secondary/50 transition-all cursor-pointer shadow-sm"
+              >
+                  <div className={`w-6 h-6 ${getRankForElo(stats.elo).glowClass}`}>
+                     <RankIcon colorClass={getRankForElo(stats.elo).colorClass} />
+                  </div>
+                  <div className="flex items-center gap-2 font-heading tracking-widest">
+                     <span className="text-foreground/90 text-sm font-bold">{stats.elo}</span>
+                     <div className="w-px h-3 bg-[var(--glass-border)] mx-1" />
+                     <span className={`text-sm flex items-center gap-1 ${stats.dailyStreak > 0 ? 'text-primary' : 'text-foreground/40'}`}>
+                        🔥 {stats.dailyStreak}
+                     </span>
+                  </div>
+              </button>
+            </div>
 
             {/* Turn Indicator */}
             <div className="flex gap-6 items-center text-lg font-heading tracking-wide">
@@ -618,6 +664,14 @@ function GameContent() {
             )}
         </div>
       </Modal>
+
+      {/* Player Stats Modal */}
+      <PlayerStatsModal
+         isOpen={isStatsModalOpen}
+         onClose={() => setIsStatsModalOpen(false)}
+         stats={stats}
+         onReset={resetStats}
+      />
     </main>
   );
 }

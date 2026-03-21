@@ -32,6 +32,15 @@
         - [x] *UI Click:* Small pebble tap on marble — bright, minimal.
     - [x] **Haptics:** Synchronized physical vibrations via the Web Vibration API (`web-haptics`) matched to game materials (e.g. grinding stone, impacts) using a shared 4-state audio/haptics toggle control.
 
+- [x] **Local Scoring System**
+    - [x] Elo Rating System (`K=32`) for Solo mode (HvC) games stored in `localStorage`.
+    - [x] Fixed AI Ratings: Plebeian (800), Merchant (1000), Eques (1200), Senator (1400), Consul (1600).
+    - [x] Roman Ranks based on Elo: Plebeian, Merchant, Eques, Senator, Consul with corresponding color/glow styling.
+    - [x] Comprehensive player stats tracking: W/L/D and current streak per difficulty.
+    - [x] "Daily Triumph" continuous win streak tracking to drive engagement.
+    - [x] Thematic top bar badge combining the Rank SVG icon, Elo score, and Daily Streak.
+    - [x] Detailed "Service Record" modal displaying stats in a mobile-friendly tabular format.
+
 ## Planned / In Progress
 - [ ] **Leaderboard:** Persistent wins tracking via Supabase Database.
 - [ ] **Reconnect Logic:** Handling transient disconnects in online games without losing state.
