@@ -191,6 +191,37 @@ describe('useSoundEffects', () => {
   });
 
   describe('Audio & Haptics Playing', () => {
+    it('stops audio buffers correctly when playing sound effects', async () => {
+      // Create a specific MockAudioContext for this test so we can track nodes it creates
+      const createdNodes: MockAudioNode[] = [];
+      const mockCtx = new MockAudioContext();
+
+      mockCtx.createOscillator = vi.fn(() => {
+        const node = new MockAudioNode();
+        createdNodes.push(node);
+        return node;
+      });
+      mockCtx.createBufferSource = vi.fn(() => {
+        const node = new MockAudioNode();
+        createdNodes.push(node);
+        return node;
+      });
+
+      const audioContextConstructorSpy = vi.fn().mockImplementation(function() { return mockCtx; });
+      Object.defineProperty(window, 'AudioContext', { value: audioContextConstructorSpy, writable: true, configurable: true });
+
+      const { result } = renderHook(() => useSoundEffects());
+      await waitFor(() => expect(result.current.isMounted).toBe(true));
+
+      await act(async () => {
+        await result.current.playPlace();
+      });
+
+      // Verify that at least one node has stop() called
+      const hasStopCalled = createdNodes.some(node => vi.mocked(node.stop).mock.calls.length > 0);
+      expect(hasStopCalled).toBe(true);
+    });
+
     it('plays sound and haptic when placing piece', async () => {
       const { result } = renderHook(() => useSoundEffects());
       await waitFor(() => expect(result.current.isMounted).toBe(true));
