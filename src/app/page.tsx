@@ -16,41 +16,41 @@ import { usePlayerStats } from '@/hooks/usePlayerStats';
 import { generateUUID } from '@/lib/utils';
 import { getRankForElo } from '@/lib/scoring';
 // Force Turbopack clean update for Lucide-React imports
-import { Copy, Users, Volume2, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
+import { Copy, Check, Users, Volume2, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
 
 // Exported for testing purposes to verify core game logic state transitions
 export function gameReducer(state: GameState, action: Action): GameState {
   // Game logic helper
   const endTurn = (newState: GameState, newBoard: (Player | null)[], newPiecesCount: { [key in Player]: number }, nextPhase: Phase): GameState => {
-     const winner = checkWin(newBoard);
-     const nextPlayer = getNextPlayer(newState.currentPlayer);
-     const newHistory = [...newState.history, JSON.stringify({ board: newBoard, player: newState.currentPlayer })];
+    const winner = checkWin(newBoard);
+    const nextPlayer = getNextPlayer(newState.currentPlayer);
+    const newHistory = [...newState.history, JSON.stringify({ board: newBoard, player: newState.currentPlayer })];
 
-     if (winner) {
-        return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: 'GAME_OVER', winner, currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
-     }
+    if (winner) {
+      return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: 'GAME_OVER', winner, currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
+    }
 
-     if (nextPhase === 'MOVEMENT' && checkRepetition(newHistory, newBoard, newState.currentPlayer)) {
-        return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: 'GAME_OVER', winner: 'DRAW', currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
-     }
+    if (nextPhase === 'MOVEMENT' && checkRepetition(newHistory, newBoard, newState.currentPlayer)) {
+      return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: 'GAME_OVER', winner: 'DRAW', currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
+    }
 
-     if (nextPhase === 'MOVEMENT') {
-        const nextStateCheck: GameState = {
-           ...newState,
-           board: newBoard,
-           currentPlayer: nextPlayer,
-           phase: 'MOVEMENT' as Phase,
-           piecesCount: newPiecesCount,
-           winner: null,
-           selectedCell: null,
-           history: newHistory
-        };
-        if (isBlocked(nextStateCheck)) {
-           return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: 'GAME_OVER', winner: newState.currentPlayer, currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
-        }
-     }
+    if (nextPhase === 'MOVEMENT') {
+      const nextStateCheck: GameState = {
+        ...newState,
+        board: newBoard,
+        currentPlayer: nextPlayer,
+        phase: 'MOVEMENT' as Phase,
+        piecesCount: newPiecesCount,
+        winner: null,
+        selectedCell: null,
+        history: newHistory
+      };
+      if (isBlocked(nextStateCheck)) {
+        return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: 'GAME_OVER', winner: newState.currentPlayer, currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
+      }
+    }
 
-     return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: nextPhase, winner: null, currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
+    return { ...newState, board: newBoard, piecesCount: newPiecesCount, phase: nextPhase, winner: null, currentPlayer: nextPlayer, selectedCell: null, history: newHistory };
   };
 
   switch (action.type) {
@@ -174,13 +174,13 @@ function GameContent() {
         dispatch({ type: 'SET_GAME_MODE', mode: 'ONLINE' });
       }
     } else {
-       // Check for explicit mode parameter (e.g. returning from Online)
-       if (modeParam === 'HvH' || modeParam === 'HvC') {
-         dispatch({ type: 'SET_GAME_MODE', mode: modeParam as GameMode });
-       } else {
-         // If no room in URL and no mode param, default to HvC
-         dispatch({ type: 'SET_GAME_MODE', mode: 'HvC' });
-       }
+      // Check for explicit mode parameter (e.g. returning from Online)
+      if (modeParam === 'HvH' || modeParam === 'HvC') {
+        dispatch({ type: 'SET_GAME_MODE', mode: modeParam as GameMode });
+      } else {
+        // If no room in URL and no mode param, default to HvC
+        dispatch({ type: 'SET_GAME_MODE', mode: 'HvC' });
+      }
     }
   }, [searchParams]);
 
@@ -189,24 +189,24 @@ function GameContent() {
   useEffect(() => { stateRef.current = state; }, [state]);
 
   const onActionReceived = useCallback((action: Action, fromPlayer: Player) => {
-     const currentState = stateRef.current;
-     // Security/Validity Check
-     // Only accept moves if it's that player's turn
+    const currentState = stateRef.current;
+    // Security/Validity Check
+    // Only accept moves if it's that player's turn
 
-     if (action.type === 'RESET_GAME') {
-        // Only allow reset if the game is over to prevent griefing
-        if (currentState.phase === 'GAME_OVER') {
-           dispatch(action);
-        }
-        return;
-     }
-
-     if (fromPlayer === currentState.currentPlayer) {
+    if (action.type === 'RESET_GAME') {
+      // Only allow reset if the game is over to prevent griefing
+      if (currentState.phase === 'GAME_OVER') {
         dispatch(action);
-     }
+      }
+      return;
+    }
+
+    if (fromPlayer === currentState.currentPlayer) {
+      dispatch(action);
+    }
   }, []);
 
-  const { myPlayer, connectionStatus, onlineUsersCount, sendAction } = useOnlineGame(roomId, onActionReceived);
+  const { myPlayer, connectionStatus, onlineUsersCount, sendAction, player1Elo, player2Elo } = useOnlineGame(roomId, onActionReceived, stats.elo);
 
   // Sound Effects
   const { playPlace, playMove, playWin, playLoss, playDraw, playClick, feedbackMode, cycleFeedbackMode, isMounted: isSoundMounted } = useSoundEffects();
@@ -217,15 +217,15 @@ function GameContent() {
   useEffect(() => {
     // Check if a move was just made (history grew)
     if (state.history.length > prevHistoryLength.current) {
-        // Only play move/place sound if the game isn't over, otherwise Game Over sounds will overlap
-        if (!state.winner && state.phase !== 'GAME_OVER') {
-            // Use the *previous* phase to determine the sound.
-            if (prevPhaseRef.current === 'PLACEMENT') {
-                playPlace();
-            } else if (prevPhaseRef.current === 'MOVEMENT') {
-                playMove();
-            }
+      // Only play move/place sound if the game isn't over, otherwise Game Over sounds will overlap
+      if (!state.winner && state.phase !== 'GAME_OVER') {
+        // Use the *previous* phase to determine the sound.
+        if (prevPhaseRef.current === 'PLACEMENT') {
+          playPlace();
+        } else if (prevPhaseRef.current === 'MOVEMENT') {
+          playMove();
         }
+      }
     }
 
     // Update refs for next render
@@ -233,7 +233,7 @@ function GameContent() {
     prevPhaseRef.current = state.phase;
   }, [state.history.length, state.phase, state.winner, playPlace, playMove]);
 
-  const lastRecordedGame = useRef<{historyLength: number, mode: GameMode} | null>(null);
+  const lastRecordedGame = useRef<{ historyLength: number, mode: GameMode } | null>(null);
 
   // Clear recorded game tracking when a new game starts
   useEffect(() => {
@@ -245,29 +245,29 @@ function GameContent() {
   // Trigger game over sounds and record stats
   useEffect(() => {
     if (state.winner && state.phase === 'GAME_OVER') {
-        if (state.winner === 'DRAW') {
-            playDraw();
-        } else if (state.gameMode === 'HvC') {
-            if (state.winner === 'PLAYER1') playWin();
-            else playLoss();
-        } else if (state.gameMode === 'ONLINE') {
-            if (myPlayer === state.winner) playWin();
-            else if (myPlayer === 'SPECTATOR') playDraw(); // Neutral for spectator
-            else playLoss();
-        } else {
-            playWin(); // HvH
-        }
+      if (state.winner === 'DRAW') {
+        playDraw();
+      } else if (state.gameMode === 'HvC') {
+        if (state.winner === 'PLAYER1') playWin();
+        else playLoss();
+      } else if (state.gameMode === 'ONLINE') {
+        if (myPlayer === state.winner) playWin();
+        else if (myPlayer === 'SPECTATOR') playDraw(); // Neutral for spectator
+        else playLoss();
+      } else {
+        playWin(); // HvH
+      }
 
-        // Record stats only in Solo (HvC) mode exactly once per game
-        if (state.gameMode === 'HvC') {
-            const currentGameId = `${state.history.length}-${state.gameMode}`;
-            const lastGameId = lastRecordedGame.current ? `${lastRecordedGame.current.historyLength}-${lastRecordedGame.current.mode}` : null;
+      // Record stats only in Solo (HvC) mode exactly once per game
+      if (state.gameMode === 'HvC') {
+        const currentGameId = `${state.history.length}-${state.gameMode}`;
+        const lastGameId = lastRecordedGame.current ? `${lastRecordedGame.current.historyLength}-${lastRecordedGame.current.mode}` : null;
 
-            if (currentGameId !== lastGameId) {
-                recordGameResult(difficulty, state.winner, 'PLAYER1');
-                lastRecordedGame.current = { historyLength: state.history.length, mode: state.gameMode };
-            }
+        if (currentGameId !== lastGameId) {
+          recordGameResult(difficulty, state.winner, 'PLAYER1');
+          lastRecordedGame.current = { historyLength: state.history.length, mode: state.gameMode };
         }
+      }
     }
   }, [state.winner, state.phase, state.gameMode, myPlayer, playWin, playLoss, playDraw, difficulty, recordGameResult, state.history.length]);
 
@@ -277,7 +277,7 @@ function GameContent() {
     workerRef.current.onmessage = (event) => {
       const { move } = event.data;
       if (move) {
-         dispatch({ type: 'CPU_MOVE', from: move.from, to: move.to });
+        dispatch({ type: 'CPU_MOVE', from: move.from, to: move.to });
       }
     };
     return () => { workerRef.current?.terminate(); };
@@ -286,11 +286,11 @@ function GameContent() {
   // AI Turn Trigger
   useEffect(() => {
     if (state.gameMode === 'HvC' && state.currentPlayer === 'PLAYER2' && state.phase !== 'GAME_OVER') {
-       if (workerRef.current) {
-          setTimeout(() => {
-             workerRef.current?.postMessage({ state, difficulty });
-          }, 800);
-       }
+      if (workerRef.current) {
+        setTimeout(() => {
+          workerRef.current?.postMessage({ state, difficulty });
+        }, 800);
+      }
     }
   }, [state, difficulty]);
 
@@ -302,10 +302,10 @@ function GameContent() {
 
     // Prevent interaction if online and not my turn
     if (state.gameMode === 'ONLINE') {
-        if (!myPlayer || myPlayer === 'SPECTATOR') return; // Spectators can't play
-        if (myPlayer !== state.currentPlayer) return; // Not my turn
-        // Ensure opponent is present? Optional, but good UX.
-        // For now, allow placing if you are assigned a role.
+      if (!myPlayer || myPlayer === 'SPECTATOR') return; // Spectators can't play
+      if (myPlayer !== state.currentPlayer) return; // Not my turn
+      // Ensure opponent is present? Optional, but good UX.
+      // For now, allow placing if you are assigned a role.
     }
 
     let action: Action | null = null;
@@ -344,17 +344,17 @@ function GameContent() {
   const handleRestart = () => {
     // In Online mode, restrict restarting to when the game is over
     if (state.gameMode === 'ONLINE' && state.phase !== 'GAME_OVER') {
-        return;
+      return;
     }
     // Prevent spectators from restarting
     if (state.gameMode === 'ONLINE' && myPlayer === 'SPECTATOR') {
-        return;
+      return;
     }
 
     const action: Action = { type: 'RESET_GAME' };
     dispatch(action);
     if (state.gameMode === 'ONLINE') {
-        sendAction(action);
+      sendAction(action);
     }
   };
 
@@ -373,61 +373,61 @@ function GameContent() {
 
   // Helper for dynamic difficulty name display
   const getOpponentName = () => {
-      if (state.gameMode === 'HvH') return 'PLAYER 2';
-      if (state.gameMode === 'ONLINE') return 'PLAYER 2';
-      // Solo mode (HvC)
-      switch (difficulty) {
-          case 'PLEBEIAN': return 'PLEBEIAN';
-          case 'MERCHANT': return 'MERCHANT';
-          case 'EQUES': return 'EQUES';
-          case 'SENATOR': return 'SENATOR';
-          case 'CONSUL': return 'CONSUL';
-          default: return 'CPU';
-      }
+    if (state.gameMode === 'HvH') return 'PLAYER 2';
+    if (state.gameMode === 'ONLINE') return 'PLAYER 2';
+    // Solo mode (HvC)
+    switch (difficulty) {
+      case 'PLEBEIAN': return 'PLEBEIAN';
+      case 'MERCHANT': return 'MERCHANT';
+      case 'EQUES': return 'EQUES';
+      case 'SENATOR': return 'SENATOR';
+      case 'CONSUL': return 'CONSUL';
+      default: return 'CPU';
+    }
   };
 
   // Helper for game over messages
   const getWinMessage = () => {
-      if (state.gameMode !== 'HvC') {
-         // Rotating victory messages for PVP
-         const quotes = [
-            "The Senate acknowledges your triumph.",
-            "Rome salutes the victor.",
-            "Glory to the winner."
-         ];
-         return quotes[state.history.length % quotes.length];
-      }
+    if (state.gameMode !== 'HvC') {
+      // Rotating victory messages for PVP
+      const quotes = [
+        "The Senate acknowledges your triumph.",
+        "Rome salutes the victor.",
+        "Glory to the winner."
+      ];
+      return quotes[state.history.length % quotes.length];
+    }
 
-      // Solo Mode Custom Messages
-      switch(difficulty) {
-          case 'PLEBEIAN': return "You have risen above the rabble.";
-          case 'MERCHANT': return "Your strategy pays dividends.";
-          case 'EQUES': return "You command respect among the elite!";
-          case 'SENATOR': return "The Senate stands in awe of your strategy.";
-          case 'CONSUL': return "History will remember this triumph.";
-          default: return "VICTORY";
-      }
+    // Solo Mode Custom Messages
+    switch (difficulty) {
+      case 'PLEBEIAN': return "You have risen above the rabble.";
+      case 'MERCHANT': return "Your strategy pays dividends.";
+      case 'EQUES': return "You command respect among the elite!";
+      case 'SENATOR': return "The Senate stands in awe of your strategy.";
+      case 'CONSUL': return "History will remember this triumph.";
+      default: return "VICTORY";
+    }
   };
 
   const getLossMessage = () => {
-      if (state.gameMode !== 'HvC') {
-         const quotes = [
-            "The Senate acknowledges the victor.",
-            "A hard-fought battle in the Forum.",
-            "Fate has favored the bold."
-         ];
-         return quotes[state.history.length % quotes.length];
-      }
+    if (state.gameMode !== 'HvC') {
+      const quotes = [
+        "The Senate acknowledges the victor.",
+        "A hard-fought battle in the Forum.",
+        "Fate has favored the bold."
+      ];
+      return quotes[state.history.length % quotes.length];
+    }
 
-      // Solo Mode Custom Messages
-      switch(difficulty) {
-          case 'PLEBEIAN': return "Defeated by a pleb? Humiliating!";
-          case 'MERCHANT': return "You've been swindled out of victory.";
-          case 'EQUES': return "The equestrian order remains exclusive.";
-          case 'SENATOR': return "Outwitted by a seasoned statesman.";
-          case 'CONSUL': return "The Consul's authority is absolute.";
-          default: return "DEFEAT";
-      }
+    // Solo Mode Custom Messages
+    switch (difficulty) {
+      case 'PLEBEIAN': return "Defeated by a pleb? Humiliating!";
+      case 'MERCHANT': return "You've been swindled out of victory.";
+      case 'EQUES': return "The equestrian order remains exclusive.";
+      case 'SENATOR': return "Outwitted by a seasoned statesman.";
+      case 'CONSUL': return "The Consul's authority is absolute.";
+      default: return "DEFEAT";
+    }
   };
 
   const [mounted, setMounted] = useState(false);
@@ -440,184 +440,210 @@ function GameContent() {
   const isReady = mounted && isStatsLoaded && isSoundMounted;
 
   return (
-    <main
-      className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden font-body transition-colors duration-500"
-      style={{ opacity: isReady ? 1 : 0 }}
-    >
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden font-body transition-colors duration-500">
+
+      {/* Loading Overlay */}
+      <div
+        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background transition-opacity duration-1000 ${isReady ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      >
+        <div className="flex flex-col items-center gap-6">
+          {/* Animated Logo */}
+          <div className="w-24 h-24 animate-[spin_4s_linear_infinite]">
+            <RankIcon colorClass="text-[var(--glass-border)]" hubColorClass="text-primary" />
+          </div>
+
+          <div className="w-48 h-px bg-gradient-to-r from-transparent via-[var(--glass-border)] to-transparent" />
+          <p className="text-foreground/50 font-heading tracking-widest text-sm uppercase animate-pulse">Entering The Forum...</p>
+        </div>
+      </div>
 
       {/* Background Ambience - Subtle tint from the primary/secondary palette */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--color-primary)_0%,transparent_70%)] opacity-5 pointer-events-none" />
 
-      <div className="z-10 w-full max-w-4xl flex flex-col items-center gap-8">
+      {/* Main Game Content */}
+      <div className={`z-10 w-full max-w-4xl flex flex-col items-center gap-8 transition-opacity duration-1000 delay-300 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
         <GlassPanel className="w-full flex justify-between items-center flex-wrap gap-4 px-8 py-6">
-            {/* Title & Stats Badge */}
-            <div className="flex items-center gap-6 flex-wrap">
-              <h1 className="text-4xl font-heading font-bold text-foreground tracking-widest drop-shadow-sm">
-                ROTA
-              </h1>
+          {/* Title & Stats Badge */}
+          <div className="flex items-center gap-6 flex-wrap">
+            <h1 className="text-4xl font-heading font-bold text-foreground tracking-widest drop-shadow-sm">
+              ROTA
+            </h1>
 
-              {/* Player Stats Badge */}
-              <button
-                  onClick={() => setIsStatsModalOpen(true)}
-                  className="group flex items-center gap-3 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-full pl-2 pr-4 py-1 hover:bg-[var(--glass-border)]/10 hover:border-secondary/50 transition-all cursor-pointer shadow-sm"
+            {/* Player Stats Badge */}
+            <button
+              onClick={() => setIsStatsModalOpen(true)}
+              className="group flex items-center gap-3 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-full pl-2 pr-4 py-1 hover:bg-[var(--glass-border)]/10 hover:border-secondary/50 transition-all cursor-pointer shadow-sm"
+            >
+              <div className={`w-6 h-6 ${getRankForElo(stats.elo).glowClass}`}>
+                <RankIcon colorClass={getRankForElo(stats.elo).colorClass} />
+              </div>
+              <div className="flex items-center gap-2 font-heading tracking-widest">
+                <span className="text-foreground/90 text-sm font-bold">{stats.elo}</span>
+                <div className="w-px h-3 bg-[var(--glass-border)] mx-1" />
+                <span className={`text-sm flex items-center gap-1 ${stats.dailyStreak > 0 ? 'text-primary' : 'text-foreground/40'}`}>
+                  🔥 {stats.dailyStreak}
+                </span>
+              </div>
+            </button>
+          </div>
+
+          {/* Turn Indicator */}
+          <div className="flex gap-6 items-center text-lg font-heading tracking-wide">
+            <div className={`transition-all duration-300 ${isPlayer1Turn ? 'text-primary font-bold drop-shadow-[0_0_8px_var(--color-primary)] scale-110' : 'text-foreground/50'}`}>
+              {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 1' : 'YOU'}
+            </div>
+            <div className="text-foreground/40 text-sm">VS</div>
+            <div className={`transition-all duration-300 ${isPlayer2Turn ? 'text-secondary font-bold drop-shadow-[0_0_8px_var(--color-secondary)] scale-110' : 'text-foreground/50'}`}>
+              {getOpponentName()}
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-wrap items-end justify-center sm:justify-end gap-3 w-full sm:w-auto">
+            {/* Game Mode Selector */}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-foreground/60 font-heading uppercase tracking-widest">OPPONENT</label>
+              <select
+                value={state.gameMode}
+                onChange={(e) => {
+                  playClick();
+                  handleModeChange(e.target.value as GameMode);
+                }}
+                className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-xl px-3 py-1 text-sm text-foreground font-body outline-none focus:border-secondary hover:bg-[var(--glass-border)]/10 transition-colors cursor-pointer"
+                disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0 || state.piecesCount.PLAYER2 > 0)}
               >
-                  <div className={`w-6 h-6 ${getRankForElo(stats.elo).glowClass}`}>
-                     <RankIcon colorClass={getRankForElo(stats.elo).colorClass} />
-                  </div>
-                  <div className="flex items-center gap-2 font-heading tracking-widest">
-                     <span className="text-foreground/90 text-sm font-bold">{stats.elo}</span>
-                     <div className="w-px h-3 bg-[var(--glass-border)] mx-1" />
-                     <span className={`text-sm flex items-center gap-1 ${stats.dailyStreak > 0 ? 'text-primary' : 'text-foreground/40'}`}>
-                        🔥 {stats.dailyStreak}
-                     </span>
-                  </div>
-              </button>
+                <option value="HvC" className="bg-background text-foreground">Solo</option>
+                <option value="HvH" className="bg-background text-foreground">Versus</option>
+                <option value="ONLINE" className="bg-background text-foreground">Online</option>
+              </select>
             </div>
 
-            {/* Turn Indicator */}
-            <div className="flex gap-6 items-center text-lg font-heading tracking-wide">
-                <div className={`transition-all duration-300 ${isPlayer1Turn ? 'text-primary font-bold drop-shadow-[0_0_8px_var(--color-primary)] scale-110' : 'text-foreground/50'}`}>
-                  {state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? 'PLAYER 1' : 'YOU'}
-                </div>
-                <div className="text-foreground/40 text-sm">VS</div>
-                <div className={`transition-all duration-300 ${isPlayer2Turn ? 'text-secondary font-bold drop-shadow-[0_0_8px_var(--color-secondary)] scale-110' : 'text-foreground/50'}`}>
-                   {getOpponentName()}
-                </div>
-            </div>
-
-            {/* Controls */}
-            <div className="flex flex-wrap items-end justify-center sm:justify-end gap-3 w-full sm:w-auto">
-                 {/* Game Mode Selector */}
-                 <div className="flex flex-col gap-1">
-                   <label className="text-xs text-foreground/60 font-heading uppercase tracking-widest">OPPONENT</label>
-                   <select
-                      value={state.gameMode}
-                      onChange={(e) => {
-                          playClick();
-                          handleModeChange(e.target.value as GameMode);
-                      }}
-                      className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-xl px-3 py-1 text-sm text-foreground font-body outline-none focus:border-secondary hover:bg-[var(--glass-border)]/10 transition-colors cursor-pointer"
-                      disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0 || state.piecesCount.PLAYER2 > 0)}
-                  >
-                      <option value="HvC" className="bg-background text-foreground">Solo</option>
-                      <option value="HvH" className="bg-background text-foreground">Versus</option>
-                      <option value="ONLINE" className="bg-background text-foreground">Online</option>
-                  </select>
-                 </div>
-
-                {/* Difficulty Selector (Only visible/enabled in HvC) */}
-                {state.gameMode === 'HvC' && (
-                  <div className="flex flex-col gap-1">
-                    <label className="text-xs text-foreground/60 font-heading uppercase tracking-widest">Rank</label>
-                    <select
-                        value={difficulty}
-                        onChange={(e) => {
-                            playClick();
-                            setDifficulty(e.target.value as Difficulty);
-                        }}
-                        className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-xl px-3 py-1 text-sm text-foreground font-body outline-none focus:border-secondary hover:bg-[var(--glass-border)]/10 transition-colors cursor-pointer"
-                        disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0)}
-                    >
-                        <option value="PLEBEIAN" className="bg-background text-foreground">Plebeian</option>
-                        <option value="MERCHANT" className="bg-background text-foreground">Merchant</option>
-                        <option value="EQUES" className="bg-background text-foreground">Eques</option>
-                        <option value="SENATOR" className="bg-background text-foreground">Senator</option>
-                        <option value="CONSUL" className="bg-background text-foreground">Consul</option>
-                    </select>
-                  </div>
-                )}
-
-                {/* Feedback Toggle */}
-                <button                    suppressHydrationWarning
-                    onClick={() => {
-                        cycleFeedbackMode();
-                        playClick();
-                    }}
-                    className="p-2 rounded-xl border border-[var(--glass-border)] hover:border-secondary/80 text-foreground/80 hover:text-foreground transition-colors self-end mb-0.5"
-                    title={
-                        feedbackMode === 'SOUND_AND_HAPTICS' ? "Sound & Haptics On" :
-                        feedbackMode === 'SOUND_ONLY' ? "Sound Only" :
-                        feedbackMode === 'HAPTICS_ONLY' ? "Haptics Only" :
-                        "Feedback Off"
-                    }
-                >
-                    {feedbackMode === 'SOUND_AND_HAPTICS' ? (
-                        <div className="flex items-center -space-x-1">
-                            <Volume2 size={18} />
-                            <Vibrate size={14} className="opacity-80" />
-                        </div>
-                    ) :
-                     feedbackMode === 'SOUND_ONLY' ? <Volume2 size={20} /> :
-                     feedbackMode === 'HAPTICS_ONLY' ? <Vibrate size={20} /> :
-                     <VolumeX size={20} />}
-                </button>
-
-                {/* Theme Toggle */}
-                <button
-                    onClick={toggleTheme}
-                    className="p-2 rounded-xl border border-[var(--glass-border)] hover:border-secondary/80 text-foreground/80 hover:text-foreground transition-colors self-end mb-0.5"
-                    title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                >
-                    {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-                </button>
-
-                <Button
-                  onClick={() => {
-                      playClick();
-                      handleRestart();
+            {/* Difficulty Selector (Only visible/enabled in HvC) */}
+            {state.gameMode === 'HvC' && (
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-foreground/60 font-heading uppercase tracking-widest">Rank</label>
+                <select
+                  value={difficulty}
+                  onChange={(e) => {
+                    playClick();
+                    setDifficulty(e.target.value as Difficulty);
                   }}
-                  variant="glass"
-                  className="text-sm py-2 px-6 font-heading tracking-wider hover:text-secondary border-[var(--glass-border)] hover:border-secondary/80 h-full self-end mb-0.5"
+                  className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-xl px-3 py-1 text-sm text-foreground font-body outline-none focus:border-secondary hover:bg-[var(--glass-border)]/10 transition-colors cursor-pointer"
+                  disabled={state.phase !== 'PLACEMENT' || (state.piecesCount.PLAYER1 > 0)}
                 >
-                  Restart
-                </Button>
-            </div>
+                  <option value="PLEBEIAN" className="bg-background text-foreground">Plebeian</option>
+                  <option value="MERCHANT" className="bg-background text-foreground">Merchant</option>
+                  <option value="EQUES" className="bg-background text-foreground">Eques</option>
+                  <option value="SENATOR" className="bg-background text-foreground">Senator</option>
+                  <option value="CONSUL" className="bg-background text-foreground">Consul</option>
+                </select>
+              </div>
+            )}
+
+            {/* Feedback Toggle */}
+            <button suppressHydrationWarning
+              onClick={() => {
+                cycleFeedbackMode();
+                playClick();
+              }}
+              className="p-2 rounded-xl border border-[var(--glass-border)] hover:border-secondary/80 text-foreground/80 hover:text-foreground transition-colors self-end mb-0.5"
+              title={
+                feedbackMode === 'SOUND_AND_HAPTICS' ? "Sound & Haptics On" :
+                  feedbackMode === 'SOUND_ONLY' ? "Sound Only" :
+                    feedbackMode === 'HAPTICS_ONLY' ? "Haptics Only" :
+                      "Feedback Off"
+              }
+            >
+              {feedbackMode === 'SOUND_AND_HAPTICS' ? (
+                <div className="flex items-center -space-x-1">
+                  <Volume2 size={18} />
+                  <Vibrate size={14} className="opacity-80" />
+                </div>
+              ) :
+                feedbackMode === 'SOUND_ONLY' ? <Volume2 size={20} /> :
+                  feedbackMode === 'HAPTICS_ONLY' ? <Vibrate size={20} /> :
+                    <VolumeX size={20} />}
+            </button>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl border border-[var(--glass-border)] hover:border-secondary/80 text-foreground/80 hover:text-foreground transition-colors self-end mb-0.5"
+              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
+            <Button
+              onClick={() => {
+                playClick();
+                handleRestart();
+              }}
+              variant="glass"
+              className="text-sm py-2 px-6 font-heading tracking-wider hover:text-secondary border-[var(--glass-border)] hover:border-secondary/80 h-full self-end mb-0.5"
+            >
+              Restart
+            </Button>
+          </div>
         </GlassPanel>
 
         {/* Online Status Bar */}
         {state.gameMode === 'ONLINE' && (
-          <GlassPanel className="w-full flex justify-between items-center px-6 py-3">
-             <div className="flex items-center gap-4">
-                <div className={`w-3 h-3 rounded-full ${connectionStatus === 'CONNECTED' ? 'bg-[var(--glass-border)] shadow-[0_0_8px_var(--glass-border)]' : 'bg-[var(--primary)] animate-pulse'}`} />
-                <span className="text-foreground/80 text-sm font-heading tracking-wider">
-                  {connectionStatus === 'CONNECTED'
-                    ? (myPlayer ? (myPlayer === 'SPECTATOR' ? 'WITNESSING HISTORY...' : `YOU ARE ${myPlayer === 'PLAYER1' ? 'PLAYER 1' : 'PLAYER 2'}`) : 'ENTERING THE FORUM...')
-                    : 'SEEKING A WORTHY CHALLENGER...'}
-                </span>
-                {onlineUsersCount > 0 && (
-                  <span className="flex items-center gap-1 text-xs text-foreground/60 ml-2">
-                    <Users size={14} /> {onlineUsersCount} Online
-                  </span>
-                )}
-             </div>
+          <GlassPanel className="w-full flex justify-between items-center px-4 py-2 sm:px-6 sm:py-3 border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-md">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0 overflow-hidden">
+              <div className={`shrink-0 w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${connectionStatus === 'CONNECTED' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-primary animate-pulse'}`} />
 
-             <div className="flex items-center gap-2">
-               <button
-                  onClick={() => {
-                      playClick();
-                      copyLink();
-                  }}
-                  className="flex items-center gap-2 text-xs text-foreground/80 hover:text-foreground transition-colors uppercase tracking-widest font-heading border border-[var(--glass-border)] rounded-lg px-3 py-1.5 hover:bg-[var(--glass-border)]/10"
-               >
-                 {copied ? 'COPIED' : 'COPY LINK'} <Copy size={14} />
-               </button>
-             </div>
+              <div className="flex items-center font-heading tracking-wider truncate text-xs sm:text-sm">
+                {connectionStatus === 'CONNECTED' ? (
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <span className={`truncate ${myPlayer === 'PLAYER1' ? 'text-primary drop-shadow-[0_0_8px_var(--color-primary)] font-bold' : 'text-foreground/80'}`}>
+                      P1{player1Elo ? ` [${player1Elo}]` : ''}
+                    </span>
+                    <span className="text-foreground/40 text-[10px] sm:text-xs">VS</span>
+                    <span className={`truncate ${myPlayer === 'PLAYER2' ? 'text-secondary drop-shadow-[0_0_8px_var(--color-secondary)] font-bold' : 'text-foreground/80'}`}>
+                      P2{player2Elo ? ` [${player2Elo}]` : ''}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-foreground/80 truncate">SEEKING A WORTHY CHALLENGER...</span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0 ml-2">
+              {onlineUsersCount > 0 && (
+                <div className="flex items-center gap-1.5 text-xs text-foreground/60 shrink-0" title={`${onlineUsersCount} user(s) online`}>
+                  <Users size={14} className="sm:w-4 sm:h-4 w-3.5 h-3.5" />
+                  <span className="font-body font-medium">{onlineUsersCount}</span>
+                </div>
+              )}
+              <button
+                onClick={() => {
+                  playClick();
+                  copyLink();
+                }}
+                className="flex items-center justify-center text-foreground/80 hover:text-foreground transition-colors border border-[var(--glass-border)] rounded-md p-1.5 sm:p-2 hover:bg-[var(--glass-border)]/10 shrink-0"
+                title="Copy Room Link"
+              >
+                {copied ? <Check size={14} className="sm:w-4 sm:h-4 text-green-500" /> : <Copy size={14} className="sm:w-4 sm:h-4" />}
+              </button>
+            </div>
           </GlassPanel>
         )}
 
         {/* Game Board */}
         <div className="w-full flex justify-center relative mb-0">
-            {/* Ambient Glow behind board */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--glass-border)] opacity-10 rounded-full blur-3xl pointer-events-none" />
-            <Board gameState={state} onCellClick={handleCellClick} />
+          {/* Ambient Glow behind board */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--glass-border)] opacity-10 rounded-full blur-3xl pointer-events-none" />
+          <Board gameState={state} onCellClick={handleCellClick} />
         </div>
 
         {/* Status Message - Moved closer to board */}
         <div className="text-center h-8 -mt-12 relative z-20 pointer-events-none">
-            <p className="text-foreground/90 font-heading text-xl tracking-wider animate-pulse drop-shadow-md">
-              {state.phase === 'PLACEMENT' && "Place your pieces (3 each)"}
-              {state.phase === 'MOVEMENT' && "Move a piece to an adjacent empty spot"}
-            </p>
+          <p className="text-foreground/90 font-heading text-xl tracking-wider animate-pulse drop-shadow-md">
+            {state.phase === 'PLACEMENT' && "Place your pieces (3 each)"}
+            {state.phase === 'MOVEMENT' && "Move a piece to an adjacent empty spot"}
+          </p>
         </div>
 
         {/* How to Play Section */}
@@ -627,62 +653,62 @@ function GameContent() {
       {/* Game Over Modal */}
       <Modal isOpen={state.phase === 'GAME_OVER'}>
         <div className="flex flex-col gap-6 items-center p-4">
-            <h2 className="text-5xl font-heading font-bold mb-2 tracking-widest text-center flex items-center justify-center gap-2">
-                {state.winner === 'PLAYER1' && (
-                  state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? (
-                     <span className="text-primary drop-shadow-[0_0_15px_var(--color-primary)]">
-                        PLAYER <span className="inline-block scale-110 drop-shadow-[0_0_25px_var(--color-primary)] font-black mx-1">1</span> WINS
-                     </span>
-                  ) : (
-                     <span className="text-primary drop-shadow-[0_0_15px_var(--color-primary)]">VICTORY</span>
-                  )
-                )}
-
-                {state.winner === 'PLAYER2' && (
-                   state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? (
-                     <span className="text-secondary drop-shadow-[0_0_15px_var(--color-secondary)]">
-                        PLAYER <span className="inline-block scale-110 drop-shadow-[0_0_25px_var(--color-secondary)] font-black mx-1">2</span> WINS
-                     </span>
-                   ) : (
-                     <span className="text-foreground/50">DEFEAT</span>
-                   )
-                )}
-
-                {state.winner === 'DRAW' && <span className="text-foreground/80">STALEMATE</span>}
-            </h2>
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-[var(--glass-border)] to-transparent" />
-            <p className="text-xl text-foreground/80 font-body text-center max-w-md">
-                {state.winner === 'PLAYER1' ?
-                  getWinMessage()
-                  : ""
-                }
-                {state.winner === 'PLAYER2' ?
-                  getLossMessage()
-                  : ""
-                }
-                {state.winner === 'DRAW' && "A stalemate in the Curia."}
-            </p>
-            {(!state.gameMode || state.gameMode !== 'ONLINE' || (myPlayer && myPlayer !== 'SPECTATOR')) && (
-              <Button
-                onClick={() => {
-                    playClick();
-                    handleRestart();
-                }}
-                variant="primary"
-                className="mt-4 px-8 py-3 text-lg font-heading tracking-widest bg-primary hover:bg-primary/80 text-white shadow-[0_0_20px_rgba(var(--color-primary),0.4)]"
-              >
-                Play Again
-              </Button>
+          <h2 className="text-5xl font-heading font-bold mb-2 tracking-widest text-center flex items-center justify-center gap-2">
+            {state.winner === 'PLAYER1' && (
+              state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? (
+                <span className="text-primary drop-shadow-[0_0_15px_var(--color-primary)]">
+                  PLAYER <span className="inline-block scale-110 drop-shadow-[0_0_25px_var(--color-primary)] font-black mx-1">1</span> WINS
+                </span>
+              ) : (
+                <span className="text-primary drop-shadow-[0_0_15px_var(--color-primary)]">VICTORY</span>
+              )
             )}
+
+            {state.winner === 'PLAYER2' && (
+              state.gameMode === 'HvH' || state.gameMode === 'ONLINE' ? (
+                <span className="text-secondary drop-shadow-[0_0_15px_var(--color-secondary)]">
+                  PLAYER <span className="inline-block scale-110 drop-shadow-[0_0_25px_var(--color-secondary)] font-black mx-1">2</span> WINS
+                </span>
+              ) : (
+                <span className="text-foreground/50">DEFEAT</span>
+              )
+            )}
+
+            {state.winner === 'DRAW' && <span className="text-foreground/80">STALEMATE</span>}
+          </h2>
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-[var(--glass-border)] to-transparent" />
+          <p className="text-xl text-foreground/80 font-body text-center max-w-md">
+            {state.winner === 'PLAYER1' ?
+              getWinMessage()
+              : ""
+            }
+            {state.winner === 'PLAYER2' ?
+              getLossMessage()
+              : ""
+            }
+            {state.winner === 'DRAW' && "A stalemate in the Curia."}
+          </p>
+          {(!state.gameMode || state.gameMode !== 'ONLINE' || (myPlayer && myPlayer !== 'SPECTATOR')) && (
+            <Button
+              onClick={() => {
+                playClick();
+                handleRestart();
+              }}
+              variant="primary"
+              className="mt-4 px-8 py-3 text-lg font-heading tracking-widest bg-primary hover:bg-primary/80 text-white shadow-[0_0_20px_rgba(var(--color-primary),0.4)]"
+            >
+              Play Again
+            </Button>
+          )}
         </div>
       </Modal>
 
       {/* Player Stats Modal */}
       <PlayerStatsModal
-         isOpen={isStatsModalOpen}
-         onClose={() => setIsStatsModalOpen(false)}
-         stats={stats}
-         onReset={resetStats}
+        isOpen={isStatsModalOpen}
+        onClose={() => setIsStatsModalOpen(false)}
+        stats={stats}
+        onReset={resetStats}
       />
     </main>
   );
