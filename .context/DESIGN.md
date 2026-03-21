@@ -7,16 +7,18 @@
     - [x] Win Condition (3-in-a-row).
     - [x] Draw Condition (3-fold repetition).
 - [x] **AI Opponent**
-    - [x] Alpha-Beta Pruning (Depth 4).
+    - [x] Alpha-Beta Pruning.
+    - [x] In-place state mutation for reduced GC overhead.
     - [x] Heuristic-based evaluation (Center control + threat detection).
-    - [x] Difficulty selector (Novice to Senator).
+    - [x] Difficulty selector (5 levels: `PLEBEIAN`, `MERCHANT`, `EQUES`, `SENATOR`, `CONSUL`).
 - [x] **Multiplayer**
     - [x] Supabase Realtime synchronization.
     - [x] Presence-based role assignment.
     - [x] Spectator mode support.
 - [x] **UI/UX**
-    - [x] "Imperial Senate" theme implementation.
-    - [x] Responsive hex/circular board layout.
+    - [x] "The Forum" theme implementation (Warm Stone, Pompeii Red, Mediterranean Blue).
+    - [x] Responsive hex/circular board layout with sized breathing circle indicators.
+    - [x] Rotating victory quotes for PvP modes with "smudge" highlight effect.
     - [x] Spring-based piece animations.
     - [x] **Soundscape:** Procedural audio synthesis via Web Audio API.
         Physical-world sound modelling — every sound based on stone/marble materials.
@@ -28,15 +30,15 @@
         - [x] *Defeat:* Descending minor lament — 4-note falling phrase using muted horn (filtered sawtooth) + low drone (~3.5s). Breaks stone palette for tonal end-game signal.
         - [x] *Draw:* Suspended unresolved tones — tritone pair (B3+F4) using filtered triangle waves with vibrato, swelling and fading without resolution (~2.5s).
         - [x] *UI Click:* Small pebble tap on marble — bright, minimal.
+    - [x] **Haptics:** Synchronized physical vibrations via the Web Vibration API (`web-haptics`) matched to game materials (e.g. grinding stone, impacts) using a shared 4-state audio/haptics toggle control.
 
 ## Planned / In Progress
 - [ ] **Leaderboard:** Persistent wins tracking via Supabase Database.
 - [ ] **Reconnect Logic:** Handling transient disconnects in online games without losing state.
-- [ ] **Haptics:** Deferred until iOS WebKit supports `navigator.vibrate` or equivalent web haptic APIs.
 
 ## Aesthetic Specification
-- **Theme Name:** "Imperial Senate"
-- **Primary:** `var(--color-tyrian-purple)` (#66023C)
-- **Secondary:** `var(--color-imperial-gold)` (#D4AF37)
-- **Canvas:** `var(--color-deep-marble)` (#1A1A2E)
+- **Theme Name:** "The Forum"
+- **Canvas / Background:** `var(--background)` (#F5F0E6 Warm Sand / #2C241B Dark Earth)
+- **Primary:** `var(--primary)` (#9C382F Pompeii Red)
+- **Secondary:** `var(--secondary)` (#2C5D8F Mediterranean Blue)
 - **Motion:** Stiff springs for UI elements, damp springs for game pieces to simulate weight.

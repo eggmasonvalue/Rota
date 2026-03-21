@@ -6,7 +6,7 @@
 - **Styling:** Tailwind CSS v4 (Using native CSS variables and `@theme` blocks)
 - **Animation:** Framer Motion 12 (Layout transitions and spring physics)
 - **Realtime:** Supabase (Presence and Broadcast Channels)
-- **Audio:** Web Audio API (Synthesized procedural audio)
+- **Sensory:** Web Audio API (Synthesized procedural audio) & Web Vibration API (`web-haptics`)
 - **Testing:** Vitest for pure logic validation
 
 ## Core Modules
@@ -20,27 +20,31 @@ A pure, functional engine that manages the Rota state machine.
 A Minimax algorithm with Alpha-Beta pruning, offloaded to a Web Worker for zero-blocking UI.
 - **Worker Entry:** `src/worker/ai.worker.ts` handles message passing.
 - **Core Logic:** `src/lib/ai.ts` contains the pure Minimax implementation.
+- **Optimizations:** Utilizes in-place state mutation with backtracking (`makeMove` / `undoMove`) rather than spreading or copying objects, minimizing GC overhead to enable rapid deep search.
 - **Heuristics:** 
     - **Center Control:** High weight (+20) for holding the center hub (point 8).
     - **Winning Threats:** Significant weight (+50) for 2-in-a-row with an empty third spot.
     - **Defensive Priority:** Penalty (-60) for opponent's 2-in-a-row threats.
-- **Difficulty Scaling:** 
-    - **Easy:** Depth 1 + 40% random move chance.
-    - **Medium:** Depth 2.
-    - **Senator (Hard):** Depth 4 (sufficient for Rota's small state space).
+- **Difficulty Scaling (5 Levels):**
+    - **Plebeian:** Depth 1 + 40% random probabilistic move chance.
+    - **Merchant:** Depth 1.
+    - **Eques:** Depth 2.
+    - **Senator:** Depth 3.
+    - **Consul:** Depth 4.
 
 ### 3. Multiplayer Sync (`src/hooks/useOnlineGame.ts`)
 A custom hook leveraging Supabase Realtime.
 - **Presence Sorting:** Roles (`PLAYER1`, `PLAYER2`, `SPECTATOR`) are determined by sorting users by their `joinedAt` timestamp in the presence state.
 - **Broadcast Pattern:** Move actions are broadcasted as JSON payloads. The receiving client re-plays the action through their local reducer to ensure state consistency.
 
-### 4. Audio Synthesis (`src/hooks/useSoundEffects.ts`)
-A custom hook encapsulating procedural audio generation.
+### 4. Audio & Haptics (`src/hooks/useSoundEffects.ts`)
+A custom hook encapsulating procedural audio generation and vibration-based haptics.
 - **Oscillator Strategy:** Uses `triangle`, `sine`, and `sawtooth` waves for tonal sounds (chords, clicks).
-- **Noise Synthesis:** Uses `AudioBuffer` filled with random values (White Noise) processed through a `BiquadFilterNode` (Bandpass) to simulate friction/scraping sounds for piece movement.
+- **Noise Synthesis:** Uses `AudioBuffer` filled with random values (White Noise) processed through a `BiquadFilterNode` (Bandpass) to simulate friction/scraping sounds for piece movement. The buffer is pre-calculated during initialization.
 - **Context Management:** Lazily initializes `AudioContext` to comply with browser autoplay policies.
+- **Haptic Feedback:** Triggers `web-haptics` patterns complementing the audio (e.g., tick/gritty texture on slide, heavier bump on placement, error bursts).
 - **Integration:** Reacts to `state.history.length` and `state.winner` changes to trigger sounds, ensuring synchronization across all game modes (Local, AI, Online).
-- **Persistence:** Mute preference is stored in `localStorage` under the key `rota_muted`.
+- **Persistence:** 4-state preference (`SOUND_AND_HAPTICS`, `SOUND_ONLY`, `HAPTICS_ONLY`, `OFF`) is stored in `localStorage` under the key `rota_feedback_mode`.
 
 ## Data Flow
 ```
@@ -56,5 +60,5 @@ A custom hook encapsulating procedural audio generation.
           |
     [Framer Motion Animate]
           |
-    [Sound Effect Trigger (useEffect)]
+    [Feedback Trigger (Audio/Haptics useEffect)]
 ```
