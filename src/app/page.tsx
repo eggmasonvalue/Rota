@@ -128,7 +128,7 @@ function GameContent() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
 
-  const { stats, recordGameResult, resetStats } = usePlayerStats();
+  const { stats, recordGameResult, resetStats, isLoaded: isStatsLoaded } = usePlayerStats();
 
   const workerRef = useRef<Worker | null>(null);
   const searchParams = useSearchParams();
@@ -209,7 +209,7 @@ function GameContent() {
   const { myPlayer, connectionStatus, onlineUsersCount, sendAction } = useOnlineGame(roomId, onActionReceived);
 
   // Sound Effects
-  const { playPlace, playMove, playWin, playLoss, playDraw, playClick, feedbackMode, cycleFeedbackMode } = useSoundEffects();
+  const { playPlace, playMove, playWin, playLoss, playDraw, playClick, feedbackMode, cycleFeedbackMode, isMounted: isSoundMounted } = useSoundEffects();
   const prevHistoryLength = useRef(state.history.length);
   const prevPhaseRef = useRef<Phase>(state.phase);
 
@@ -429,6 +429,11 @@ function GameContent() {
           default: return "DEFEAT";
       }
   };
+
+  // Prevent flash of defaults before hydration from localStorage
+  if (!isStatsLoaded || !isSoundMounted) {
+    return <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden font-body transition-colors duration-500" />;
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background text-foreground relative overflow-x-hidden font-body transition-colors duration-500">

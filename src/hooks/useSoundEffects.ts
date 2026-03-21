@@ -222,12 +222,16 @@ export function useSoundEffects() {
       gritFilter.frequency.setValueAtTime(800, startTime);
       gritFilter.Q.value = 1.5;
       const gritGain = ctx.createGain();
+      const stopTime = startTime + Math.min(0.025, decayTime * 0.3);
       gritGain.gain.setValueAtTime(gritVol, startTime);
-      gritGain.gain.exponentialRampToValueAtTime(0.001, startTime + Math.min(0.025, decayTime * 0.3));
+      gritGain.gain.exponentialRampToValueAtTime(0.001, stopTime);
+      gritGain.gain.setValueAtTime(0, stopTime + 0.01);
+
       grit.connect(gritFilter);
       gritFilter.connect(gritGain);
       gritGain.connect(ctx.destination);
       grit.start(startTime);
+      grit.stop(stopTime + 0.05);
     }
   }, []);
 
@@ -256,12 +260,16 @@ export function useSoundEffects() {
     filter.frequency.setValueAtTime(cutoffHz, startTime);
     filter.Q.value = 0.7;
     const gain = ctx.createGain();
+    const stopTime = startTime + decayMs;
     gain.gain.setValueAtTime(volume, startTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, startTime + decayMs);
+    gain.gain.exponentialRampToValueAtTime(0.001, stopTime);
+    gain.gain.setValueAtTime(0, stopTime + 0.01);
+
     crack.connect(filter);
     filter.connect(gain);
     gain.connect(ctx.destination);
     crack.start(startTime);
+    crack.stop(stopTime + 0.05);
   }, []);
 
 
