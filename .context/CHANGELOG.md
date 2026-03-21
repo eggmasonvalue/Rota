@@ -32,6 +32,14 @@
 - Implemented "Human vs Human" (HvH) game mode for local multiplayer.
 - Optimized animation performance with Framer Motion.
 - **Performance Optimization (AI):** Reduced memory allocation and GC overhead in the minimax search by implementing in-place state mutation with backtracking (`makeMove`/`undoMove`). This replaced unnecessary object spreading and array copying in `src/lib/ai.ts`, resulting in a ~30% improvement in search speed at the `CONSUL` difficulty level.
+- **Local Scoring System:**
+    - Implemented a local Scoring System (Elo Rating) for Solo (HvC) games.
+    - Created `src/lib/scoring.ts` to manage Elo calculations, Rank information, and fixed AI ratings.
+    - Added a "Daily Triumph" continuous win streak tracking system.
+    - Created `usePlayerStats` hook for managing and persisting stats in `localStorage` (`rota_player_stats`).
+    - Built `PlayerStatsModal` component for viewing a detailed breakdown of W/L/D and streaks against each AI difficulty.
+    - Added a compact, colored `RankIcon` SVG component for the top bar badge and modal legends.
+    - Integrated the unified stats badge `[<RankIcon> ELO | 🔥 Streak]` into `src/app/page.tsx`.
 
 ## [0.1.1] - 2026-02-18
 - Implemented Difficulty Selector (Easy/Medium/Hard).

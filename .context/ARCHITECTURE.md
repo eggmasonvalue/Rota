@@ -37,7 +37,14 @@ A custom hook leveraging Supabase Realtime.
 - **Presence Sorting:** Roles (`PLAYER1`, `PLAYER2`, `SPECTATOR`) are determined by sorting users by their `joinedAt` timestamp in the presence state.
 - **Broadcast Pattern:** Move actions are broadcasted as JSON payloads. The receiving client re-plays the action through their local reducer to ensure state consistency.
 
-### 4. Audio & Haptics (`src/hooks/useSoundEffects.ts`)
+### 4. Local Scoring & Player Stats (`src/hooks/usePlayerStats.ts`)
+A custom hook managing the player's persistent local progression in Solo (HvC) mode.
+- **Elo System:** Calculates rank progression using a standard Elo formula (`K=32`) against fixed AI difficulty ratings (Plebeian=800 -> Consul=1600).
+- **Daily Streak:** Tracks consecutive days with at least one win to drive engagement.
+- **Detailed Stats:** Records W/L/D and Current Streak against each specific difficulty level.
+- **Persistence:** Saved in `localStorage` under the key `rota_player_stats`.
+
+### 5. Audio & Haptics (`src/hooks/useSoundEffects.ts`)
 A custom hook encapsulating procedural audio generation and vibration-based haptics.
 - **Oscillator Strategy:** Uses `triangle`, `sine`, and `sawtooth` waves for tonal sounds (chords, clicks).
 - **Noise Synthesis:** Uses `AudioBuffer` filled with random values (White Noise) processed through a `BiquadFilterNode` (Bandpass) to simulate friction/scraping sounds for piece movement. The buffer is pre-calculated during initialization.
