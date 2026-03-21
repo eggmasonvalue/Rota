@@ -57,16 +57,16 @@ export function usePlayerStats() {
           setStats(updatedStats);
           localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(updatedStats));
         } else {
-          // eslint-disable-next-line react-hooks/set-state-in-effect
+
           setStats(INITIAL_PLAYER_STATS);
         }
       } else {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+
         setStats(INITIAL_PLAYER_STATS);
       }
     } catch (e) {
       console.error("Failed to parse player stats", e);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setStats(INITIAL_PLAYER_STATS);
     }
     setIsLoaded(true);
@@ -140,7 +140,9 @@ export function usePlayerStats() {
 
           try {
              localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(newStats));
-          } catch(_e) {}
+          } catch {
+             // Silently catch serialization/storage errors
+          }
 
           return newStats;
       });
