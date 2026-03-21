@@ -7,16 +7,20 @@ import { RealtimeChannel } from '@supabase/supabase-js';
 type PresenceUser = {
   sessionId: string;
   joinedAt: string;
+  elo?: number;
   presence_ref: string;
 };
 
 export function useOnlineGame(
   roomId: string | null,
-  onActionReceived: (action: Action, fromPlayer: Player) => void
+  onActionReceived: (action: Action, fromPlayer: Player) => void,
+  myElo: number
 ) {
   const [myPlayer, setMyPlayer] = useState<Player | 'SPECTATOR' | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<'CONNECTING' | 'CONNECTED' | 'DISCONNECTED'>('DISCONNECTED');
   const [onlineUsersCount, setOnlineUsersCount] = useState<number>(0);
+  const [player1Elo, setPlayer1Elo] = useState<number | null>(null);
+  const [player2Elo, setPlayer2Elo] = useState<number | null>(null);
 
   const channelRef = useRef<RealtimeChannel | null>(null);
   const sessionIdRef = useRef<string>('');
@@ -49,6 +53,8 @@ export function useOnlineGame(
       setConnectionStatus('DISCONNECTED');
       setMyPlayer(null);
       setOnlineUsersCount(0);
+      setPlayer1Elo(null);
+      setPlayer2Elo(null);
       return;
     }
 
@@ -86,6 +92,12 @@ export function useOnlineGame(
         if (myIndex === 0) setMyPlayer('PLAYER1');
         else if (myIndex === 1) setMyPlayer('PLAYER2');
         else setMyPlayer('SPECTATOR');
+
+        if (allUsers[0]) setPlayer1Elo(allUsers[0].elo || null);
+        else setPlayer1Elo(null);
+
+        if (allUsers[1]) setPlayer2Elo(allUsers[1].elo || null);
+        else setPlayer2Elo(null);
       })
       .on('broadcast', { event: 'game_action' }, ({ payload }) => {
         const { action, sessionId } = payload;
@@ -108,6 +120,7 @@ export function useOnlineGame(
           await channel.track({
             sessionId: sessionIdRef.current,
             joinedAt: joinedAtRef.current,
+            elo: myElo,
           });
           setConnectionStatus('CONNECTED');
         } else if (status === 'CLOSED') {
@@ -119,7 +132,7 @@ export function useOnlineGame(
       supabase.removeChannel(channel);
       channelRef.current = null;
     };
-  }, [roomId, onActionReceived]);
+  }, [roomId, onActionReceived, myElo]);
 
-  return { myPlayer, connectionStatus, onlineUsersCount, sendAction };
+  return { myPlayer, connectionStatus, onlineUsersCount, sendAction, player1Elo, player2Elo };
 }

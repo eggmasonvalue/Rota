@@ -15,8 +15,10 @@
     - [x] Supabase Realtime synchronization.
     - [x] Presence-based role assignment.
     - [x] Spectator mode support.
+    - [x] Sync player ELO over presence and display compactly on the online status bar.
 - [x] **UI/UX**
     - [x] "The Forum" theme implementation (Warm Stone, Pompeii Red, Mediterranean Blue).
+    - [x] Splash/Loading overlay featuring an animated `RankIcon` to gracefully mask `localStorage` hydration.
     - [x] Responsive hex/circular board layout with sized breathing circle indicators.
     - [x] Rotating victory quotes for PvP modes with "smudge" highlight effect.
     - [x] Spring-based piece animations.
@@ -40,10 +42,6 @@
     - [x] "Daily Triumph" continuous win streak tracking to drive engagement.
     - [x] Thematic top bar badge combining the Rank SVG icon, Elo score, and Daily Streak.
     - [x] Detailed "Service Record" modal displaying stats in a mobile-friendly tabular format.
-
-## Planned / In Progress
-- [ ] **Leaderboard:** Persistent wins tracking via Supabase Database.
-- [ ] **Reconnect Logic:** Handling transient disconnects in online games without losing state.
 
 ## Aesthetic Specification
 - **Theme Name:** "The Forum"

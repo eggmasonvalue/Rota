@@ -3,11 +3,13 @@ import React from 'react';
 interface RankIconProps {
   className?: string;
   colorClass?: string;
+  hubColorClass?: string;
 }
 
 export const RankIcon: React.FC<RankIconProps> = ({
   className = '',
   colorClass = 'text-current',
+  hubColorClass,
 }) => {
   return (
     <svg
@@ -28,7 +30,7 @@ export const RankIcon: React.FC<RankIconProps> = ({
 
       {/* Center Hub */}
       <circle cx="16" cy="16" r="4" fill="var(--background)" stroke="currentColor" strokeWidth="2" />
-      <circle cx="16" cy="16" r="2" fill="currentColor" />
+      <circle cx="16" cy="16" r="2" fill="currentColor" className={hubColorClass} />
     </svg>
   );
 };

@@ -1,6 +1,11 @@
 # Changelog
-
 ## [Unreleased]
+
+## [1.0.0]
+- **UI Polish:**
+    - Redesigned the online status bar to compactly display both players' ELO synchronized via real-time presence without bleeding to multiple lines.
+    - Implemented a splash/loading overlay using an animated `RankIcon` to gracefully mask `localStorage` data loading and prevent flashes of default state.
+    - Updated `RankIcon` to support an independent `hubColorClass` variable, allowing the icon to precisely match the actual application colors (`icon.tsx`).
 - **Fix: First-load double-sound on solo mode first placement:** `initAudio()` was calling `AudioContext.resume()` fire-and-forget (no `await`). On the very first user interaction Chrome's autoplay policy leaves the context `suspended`, so `ctx.currentTime` was still `0` when nodes were scheduled — they would replay/flush later when the AI move triggered a second `resume()`, causing two sounds in quick succession. Fixed by making `initAudio` `async`, properly `await`ing `resume()`, and returning a `boolean` guard. All `playX` functions now `await initAudio()` before scheduling any nodes.
 - **Fix: Draw detection (threefold repetition off-by-one):** `checkRepetition` was being called with the *pre-append* history (`newState.history`) instead of the fully-updated `newHistory`, causing draws to trigger one move too late (4th occurrence instead of 3rd). Fixed by passing `newHistory` to `checkRepetition` and raising the internal threshold from `>= 2` to `>= 3` to match the new invariant. Updated unit tests accordingly.
 - **Fix: Flash of Incorrect Theme on Reload:** Moved theme initialisation from a React `useEffect` (post-hydration) to a blocking inline `<script>` in `<head>` that runs synchronously before the first paint. Removed the always-on body `transition` and replaced it with a `.theme-ready` class added after mount, so smooth transitions still fire on user-triggered toggles only.
