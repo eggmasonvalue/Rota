@@ -38,48 +38,37 @@
   --glass-bg: rgba(140, 138, 107, 0.1);
 }
 
-/* VULCAN'S FORGE (Orange/Grey) */
+/* VULCAN'S FORGE (Hammer & Anvil) */
 [data-theme="vulcan"] {
-  --background: #1A1C1E; /* Deeper Charcoal/Ash */
-  --foreground: #E8E8E8; /* Off-white */
-  --primary: #E67E22; /* Vibrant Bronze/Orange */
-  --primary-bright: #F39C12;
-  --secondary: #2563EB; /* Quenched Steel Blue - Dynamic contrast to molten orange */
-  --glass-border: #4A4E52; /* Dark Steel */
-  --glass-bg: rgba(149, 165, 166, 0.1);
+  --background: #0F0F0F; /* Charred Basalt / Deepest Soot */
+  --foreground: #F2F2F2;
+  --primary: #F97316; /* Molten Ember / Vibrant Orange */
+  --primary-bright: #FB923C;
+  --secondary: #3B82F6; /* Quenched Steel / Radiant Blue - The Serpentine-style pop */
+  --glass-border: #431407; /* Scorched Earth */
+  --glass-bg: rgba(67, 20, 7, 0.2);
 }
 
-/* THE ONYX (Obsidian) */
+/* THE ONYX (Palatine Treasury) */
 [data-theme="onyx"] {
-  --background: #000000; /* Pitch Black */
-  --foreground: #FFFFFF; /* Pure White */
-  --primary: #D4AF37; /* Burnished Gold */
+  --background: #000000; /* Polished Obsidian */
+  --foreground: #FFFFFF;
+  --primary: #D4AF37; /* Imperial Gold */
   --primary-bright: #F1C40F;
-  --secondary: #10B981; /* Emerald - Jewel-toned richness against obsidian */
+  --secondary: #10B981; /* Emerald - Jewel-toned richness */
   --glass-border: #333333;
   --glass-bg: rgba(255, 255, 255, 0.1);
 }
 
 /* THE ALABASTER (Marble) */
 [data-theme="alabaster"] {
-  --background: #FFFFFF; /* Pure White */
-  --foreground: #000000; /* Black */
+  --background: #FFFFFF; /* Pure White Marble */
+  --foreground: #000000;
   --primary: #4B0082; /* Indigo/Purple */
   --primary-bright: #8A2BE2;
-  --secondary: #065F46; /* Verde Antico - Deep forest marble green to match indigo's weight */
+  --secondary: #065F46; /* Verde Antico (Marble Green) */
   --glass-border: #D1D5DB;
   --glass-bg: rgba(75, 0, 130, 0.05);
-}
-
-/* THE VERDIGRIS (Aged Patina) */
-[data-theme="verdigris"] {
-  --background: #3D5A5A; /* Aged Patina */
-  --foreground: #E2E8F0; /* Ancient Ivory */
-  --primary: #B45309; /* Polished Copper */
-  --primary-bright: #D97706;
-  --secondary: #E2E8F0; /* Ancient Ivory Pieces */
-  --glass-border: #2D4F4F; /* Sage Stone */
-  --glass-bg: rgba(45, 79, 79, 0.2);
 }
 
 /* THE SERPENTINE (Green Marble) */

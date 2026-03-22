@@ -18,7 +18,7 @@ import { getRankForElo } from '@/lib/scoring';
 // Force Turbopack clean update for Lucide-React imports
 import { Copy, Check, Users, Volume2, VolumeX, Vibrate, Palette } from 'lucide-react';
 
-const THEMES = ['forum', 'forum-dark', 'vulcan', 'onyx', 'alabaster', 'verdigris', 'serpentine'] as const;
+const THEMES = ['forum', 'forum-dark', 'vulcan', 'onyx', 'alabaster', 'serpentine'] as const;
 type Theme = typeof THEMES[number];
 
 // Exported for testing purposes to verify core game logic state transitions
