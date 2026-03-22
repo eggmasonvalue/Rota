@@ -70,50 +70,7 @@ export default function manifest(): MetadataRoute.Manifest {
         type: 'image/png',
         form_factor: 'narrow',
         label: 'The Onyx - Obsidian & Gold Theme',
-      },
-      // Wide screenshots (using same images as requested)
-      {
-        src: '/theme_0.png',
-        sizes: '1080x1920',
-        type: 'image/png',
-        form_factor: 'wide',
-        label: 'The Forum - Warm Stone Theme',
-      },
-      {
-        src: '/theme_1.png',
-        sizes: '1080x1920',
-        type: 'image/png',
-        form_factor: 'wide',
-        label: 'The Alabaster - Pure Marble Theme',
-      },
-      {
-        src: '/theme_2.png',
-        sizes: '1080x1920',
-        type: 'image/png',
-        form_factor: 'wide',
-        label: 'The Serpentine - Green Marble Theme',
-      },
-      {
-        src: '/theme_3.png',
-        sizes: '1080x1920',
-        type: 'image/png',
-        form_factor: 'wide',
-        label: 'The Forum (Dark) - Earth & Lapis Theme',
-      },
-      {
-        src: '/theme_4.png',
-        sizes: '1080x1920',
-        type: 'image/png',
-        form_factor: 'wide',
-        label: 'Vulcan\'s Forge - Amber & Cobalt Theme',
-      },
-      {
-        src: '/theme_5.png',
-        sizes: '1080x1920',
-        type: 'image/png',
-        form_factor: 'wide',
-        label: 'The Onyx - Obsidian & Gold Theme',
-      },
+      }
     ],
   };
 }
