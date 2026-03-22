@@ -16,7 +16,7 @@ import { usePlayerStats } from '@/hooks/usePlayerStats';
 import { generateUUID } from '@/lib/utils';
 import { getRankForElo } from '@/lib/scoring';
 // Force Turbopack clean update for Lucide-React imports
-import { Copy, Check, Users, Volume2, VolumeX, Vibrate, Sun, Moon, Palette } from 'lucide-react';
+import { Copy, Check, Users, Volume2, VolumeX, Vibrate, Palette } from 'lucide-react';
 
 const THEMES = ['forum', 'forum-dark', 'imperial', 'imperial-dark', 'olive', 'vulcan'] as const;
 type Theme = typeof THEMES[number];
