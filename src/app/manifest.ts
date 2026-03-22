@@ -31,7 +31,7 @@ export default function manifest(): MetadataRoute.Manifest {
     screenshots: [
       {
         src: '/theme_0.png',
-        sizes: '1080x1921',
+        sizes: '1080x1920',
         type: 'image/png',
         form_factor: 'narrow',
         label: 'The Forum - Warm Stone Theme',
@@ -52,21 +52,21 @@ export default function manifest(): MetadataRoute.Manifest {
       },
       {
         src: '/theme_3.png',
-        sizes: '1080x1921',
+        sizes: '1080x1920',
         type: 'image/png',
         form_factor: 'narrow',
         label: 'The Forum (Dark) - Earth & Lapis Theme',
       },
       {
         src: '/theme_4.png',
-        sizes: '1080x1921',
+        sizes: '1080x1920',
         type: 'image/png',
         form_factor: 'narrow',
         label: 'Vulcan\'s Forge - Amber & Cobalt Theme',
       },
       {
         src: '/theme_5.png',
-        sizes: '1080x1921',
+        sizes: '1080x1920',
         type: 'image/png',
         form_factor: 'narrow',
         label: 'The Onyx - Obsidian & Gold Theme',
@@ -74,7 +74,7 @@ export default function manifest(): MetadataRoute.Manifest {
       // Wide screenshots (using same images as requested)
       {
         src: '/theme_0.png',
-        sizes: '1080x1921',
+        sizes: '1080x1920',
         type: 'image/png',
         form_factor: 'wide',
         label: 'The Forum - Warm Stone Theme',
@@ -95,21 +95,21 @@ export default function manifest(): MetadataRoute.Manifest {
       },
       {
         src: '/theme_3.png',
-        sizes: '1080x1921',
+        sizes: '1080x1920',
         type: 'image/png',
         form_factor: 'wide',
         label: 'The Forum (Dark) - Earth & Lapis Theme',
       },
       {
         src: '/theme_4.png',
-        sizes: '1080x1921',
+        sizes: '1080x1920',
         type: 'image/png',
         form_factor: 'wide',
         label: 'Vulcan\'s Forge - Amber & Cobalt Theme',
       },
       {
         src: '/theme_5.png',
-        sizes: '1080x1921',
+        sizes: '1080x1920',
         type: 'image/png',
         form_factor: 'wide',
         label: 'The Onyx - Obsidian & Gold Theme',
