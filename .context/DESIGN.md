@@ -47,7 +47,10 @@
 ## Aesthetic Specification
 - **Themes:**
     - **"The Forum" (Default):** Warm Sand & Pompeii Red (Light/Dark).
-    - **"Imperial Purple":** Tyrian Purple & Roman Gold (Light/Dark).
-    - **"Olive Grove":** Limestone & Forest Green.
-    - **"Vulcan's Forge":** Ash & Bronze.
+    - **"Vulcan's Forge":** Ash & Bronze (The "Grey" Theme).
+    - **"The Lapis":** Deep Ultramarine & Gold.
+    - **"The Verdigris":** Oxidized Bronze & Copper.
+    - **"The Cinnabar":** Pompeian Red & Charcoal.
+    - **"The Onyx":** High-Contrast Obsidian & Gold.
+    - **"The Alabaster":** Pure White Marble & Tyrian Purple.
 - **Motion:** Stiff springs for UI elements, damp springs for game pieces to simulate weight.

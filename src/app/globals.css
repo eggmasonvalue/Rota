@@ -38,39 +38,7 @@
   --glass-bg: rgba(140, 138, 107, 0.1);
 }
 
-/* IMPERIAL PURPLE */
-[data-theme="imperial"] {
-  --background: #F2F2F2; /* White Marble */
-  --foreground: #2A0119; /* Deep Tyrian */
-  --primary: #66023C; /* Tyrian Purple */
-  --primary-bright: #80024B;
-  --secondary: #B8860B; /* Dark Goldenrod */
-  --glass-border: #D4AF37; /* Gold */
-  --glass-bg: rgba(212, 175, 55, 0.1);
-}
-
-[data-theme="imperial-dark"] {
-  --background: #0B0B0B; /* Obsidian */
-  --foreground: #F2F2F2;
-  --primary: #80024B; /* Lighter Purple */
-  --primary-bright: #99035A;
-  --secondary: #FFD700; /* Gold */
-  --glass-border: #B8860B;
-  --glass-bg: rgba(184, 134, 11, 0.2);
-}
-
-/* OLIVE GROVE */
-[data-theme="olive"] {
-  --background: #E3D9C6; /* Limestone */
-  --foreground: #2D3A1F; /* Forest */
-  --primary: #556B2F; /* Olive Drab */
-  --primary-bright: #6B8E23;
-  --secondary: #8B4513; /* Saddle Brown */
-  --glass-border: #5D5C43;
-  --glass-bg: rgba(93, 92, 67, 0.1);
-}
-
-/* VULCAN'S FORGE */
+/* VULCAN'S FORGE - Keep (Orange/Grey) */
 [data-theme="vulcan"] {
   --background: #23272A; /* Ash */
   --foreground: #E1E1E1;
@@ -79,6 +47,61 @@
   --secondary: #43464B; /* Iron */
   --glass-border: #708090; /* Slate */
   --glass-bg: rgba(112, 128, 144, 0.2);
+}
+
+/* THE LAPIS (Deep Ultramarine) */
+[data-theme="lapis"] {
+  --background: #0F172A; /* Midnight Blue */
+  --foreground: #F8FAFC; /* Marble White */
+  --primary: #D4AF37; /* Gold */
+  --primary-bright: #F1C40F;
+  --secondary: #38B2AC; /* Teal */
+  --glass-border: #1E293B;
+  --glass-bg: rgba(56, 178, 172, 0.1);
+}
+
+/* THE VERDIGRIS (Oxidized Bronze) */
+[data-theme="verdigris"] {
+  --background: #2D4F4F; /* Aged Teal */
+  --foreground: #E2E8F0; /* Off-white */
+  --primary: #B45309; /* Copper */
+  --primary-bright: #D97706;
+  --secondary: #14B8A6; /* Fresh Teal */
+  --glass-border: #134E4A;
+  --glass-bg: rgba(20, 184, 166, 0.1);
+}
+
+/* THE CINNABAR (Pompeian Red) */
+[data-theme="cinnabar"] {
+  --background: #7F1D1D; /* Deep Red */
+  --foreground: #FEF2F2; /* Creamy White */
+  --primary: #111827; /* Charcoal */
+  --primary-bright: #374151;
+  --secondary: #FDE68A; /* Pale Gold */
+  --glass-border: #450A0A;
+  --glass-bg: rgba(253, 230, 138, 0.1);
+}
+
+/* THE ONYX (Obsidian) */
+[data-theme="onyx"] {
+  --background: #000000; /* Pitch Black */
+  --foreground: #FFFFFF; /* Pure White */
+  --primary: #FFD700; /* Goldenrod */
+  --primary-bright: #FFFACD;
+  --secondary: #C0C0C0; /* Silver */
+  --glass-border: #333333;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* THE ALABASTER (Marble) */
+[data-theme="alabaster"] {
+  --background: #FFFFFF; /* Pure White */
+  --foreground: #000000; /* Black */
+  --primary: #4B0082; /* Indigo/Purple */
+  --primary-bright: #8A2BE2;
+  --secondary: #A9A9A9; /* Dark Grey */
+  --glass-border: #D1D5DB;
+  --glass-bg: rgba(75, 0, 130, 0.05);
 }
 
 body {
