@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Marcellus, Merriweather } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import Script from "next/script";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { JsonLd } from "@/components/JsonLd";
 import "./globals.css";
@@ -82,9 +81,7 @@ export default function RootLayout({
           suppressHydrationWarning on <html> is required because the class differs
           between SSR (no class) and the client (potentially "dark").
         */}
-        <Script
-          id="theme-init"
-          strategy="beforeInteractive"
+        <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -109,7 +106,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${marcellus.variable} ${merriweather.variable} antialiased bg-[var(--background)] text-[var(--foreground)] font-[family-name:var(--font-body)]`}
+        className={`${marcellus.variable} ${merriweather.variable} antialiased font-[family-name:var(--font-body)]`}
       >
         <JsonLd data={jsonLd} />
         <ServiceWorkerRegister />
