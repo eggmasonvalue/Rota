@@ -143,6 +143,7 @@ function GameContent() {
     // Sync React state with the DOM attribute.
     const attr = document.documentElement.getAttribute('data-theme') as Theme | null;
     if (attr && THEMES.includes(attr)) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentTheme(attr);
     }
 
