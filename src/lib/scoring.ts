@@ -61,7 +61,7 @@ export interface RankInfo {
 export const RANKS: RankInfo[] = [
   { name: 'Plebeian', minElo: 0, colorClass: 'text-foreground/40', glowClass: '' },
   { name: 'Merchant', minElo: 1000, colorClass: 'text-foreground/80', glowClass: '' },
-  { name: 'Eques', minElo: 1200, colorClass: 'text-orange-400', glowClass: 'drop-shadow-[0_0_8px_rgba(251,146,60,0.5)]' }, // Bronze-ish
+  { name: 'Eques', minElo: 1200, colorClass: 'text-[#E67E22]', glowClass: 'drop-shadow-[0_0_8px_rgba(230,126,34,0.4)]' }, // Bronze/Orange
   { name: 'Senator', minElo: 1400, colorClass: 'text-secondary', glowClass: 'drop-shadow-[0_0_8px_var(--color-secondary)]' },
   { name: 'Consul', minElo: 1600, colorClass: 'text-primary', glowClass: 'drop-shadow-[0_0_8px_var(--color-primary)]' },
 ];
