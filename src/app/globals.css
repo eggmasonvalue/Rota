@@ -71,6 +71,28 @@
   --glass-bg: rgba(75, 0, 130, 0.05);
 }
 
+/* THE VERDIGRIS (Aged Patina) */
+[data-theme="verdigris"] {
+  --background: #3D5A5A; /* Aged Patina */
+  --foreground: #E2E8F0; /* Ancient Ivory */
+  --primary: #B45309; /* Polished Copper */
+  --primary-bright: #D97706;
+  --secondary: #E2E8F0; /* Ancient Ivory Pieces */
+  --glass-border: #2D4F4F; /* Sage Stone */
+  --glass-bg: rgba(45, 79, 79, 0.2);
+}
+
+/* THE SERPENTINE (Green Marble) */
+[data-theme="serpentine"] {
+  --background: #283618; /* Deep Serpentine Green */
+  --foreground: #FEFAE0; /* Cornsilk */
+  --primary: #E5E7EB; /* Polished Silver */
+  --primary-bright: #FFFFFF;
+  --secondary: #D4AF37; /* Burnished Gold */
+  --glass-border: #1B2411; /* Dark Moss */
+  --glass-bg: rgba(40, 54, 24, 0.2);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
