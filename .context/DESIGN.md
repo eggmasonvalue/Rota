@@ -47,7 +47,7 @@
 ## Aesthetic Specification
 - **Themes:**
     - **"The Forum" (Default):** Warm Sand & Pompeii Red (Light/Dark).
-    - **"Vulcan's Forge":** Charred Basalt & Molten Ember.
+    - **"Vulcan's Forge":** Deep Grey & Fire Steel.
     - **"The Onyx":** Obsidian & Imperial Gold.
     - **"The Alabaster":** Parian Marble & Indigo.
     - **"The Serpentine":** Green Marble & Polished Silver.

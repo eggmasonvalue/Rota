@@ -38,15 +38,15 @@
   --glass-bg: rgba(140, 138, 107, 0.1);
 }
 
-/* VULCAN'S FORGE (Hammer & Anvil) */
+/* VULCAN'S FORGE (Deep Grey / Fire & Steel) */
 [data-theme="vulcan"] {
-  --background: #0F0F0F; /* Charred Basalt / Deepest Soot */
-  --foreground: #F2F2F2;
-  --primary: #F97316; /* Molten Ember / Vibrant Orange */
-  --primary-bright: #FB923C;
-  --secondary: #3B82F6; /* Quenched Steel / Radiant Blue - The Serpentine-style pop */
-  --glass-border: #431407; /* Scorched Earth */
-  --glass-bg: rgba(67, 20, 7, 0.2);
+  --background: #1A1C1E; /* Deep Grey / Ash */
+  --foreground: #F8FAFC;
+  --primary: #EF4444; /* Molten Crimson - High saturation pop */
+  --primary-bright: #F87171;
+  --secondary: #3B82F6; /* Quenched Azure - Radiant contrast */
+  --glass-border: #475569; /* Slate Steel */
+  --glass-bg: rgba(71, 85, 105, 0.15);
 }
 
 /* THE ONYX (Palatine Treasury) */
