@@ -45,10 +45,11 @@
     - [x] Detailed "Service Record" modal displaying stats in a mobile-friendly tabular format.
 
 ## Aesthetic Specification
-- **Themes:**
-    - **"The Forum" (Default):** Warm Sand & Pompeii Red (Light/Dark).
-    - **"Vulcan's Forge":** Deep Grey & Amber/Cobalt (Heliopolis).
-    - **"The Onyx":** Obsidian & Imperial Gold.
+- **Themes (In Rotation Order):**
+    - **"The Forum" (Default):** Warm Sand & Pompeii Red.
     - **"The Alabaster":** Parian Marble & Indigo.
     - **"The Serpentine":** Green Marble & Polished Silver.
+    - **"The Forum" (Dark):** Dark Earth & Bright Lapis.
+    - **"Vulcan's Forge":** Deep Grey & Amber/Cobalt (Heliopolis).
+    - **"The Onyx":** Obsidian & Imperial Gold.
 - **Motion:** Stiff springs for UI elements, damp springs for game pieces to simulate weight.
