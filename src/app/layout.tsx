@@ -88,8 +88,15 @@ export default function RootLayout({
                 try {
                   var stored = localStorage.getItem('theme');
                   var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  if (stored === 'dark' || (!stored && prefersDark)) {
-                    document.documentElement.classList.add('dark');
+                  
+                  // Map legacy 'dark' to 'forum-dark' for backward compatibility
+                  if (stored === 'dark') stored = 'forum-dark';
+                  if (stored === 'light') stored = 'forum';
+
+                  var theme = stored || (prefersDark ? 'forum-dark' : 'forum');
+                  
+                  if (theme !== 'forum') {
+                    document.documentElement.setAttribute('data-theme', theme);
                   }
                 } catch (e) {}
               })();

@@ -36,6 +36,20 @@ export default function Icon() {
         <div style={{ position: 'absolute', width: '2px', height: '100%', background: '#8C8A6B', transform: 'rotate(45deg)' }} />
         <div style={{ position: 'absolute', width: '2px', height: '100%', background: '#8C8A6B', transform: 'rotate(-45deg)' }} />
 
+        {/* Decorative Dots on rim (Orthogonal) */}
+        <div style={{ position: 'absolute', top: '-3px', width: '6px', height: '6px', borderRadius: '50%', background: '#8C8A6B' }} />
+        <div style={{ position: 'absolute', bottom: '-3px', width: '6px', height: '6px', borderRadius: '50%', background: '#8C8A6B' }} />
+        <div style={{ position: 'absolute', left: '-3px', width: '6px', height: '6px', borderRadius: '50%', background: '#8C8A6B' }} />
+        <div style={{ position: 'absolute', right: '-3px', width: '6px', height: '6px', borderRadius: '50%', background: '#8C8A6B' }} />
+
+        {/* Decorative Dots on rim (Diagonal) */}
+        <div style={{ position: 'absolute', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'rotate(45deg)' }}>
+            <div style={{ position: 'absolute', top: '-3px', width: '6px', height: '6px', borderRadius: '50%', background: '#8C8A6B' }} />
+            <div style={{ position: 'absolute', bottom: '-3px', width: '6px', height: '6px', borderRadius: '50%', background: '#8C8A6B' }} />
+            <div style={{ position: 'absolute', left: '-3px', width: '6px', height: '6px', borderRadius: '50%', background: '#8C8A6B' }} />
+            <div style={{ position: 'absolute', right: '-3px', width: '6px', height: '6px', borderRadius: '50%', background: '#8C8A6B' }} />
+        </div>
+
         {/* Center piece */}
         <div style={{
             position: 'absolute',

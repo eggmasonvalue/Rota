@@ -14,35 +14,71 @@
 }
 
 :root {
-  /* THE FORUM (Warm Stone) - LIGHT MODE DEFAULT */
+  /* THE FORUM (Warm Stone) - DEFAULT */
   --background: #F5F0E6; /* Warm Sand */
   --foreground: #333333; /* Dark Charcoal */
-
   --primary: #9C382F; /* Pompeii Red */
-  --primary-bright: #B54238; /* Slightly brighter for active states */
+  --primary-bright: #B54238;
   --secondary: #2C5D8F; /* Mediterranean Blue */
-
-  /* Accent color from mockup used for borders/UI elements */
   --glass-border: #5D5C43; /* Bronze / Olive */
-  --glass-bg: rgba(93, 92, 67, 0.05); /* Very subtle tint of the accent */
+  --glass-bg: rgba(93, 92, 67, 0.05);
 
   --font-heading: 'Marcellus', serif;
   --font-body: 'Merriweather', serif;
 }
 
-/* DARK MODE OVERRIDE */
-.dark {
-  /* THE FORUM (Warm Stone) - DARK MODE */
+/* THE FORUM - DARK */
+[data-theme="forum-dark"] {
   --background: #2C241B; /* Dark Earth */
   --foreground: #E8DCC4; /* Light Sand text */
-
   --primary: #C24538; /* Bright Terracotta */
   --primary-bright: #D65A4C;
   --secondary: #4A8BC2; /* Bright Lapis */
-
-  /* Accent */
   --glass-border: #8C8A6B; /* Light Olive */
-  --glass-bg: rgba(140, 138, 107, 0.1); /* Subtle tint of the accent */
+  --glass-bg: rgba(140, 138, 107, 0.1);
+}
+
+/* IMPERIAL PURPLE */
+[data-theme="imperial"] {
+  --background: #F2F2F2; /* White Marble */
+  --foreground: #2A0119; /* Deep Tyrian */
+  --primary: #66023C; /* Tyrian Purple */
+  --primary-bright: #80024B;
+  --secondary: #B8860B; /* Dark Goldenrod */
+  --glass-border: #D4AF37; /* Gold */
+  --glass-bg: rgba(212, 175, 55, 0.1);
+}
+
+[data-theme="imperial-dark"] {
+  --background: #0B0B0B; /* Obsidian */
+  --foreground: #F2F2F2;
+  --primary: #80024B; /* Lighter Purple */
+  --primary-bright: #99035A;
+  --secondary: #FFD700; /* Gold */
+  --glass-border: #B8860B;
+  --glass-bg: rgba(184, 134, 11, 0.2);
+}
+
+/* OLIVE GROVE */
+[data-theme="olive"] {
+  --background: #E3D9C6; /* Limestone */
+  --foreground: #2D3A1F; /* Forest */
+  --primary: #556B2F; /* Olive Drab */
+  --primary-bright: #6B8E23;
+  --secondary: #8B4513; /* Saddle Brown */
+  --glass-border: #5D5C43;
+  --glass-bg: rgba(93, 92, 67, 0.1);
+}
+
+/* VULCAN'S FORGE */
+[data-theme="vulcan"] {
+  --background: #23272A; /* Ash */
+  --foreground: #E1E1E1;
+  --primary: #CD7F32; /* Bronze */
+  --primary-bright: #DE9344;
+  --secondary: #43464B; /* Iron */
+  --glass-border: #708090; /* Slate */
+  --glass-bg: rgba(112, 128, 144, 0.2);
 }
 
 body {

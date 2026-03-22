@@ -25,9 +25,9 @@ describe('RankIcon Component', () => {
     const { container } = render(<RankIcon />);
     const svg = container.querySelector('svg');
 
-    // Check for circles (outer, inner hub, inner dot)
+    // Check for circles (outer, inner hub, inner dot, and 8 rim knots)
     const circles = svg?.querySelectorAll('circle');
-    expect(circles?.length).toBe(3);
+    expect(circles?.length).toBe(11);
 
     // Check for spokes (lines)
     const lines = svg?.querySelectorAll('line');
