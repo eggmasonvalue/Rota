@@ -44,7 +44,7 @@
   --foreground: #E8E8E8; /* Off-white */
   --primary: #E67E22; /* Vibrant Bronze/Orange */
   --primary-bright: #F39C12;
-  --secondary: #95A5A6; /* Metallic Silver/Steel - Better differentiation from Ash */
+  --secondary: #2563EB; /* Quenched Steel Blue - Dynamic contrast to molten orange */
   --glass-border: #4A4E52; /* Dark Steel */
   --glass-bg: rgba(149, 165, 166, 0.1);
 }
@@ -55,7 +55,7 @@
   --foreground: #FFFFFF; /* Pure White */
   --primary: #D4AF37; /* Burnished Gold */
   --primary-bright: #F1C40F;
-  --secondary: #E5E7EB; /* Platinum/Silver - Brighter and more regal than plain grey */
+  --secondary: #10B981; /* Emerald - Jewel-toned richness against obsidian */
   --glass-border: #333333;
   --glass-bg: rgba(255, 255, 255, 0.1);
 }
@@ -66,7 +66,7 @@
   --foreground: #000000; /* Black */
   --primary: #4B0082; /* Indigo/Purple */
   --primary-bright: #8A2BE2;
-  --secondary: #64748B; /* Slate Grey - Deeper contrast against white */
+  --secondary: #065F46; /* Verde Antico - Deep forest marble green to match indigo's weight */
   --glass-border: #D1D5DB;
   --glass-bg: rgba(75, 0, 130, 0.05);
 }
