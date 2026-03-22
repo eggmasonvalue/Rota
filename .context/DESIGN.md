@@ -17,7 +17,8 @@
     - [x] Spectator mode support.
     - [x] Sync player ELO over presence and display compactly on the online status bar.
 - [x] **UI/UX**
-    - [x] "The Forum" theme implementation (Warm Stone, Pompeii Red, Mediterranean Blue).
+    - [x] **Multiple Roman Themes:** 6 distinct color palettes inspired by antiquity (The Forum, Imperial Purple, Olive Grove, Vulcan's Forge), with both light and dark variations for key themes.
+    - [x] **Theme Cycling:** Intuitive `Palette` toggle to switch between all available themes, with persistent storage in `localStorage`.
     - [x] Splash/Loading overlay featuring an animated `RankIcon` to gracefully mask `localStorage` hydration.
     - [x] Responsive hex/circular board layout with sized breathing circle indicators.
     - [x] Rotating victory quotes for PvP modes with "smudge" highlight effect.
@@ -44,8 +45,11 @@
     - [x] Detailed "Service Record" modal displaying stats in a mobile-friendly tabular format.
 
 ## Aesthetic Specification
-- **Theme Name:** "The Forum"
-- **Canvas / Background:** `var(--background)` (#F5F0E6 Warm Sand / #2C241B Dark Earth)
-- **Primary:** `var(--primary)` (#9C382F Pompeii Red)
-- **Secondary:** `var(--secondary)` (#2C5D8F Mediterranean Blue)
+- **Themes (In Rotation Order):**
+    - **"The Forum" (Default):** Warm Sand & Pompeii Red.
+    - **"The Alabaster":** Parian Marble & Indigo.
+    - **"The Serpentine":** Green Marble & Polished Silver.
+    - **"The Forum" (Dark):** Dark Earth & Bright Lapis.
+    - **"Vulcan's Forge":** Deep Grey & Amber/Cobalt (Heliopolis).
+    - **"The Onyx":** Obsidian & Imperial Gold.
 - **Motion:** Stiff springs for UI elements, damp springs for game pieces to simulate weight.

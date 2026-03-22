@@ -14,35 +14,72 @@
 }
 
 :root {
-  /* THE FORUM (Warm Stone) - LIGHT MODE DEFAULT */
+  /* THE FORUM (Warm Stone) - DEFAULT */
   --background: #F5F0E6; /* Warm Sand */
   --foreground: #333333; /* Dark Charcoal */
-
   --primary: #9C382F; /* Pompeii Red */
-  --primary-bright: #B54238; /* Slightly brighter for active states */
+  --primary-bright: #B54238;
   --secondary: #2C5D8F; /* Mediterranean Blue */
-
-  /* Accent color from mockup used for borders/UI elements */
   --glass-border: #5D5C43; /* Bronze / Olive */
-  --glass-bg: rgba(93, 92, 67, 0.05); /* Very subtle tint of the accent */
+  --glass-bg: rgba(93, 92, 67, 0.05);
 
   --font-heading: 'Marcellus', serif;
   --font-body: 'Merriweather', serif;
 }
 
-/* DARK MODE OVERRIDE */
-.dark {
-  /* THE FORUM (Warm Stone) - DARK MODE */
+/* THE FORUM - DARK */
+[data-theme="forum-dark"] {
   --background: #2C241B; /* Dark Earth */
   --foreground: #E8DCC4; /* Light Sand text */
-
   --primary: #C24538; /* Bright Terracotta */
   --primary-bright: #D65A4C;
   --secondary: #4A8BC2; /* Bright Lapis */
-
-  /* Accent */
   --glass-border: #8C8A6B; /* Light Olive */
-  --glass-bg: rgba(140, 138, 107, 0.1); /* Subtle tint of the accent */
+  --glass-bg: rgba(140, 138, 107, 0.1);
+}
+
+/* VULCAN'S FORGE (Heliopolis / Amber & Cobalt) */
+[data-theme="vulcan"] {
+  --background: #1A1C1E; /* Deep Grey / Ash */
+  --foreground: #F8FAFC;
+  --primary: #F59E0B; /* Vibrant Amber - Golden-hour heat */
+  --primary-bright: #FBBF24;
+  --secondary: #1E40AF; /* Deep Cobalt - Heavy saturated blue */
+  --glass-border: #475569; /* Slate Steel */
+  --glass-bg: rgba(30, 64, 175, 0.1);
+}
+
+/* THE ONYX (Palatine Treasury) */
+[data-theme="onyx"] {
+  --background: #000000; /* Polished Obsidian */
+  --foreground: #FFFFFF;
+  --primary: #D4AF37; /* Imperial Gold */
+  --primary-bright: #F1C40F;
+  --secondary: #10B981; /* Emerald - Jewel-toned richness */
+  --glass-border: #333333;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* THE ALABASTER (Marble) */
+[data-theme="alabaster"] {
+  --background: #FFFFFF; /* Pure White Marble */
+  --foreground: #000000;
+  --primary: #4B0082; /* Indigo/Purple */
+  --primary-bright: #8A2BE2;
+  --secondary: #065F46; /* Verde Antico (Marble Green) */
+  --glass-border: #D1D5DB;
+  --glass-bg: rgba(75, 0, 130, 0.05);
+}
+
+/* THE SERPENTINE (Green Marble) */
+[data-theme="serpentine"] {
+  --background: #283618; /* Deep Serpentine Green */
+  --foreground: #FEFAE0; /* Cornsilk */
+  --primary: #E5E7EB; /* Polished Silver */
+  --primary-bright: #FFFFFF;
+  --secondary: #D4AF37; /* Burnished Gold */
+  --glass-border: #1B2411; /* Dark Moss */
+  --glass-bg: rgba(40, 54, 24, 0.2);
 }
 
 body {

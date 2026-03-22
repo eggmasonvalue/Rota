@@ -16,7 +16,10 @@ import { usePlayerStats } from '@/hooks/usePlayerStats';
 import { generateUUID } from '@/lib/utils';
 import { getRankForElo } from '@/lib/scoring';
 // Force Turbopack clean update for Lucide-React imports
-import { Copy, Check, Users, Volume2, VolumeX, Vibrate, Sun, Moon } from 'lucide-react';
+import { Copy, Check, Users, Volume2, VolumeX, Vibrate, Palette } from 'lucide-react';
+
+const THEMES = ['forum', 'alabaster', 'serpentine', 'forum-dark', 'vulcan', 'onyx'] as const;
+type Theme = typeof THEMES[number];
 
 // Exported for testing purposes to verify core game logic state transitions
 export function gameReducer(state: GameState, action: Action): GameState {
@@ -125,7 +128,7 @@ function GameContent() {
   const [difficulty, setDifficulty] = useState<Difficulty>('EQUES');
   const [roomId, setRoomId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState<Theme>('forum');
   const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
 
   const { stats, recordGameResult, resetStats, isLoaded: isStatsLoaded } = usePlayerStats();
@@ -136,27 +139,30 @@ function GameContent() {
 
   // Theme Toggle Logic
   useEffect(() => {
-    // The blocking script in layout.tsx already applied .dark before first paint.
-    // Here we just sync React state with whatever the DOM already has.
-    const isDark = document.documentElement.classList.contains('dark');
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsDarkMode(isDark);
+    // The blocking script in layout.tsx already applied the theme.
+    // Sync React state with the DOM attribute.
+    const attr = document.documentElement.getAttribute('data-theme') as Theme | null;
+    if (attr && THEMES.includes(attr)) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentTheme(attr);
+    }
 
-    // Enable smooth transitions NOW (after mount), so they only fire on
-    // user-triggered toggles — not on the initial page load.
     document.body.classList.add('theme-ready');
   }, []);
 
   const toggleTheme = () => {
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    if (newMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+    const currentIndex = THEMES.indexOf(currentTheme);
+    const nextIndex = (currentIndex + 1) % THEMES.length;
+    const nextTheme = THEMES[nextIndex];
+    
+    setCurrentTheme(nextTheme);
+    
+    if (nextTheme === 'forum') {
+        document.documentElement.removeAttribute('data-theme');
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+        document.documentElement.setAttribute('data-theme', nextTheme);
     }
+    localStorage.setItem('theme', nextTheme);
     playClick();
   };
 
@@ -569,11 +575,10 @@ function GameContent() {
             <button
               onClick={toggleTheme}
               className="p-2 rounded-xl border border-[var(--glass-border)] hover:border-secondary/80 text-foreground/80 hover:text-foreground transition-colors self-end mb-0.5"
-              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              title={`Theme: ${currentTheme.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}`}
             >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              <Palette size={20} />
             </button>
-
             <Button
               onClick={() => {
                 playClick();

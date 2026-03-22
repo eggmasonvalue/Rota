@@ -4,7 +4,12 @@ A modern, visually stunning implementation of the ancient Roman game **Rota**, b
 
 ## Features
 
-- **The Forum Theme:** A rich visual experience using Pompeii Red (#9C382F) and Mediterranean Blue (#2C5D8F) on a Warm Stone background.
+- **Multi-Theme System:** Six immersive visual experiences:
+  - **The Forum:** Warm Stone & Pompeii Red (Light/Dark).
+  - **The Alabaster:** Pure White Marble & Indigo.
+  - **The Serpentine:** Green Marble & Polished Silver.
+  - **Vulcan's Forge:** Deep Grey & Fire Steel (Heliopolis).
+  - **The Onyx:** Obsidian & Imperial Gold.
 - **Sensory Feedback:** Procedural audio synthesis via the Web Audio API (stone/marble materials) paired with synchronized physical vibrations via the Web Vibration API (`web-haptics`), seamlessly unified under a 4-state toggle control.
 - **Game Modes:**
   - **Human vs CPU:** Challenge a Minimax-powered AI with five distinct difficulty levels:
